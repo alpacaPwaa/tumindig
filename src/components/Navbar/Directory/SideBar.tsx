@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { communityState } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
 import useDirectory from "../../../hooks/useDirectory";
@@ -22,6 +22,7 @@ import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
 import { useRouter } from "next/router";
 import { FaUserCircle } from "react-icons/fa";
 import { MdPeopleAlt } from "react-icons/md";
+import { authModalState } from "../../../atoms/authModalAtom";
 
 type sideBarProps = {};
 
@@ -29,6 +30,7 @@ const sideBar: React.FC<sideBarProps> = () => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
+  const setAuthModalState = useSetRecoilState(authModalState);
   const { onSelectMenuItem } = useDirectory();
   const router = useRouter();
 
@@ -38,6 +40,15 @@ const sideBar: React.FC<sideBarProps> = () => {
 
   const goToProfile = () => {
     router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
+  };
+
+  const handleOpenModal = () => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
+    setOpen(true);
   };
 
   return (
@@ -69,49 +80,47 @@ const sideBar: React.FC<sideBarProps> = () => {
       >
         <Stack spacing={1}>
           <Stack spacing={2} mb={2} mt={2}>
-            <Flex
-              alignItems="center"
-              _hover={{ bg: "gray.100" }}
-              backgroundColor={
-                router.pathname === "/user/[profile]" ? "gray.100" : ""
-              }
-              onClick={goToProfile}
-              cursor="pointer"
-              p={2}
-              mt={3}
-            >
-              {user && (
-                <>
-                  {user?.photoURL ? (
-                    <Box
-                      borderRadius="full"
-                      overflow="hidden"
-                      boxSize="30px"
-                      mr={3}
-                    >
-                      <AspectRatio ratio={1 / 1}>
-                        <Image
-                          src={user.photoURL}
-                          alt="User Photo"
-                          objectFit="cover"
-                          boxSize="100%"
-                        />
-                      </AspectRatio>
-                    </Box>
-                  ) : (
-                    <Icon
-                      as={FaUserCircle}
-                      fontSize="30px"
-                      color="gray.300"
-                      mr={3}
-                    />
-                  )}
-                  <Text fontWeight={700} fontSize="10pt">
-                    {user?.displayName || user?.email?.split("@")[0]}
-                  </Text>
-                </>
-              )}
-            </Flex>
+            {user && (
+              <Flex
+                alignItems="center"
+                _hover={{ bg: "gray.100" }}
+                backgroundColor={
+                  router.pathname === "/user/[profile]" ? "gray.100" : ""
+                }
+                onClick={goToProfile}
+                cursor="pointer"
+                p={2}
+                mt={3}
+              >
+                {user?.photoURL ? (
+                  <Box
+                    borderRadius="full"
+                    overflow="hidden"
+                    boxSize="30px"
+                    mr={3}
+                  >
+                    <AspectRatio ratio={1 / 1}>
+                      <Image
+                        src={user.photoURL}
+                        alt="User Photo"
+                        objectFit="cover"
+                        boxSize="100%"
+                      />
+                    </AspectRatio>
+                  </Box>
+                ) : (
+                  <Icon
+                    as={FaUserCircle}
+                    fontSize="30px"
+                    color="gray.300"
+                    mr={3}
+                  />
+                )}
+                <Text fontWeight={700} fontSize="10pt">
+                  {user?.displayName || user?.email?.split("@")[0]}
+                </Text>
+              </Flex>
+            )}
             <Box
               as="button"
               width="100%"
@@ -164,7 +173,7 @@ const sideBar: React.FC<sideBarProps> = () => {
               fontWeight={600}
               p={2}
               _hover={{ bg: "gray.100" }}
-              onClick={() => setOpen(true)}
+              onClick={handleOpenModal}
               mb={1}
             >
               <Flex alignItems="center">
@@ -209,7 +218,7 @@ const sideBar: React.FC<sideBarProps> = () => {
                       }
                     >
                       <Flex width="80%" align="center">
-                        <Flex align="center" width="80%">
+                        <Flex align="center" width="100%">
                           {snippet.imageURL ? (
                             <Image
                               borderRadius="md"
@@ -259,7 +268,7 @@ const sideBar: React.FC<sideBarProps> = () => {
                 <Flex width="80%" align="center">
                   <Flex
                     align="center"
-                    width="80%"
+                    width="100%"
                     onClick={() => `/tumindig/${snippet.communityId}`}
                   >
                     {snippet.imageURL ? (

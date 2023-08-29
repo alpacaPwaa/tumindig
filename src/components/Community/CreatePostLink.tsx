@@ -15,6 +15,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import { IoMdImages } from "react-icons/io";
+import { useSetRecoilState } from "recoil";
+import { authModalState } from "../../atoms/authModalAtom";
 import { auth } from "../../firebase/clientApp";
 
 type CreatePostProps = {};
@@ -22,9 +24,14 @@ type CreatePostProps = {};
 const CreatePostLink: React.FC<CreatePostProps> = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
+  const setAuthModalState = useSetRecoilState(authModalState);
 
   const onClick = () => {
-    // Could check for user to open auth modal before redirecting to submit
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
     const { community } = router.query;
     if (community) {
       router.push(`/tumindig/${router.query.community}/submit`);

@@ -382,47 +382,6 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600} mb={2}>
           <Text>Recent Activity</Text>
         </Flex>
-        <Modal isOpen={openModal} onClose={handlecloseModal}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader fontSize="11pt">Choose Community</ModalHeader>
-            <Box pr={3} pl={3}>
-              <Divider />
-              <ModalCloseButton />
-              <ModalBody>
-                {mySnippets.length === 0 ? (
-                  <Flex
-                    justifyContent="center"
-                    alignItems="center"
-                    direction="column"
-                    p={4}
-                  >
-                    <Icon
-                      fontSize="70pt"
-                      as={MdGroupOff}
-                      color="gray.300"
-                      mb={2}
-                    />
-                    <Text fontWeight={600} fontSize="17pt" color="gray.300">
-                      No Communities Yet
-                    </Text>
-                  </Flex>
-                ) : (
-                  mySnippets.map((snippet, index) => (
-                    <MenuListPost
-                      key={index}
-                      icon={IoPeopleCircleSharp}
-                      displayText={`${snippet.communityId}`}
-                      link={`/tumindig/${snippet.communityId}/submit`}
-                      iconColor="gray.300"
-                      imageURL={snippet.imageURL}
-                    />
-                  ))
-                )}
-              </ModalBody>
-            </Box>
-          </ModalContent>
-        </Modal>
         {loading ? (
           <PostLoader />
         ) : (

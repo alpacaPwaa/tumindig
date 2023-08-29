@@ -20,15 +20,12 @@ import {
 } from "@chakra-ui/react";
 import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
-import { HiLockClosed } from "react-icons/hi";
+import { BsFillEyeFill } from "react-icons/bs";
 import { useSetRecoilState } from "recoil";
 import { communityState } from "../../../atoms/communitiesAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import ModalWrapper from "../ModalWrapper";
-import MenuListItem from "../../Navbar/Directory/MenuListItem";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { StarIcon } from "@chakra-ui/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { User } from "firebase/auth";
 import { FaGlobeAmericas } from "react-icons/fa";
@@ -47,7 +44,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 }) => {
   const setSnippetState = useSetRecoilState(communityState);
   const [name, setName] = useState("");
-  const [charsRemaining, setCharsRemaining] = useState(21);
+  const [charsRemaining, setCharsRemaining] = useState(50);
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
   const [loading, setLoading] = useState(false);
@@ -84,9 +81,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 21) return;
+    if (event.target.value.length > 50) return;
     setName(event.target.value);
-    setCharsRemaining(21 - event.target.value.length);
+    setCharsRemaining(50 - event.target.value.length);
   };
 
   const communityCategory =
@@ -98,11 +95,11 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
   const handleCreateCommunity = async () => {
     if (nameError) setNameError("");
-    const format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const format = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
 
     if (format.test(name) || name.length < 3) {
       return setNameError(
-        "Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
+        "Community names must be between 3–50 characters, and can only contain letters, numbers, or underscores."
       );
     }
 

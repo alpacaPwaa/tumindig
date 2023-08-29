@@ -387,9 +387,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
               align="center"
               p="10px 10px 0px 10px"
             >
-              <Stack direction="row" align="center" fontSize="10pt">
-                {homePage && (
-                  <>
+              <Stack direction="column" align="center" fontSize="10pt">
+                {homePage ? (
+                  <Flex alignItems="center">
                     {post.communityImageURL ? (
                       <Flex>
                         <Image
@@ -412,23 +412,44 @@ const PostItem: React.FC<PostItemContentProps> = ({
                         color="gray.300"
                       />
                     )}
-                    <Link href={`tumindig/${post.communityId}`}>
-                      <Text
-                        fontWeight={700}
-                        _hover={{ textDecoration: "underline" }}
-                        onClick={(event) => event.stopPropagation()}
-                      >{`${post.communityId}`}</Text>
-                    </Link>
-                    <Text>&middot;</Text>
-                  </>
+                    <Flex flexDirection="column">
+                      <Link href={`tumindig/${post.communityId}`}>
+                        <Text
+                          fontWeight={700}
+                          _hover={{ textDecoration: "underline" }}
+                          onClick={(event) => event.stopPropagation()}
+                        >{`${post.communityId}`}</Text>
+                      </Link>
+                      <Flex flexDirection="row">
+                        <Text color="gray.500">
+                          Posted by {post.userDisplayText}
+                        </Text>
+                        <Text color="gray.500" mx={1}>
+                          &middot;
+                        </Text>
+                        <Text color="gray.500">
+                          {moment(
+                            new Date(post.createdAt.seconds * 1000)
+                          ).fromNow()}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                ) : (
+                  <Flex>
+                    <Text color="gray.500">
+                      Posted by {post.userDisplayText}
+                    </Text>
+                    <Text color="gray.500" mx={1}>
+                      &middot;
+                    </Text>
+                    <Text color="gray.500">
+                      {moment(
+                        new Date(post.createdAt.seconds * 1000)
+                      ).fromNow()}
+                    </Text>
+                  </Flex>
                 )}
-                <Text color="gray.500">Posted by {post.userDisplayText}</Text>
-                <Text color="gray.500" mx={1}>
-                  &middot;
-                </Text>
-                <Text color="gray.500">
-                  {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
-                </Text>
               </Stack>
               <Flex align="center">
                 <Menu closeOnSelect={false}>

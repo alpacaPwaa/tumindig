@@ -242,6 +242,7 @@ const Rules: React.FC<RulesProps> = ({ communityData }) => {
                         <Button
                           variant="ghost"
                           position="relative"
+                          isLoading={deletingRule}
                           size="sm"
                           color="blue.500"
                           fontWeight={600}
@@ -253,9 +254,7 @@ const Rules: React.FC<RulesProps> = ({ communityData }) => {
                             color="gray.500"
                             position="absolute"
                             as={AiFillDelete}
-                          >
-                            Delete
-                          </Icon>
+                          />
                         </Button>
                       )}
                   </Flex>

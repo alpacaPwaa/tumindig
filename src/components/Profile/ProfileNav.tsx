@@ -1,5 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
-import router from "next/router";
+import router, { useRouter } from "next/router";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
@@ -7,6 +7,7 @@ import { auth } from "../../firebase/clientApp";
 type ProfileNavProps = {};
 
 const ProfileNav: React.FC<ProfileNavProps> = () => {
+  const router = useRouter();
   const [user] = useAuthState(auth);
 
   const goToProfile = () => {

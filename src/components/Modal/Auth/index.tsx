@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
 import {
   Flex,
-  Modal,
   ModalBody,
   ModalCloseButton,
-  ModalContent,
+  Text,
   ModalHeader,
-  ModalOverlay,
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -28,13 +26,8 @@ const AuthModal: React.FC<AuthModalProps> = () => {
       open: false,
     }));
 
-  const currentUser = useRecoilValue(userState);
   const [user, error] = useAuthState(auth);
 
-  // Can implement at the end
-  // useEffect(() => {
-  //   if (currentUser) handleClose();
-  // }, [currentUser]);
   const toggleView = (view: string) => {
     setModalState({
       ...modalState,
@@ -70,7 +63,9 @@ const AuthModal: React.FC<AuthModalProps> = () => {
           {modalState.view === "login" || modalState.view === "signup" ? (
             <>
               <OAuthButtons />
-              OR
+              <Text fontSize="11pt" fontWeight={600}>
+                OR
+              </Text>
               <AuthInputs toggleView={toggleView} />
             </>
           ) : (

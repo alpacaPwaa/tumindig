@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
-import { BsDot, BsReddit } from "react-icons/bs";
+import { BsDot } from "react-icons/bs";
 import { authModalState, ModalView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import { useSetRecoilState } from "recoil";
+import { FaAngry } from "react-icons/fa";
 
 type ResetPasswordProps = {
   toggleView: (view: ModalView) => void;
@@ -25,12 +26,15 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
   };
   return (
     <Flex direction="column" alignItems="center" width="100%">
-      <Icon as={BsReddit} color="brand.100" fontSize={40} mb={2} />
+      <Flex bg="deeppink" borderRadius="full">
+        <Icon fontSize={40} p="4px" color="white" as={FaAngry} />
+      </Flex>
+
       <Text fontWeight={700} mb={2}>
         Reset your password
       </Text>
       {success ? (
-        <Text mb={4}>Check your email :)</Text>
+        <Text mb={4}>Check your email</Text>
       ) : (
         <>
           <Text fontSize="sm" textAlign="center" mb={2}>

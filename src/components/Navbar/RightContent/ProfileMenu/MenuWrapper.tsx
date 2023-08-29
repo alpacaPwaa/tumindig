@@ -50,7 +50,7 @@ const MenuWrapper: React.FC<MenuWrapperProps> = () => {
               )}
             </>
           ) : (
-            <Icon fontSize={24} mr={1} color="gray.400" as={VscAccount} />
+            <Icon fontSize={26} mr={1} color="gray.400" as={VscAccount} />
           )}
         </Flex>
       </MenuButton>

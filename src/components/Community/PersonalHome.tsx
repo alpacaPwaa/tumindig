@@ -22,23 +22,39 @@ import {
   CommunitySnippet,
   communityState,
 } from "../../atoms/communitiesAtom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import MenuListPost from "../Navbar/Directory/MenuListPost";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { MdGroupOff } from "react-icons/md";
+import { authModalState } from "../../atoms/authModalAtom";
 
 const PersonalHome: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [user] = useAuthState(auth);
-  const [openModal, setOpenModal] = useState(false);
+  const [openPostModal, setOpenPostModal] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
+  const setAuthModalState = useSetRecoilState(authModalState);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
+  const handleOpenPostModal = () => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
+    setOpenPostModal(true);
   };
 
   const handlecloseModal = () => {
-    setOpenModal(false);
+    setOpenPostModal(false);
+  };
+
+  const handleOpenModal = () => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
+    setOpen(true);
   };
 
   return (
@@ -69,14 +85,14 @@ const PersonalHome: React.FC = () => {
             <Text fontSize="9pt">
               Welcome to the Tumindig Personal Home Page
             </Text>
-            <Button size="sm" fontSize="10pt" onClick={handleOpenModal}>
+            <Button size="sm" fontSize="10pt" onClick={handleOpenPostModal}>
               Create Post
             </Button>
             <Button
               variant="outline"
               size="sm"
               fontSize="10pt"
-              onClick={() => setOpen(true)}
+              onClick={handleOpenModal}
             >
               Create Community
             </Button>
@@ -84,7 +100,7 @@ const PersonalHome: React.FC = () => {
         </Flex>
       </Flex>
 
-      <Modal isOpen={openModal} onClose={handlecloseModal}>
+      <Modal isOpen={openPostModal} onClose={handlecloseModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize="11pt">Choose Community</ModalHeader>
