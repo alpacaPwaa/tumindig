@@ -378,7 +378,6 @@ const About: React.FC<AboutProps> = ({
                   )}
                 </Flex>
               </Flex>
-              {/* !!!ADDED AT THE VERY END!!! INITIALLY DOES NOT EXIST */}
               <CommunityCustomization
                 post={post}
                 communityData={communityData}

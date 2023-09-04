@@ -365,13 +365,8 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                         />
                       </Flex>
                     )}
-                    <Flex direction="column" p={2}>
-                      <Text
-                        alignItems="center"
-                        margin="auto"
-                        fontSize="11pt"
-                        fontWeight={600}
-                      >
+                    <Flex direction="column" textAlign="center" p={2}>
+                      <Text margin="auto" fontSize="11pt" fontWeight={600}>
                         {`${item.id}`}
                       </Text>
 

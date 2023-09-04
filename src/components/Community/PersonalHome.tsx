@@ -27,6 +27,7 @@ import MenuListPost from "../Navbar/Directory/MenuListPost";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { MdGroupOff } from "react-icons/md";
 import { authModalState } from "../../atoms/authModalAtom";
+import { FaUsers } from "react-icons/fa";
 
 const PersonalHome: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -116,13 +117,19 @@ const PersonalHome: React.FC = () => {
                   p={4}
                 >
                   <Icon
-                    fontSize="70pt"
-                    as={MdGroupOff}
                     color="gray.300"
-                    mb={2}
+                    as={FaUsers}
+                    fontSize={180}
+                    border="8px solid"
+                    borderColor="gray.300"
+                    borderRadius="50%"
+                    mb={3}
                   />
-                  <Text fontWeight={600} fontSize="17pt" color="gray.300">
-                    No Communities Yet
+                  <Text color="gray.500" fontSize="15pt" fontWeight={800}>
+                    No Community Yet
+                  </Text>
+                  <Text color="gray.500" fontSize="11pt" fontWeight={500}>
+                    Join community to get started
                   </Text>
                 </Flex>
               ) : (

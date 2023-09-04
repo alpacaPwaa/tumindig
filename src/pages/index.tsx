@@ -41,9 +41,6 @@ import PostItem from "../components/Post/PostItem";
 import { auth, firestore } from "../firebase/clientApp";
 import usePosts from "../hooks/usePosts";
 import PersonalHome from "../components/Community/PersonalHome";
-import { IoPeopleCircleSharp } from "react-icons/io5";
-import MenuListPost from "../components/Navbar/Directory/MenuListPost";
-import { MdGroupOff } from "react-icons/md";
 
 type HomeProps = {
   communityData: Community;

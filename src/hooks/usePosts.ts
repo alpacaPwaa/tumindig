@@ -5,8 +5,9 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   query,
+  serverTimestamp,
+  Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -15,7 +16,13 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
 import { Community, communityState } from "../atoms/communitiesAtom";
-import { Post, PostOptions, postState, PostVote } from "../atoms/postsAtom";
+import {
+  Post,
+  PostNotification,
+  PostOptions,
+  postState,
+  PostVote,
+} from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
 import { useRouter } from "next/router";
 
@@ -97,13 +104,30 @@ const usePosts = (communityData?: Community) => {
 
         console.log("NEW VOTE!!!", newVote);
 
-        // APRIL 25 - DON'T THINK WE NEED THIS
-        // newVote.id = postVoteRef.id;
-
         batch.set(postVoteRef, newVote);
 
         updatedPost.voteStatus = voteStatus + vote;
         updatedPostVotes = [...updatedPostVotes, newVote];
+      }
+
+      if (!existingVote) {
+        const postNotificationRef = doc(
+          collection(firestore, "users", `${post.creatorId}/postNotification`)
+        );
+
+        const newNotification: PostNotification = {
+          userDisplayText: user.displayName || user.email!.split("@")[0],
+          userProfile: user.photoURL || "",
+          userId: user.uid,
+          id: post.id,
+          creatorId: post.creatorId,
+          createdAt: serverTimestamp() as Timestamp,
+          communityId,
+        };
+
+        console.log("NEW Notification!!!", newNotification);
+
+        batch.set(postNotificationRef, newNotification);
       }
       // Removing existing vote
       else {

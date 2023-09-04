@@ -56,7 +56,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
   const [replyVotes, setReplyVotes] = useState<ReplyVotes[]>([]);
   const [currentPageComment, setCurrentPageComment] = useState(1);
 
-  const onCreateComment = async (comment: string) => {
+  const onCreateComment = async (commentText: string) => {
     if (!user) {
       setAuthModalState({ open: true, view: "login" });
       return;
@@ -74,7 +74,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
         creatorDisplayText: user.displayName || user.email!.split("@")[0],
         creatorPhotoURL: user.photoURL,
         communityId: community,
-        text: comment,
+        text: commentText,
         postTitle: selectedPost.title,
         createdAt: serverTimestamp(),
         voteStatus: 0, // Initialize voteStatus with a value of 0

@@ -18,8 +18,10 @@ export type Post = {
   };
   mediaURLs?: string[];
   postIdx?: number;
-  createdAt?: Timestamp;
+  createdAt: Timestamp;
   editedAt?: Timestamp;
+  userId?: string;
+  userProfile?: string;
 };
 
 export type PostVote = {
@@ -27,6 +29,16 @@ export type PostVote = {
   postId: string;
   communityId: string;
   voteValue: number;
+};
+
+export type PostNotification = {
+  userDisplayText: string;
+  userId: string;
+  id: string;
+  creatorId: string;
+  communityId: string;
+  userProfile: string;
+  createdAt: Timestamp;
 };
 
 // Add a union type that includes PostVote and the partial object with postId and voteValue

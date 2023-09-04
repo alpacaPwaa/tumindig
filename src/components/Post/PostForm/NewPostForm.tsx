@@ -376,7 +376,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
             fontSize="10pt"
             onClick={() => setSelectedFiles([])}
           >
-            Clear Media
+            Clear Photo/Video
           </Button>
         )}
         <Button

@@ -76,7 +76,7 @@ const UserList: React.FC<UserListProps> = () => {
           <Text fontWeight={700} fontSize="10pt">
             {user?.displayName || user?.email?.split("@")[0]}
           </Text>
-          <Text fontWeight={600} color="gray.500" fontSize="9pt">
+          <Text fontWeight={700} color="blue.500" fontSize="9pt">
             Username
           </Text>
         </Flex>
