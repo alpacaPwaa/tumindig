@@ -43,6 +43,7 @@ import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
 import ResizeTextarea from "react-textarea-autosize";
 import { User } from "firebase/auth";
+import { UserNotification } from "../../../atoms/notificationAtom";
 
 export type Comment = {
   id: string;
@@ -123,6 +124,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const onCreateCommentReply = async (commentId: string, replyText: string) => {
     setReplyCreateLoading(true);
+
+    const isCreatorReplying = user?.uid === comment.creatorId;
+
     try {
       const batch = writeBatch(firestore);
 
@@ -142,6 +146,31 @@ const CommentItem: React.FC<CommentItemProps> = ({
         },
         createdAt: serverTimestamp(),
       } as Reply);
+
+      if (!isCreatorReplying) {
+        const replyNotificationRef = doc(
+          collection(
+            firestore,
+            "users",
+            `${comment.creatorId}/userNotification`
+          )
+        );
+
+        const newNotification: UserNotification = {
+          userDisplayText: user?.displayName || user?.email!.split("@")[0],
+          userProfile: user?.photoURL || "",
+          userId: user?.uid,
+          triggerDocumentId: comment.id,
+          creatorId: comment.creatorId,
+          createdAt: serverTimestamp() as Timestamp,
+          communityId: communityId,
+          notificationId: replyNotificationRef.id,
+          notificationType: "reply",
+          isRead: false,
+        };
+
+        batch.set(replyNotificationRef, newNotification);
+      }
 
       await batch.commit();
       setReply("");

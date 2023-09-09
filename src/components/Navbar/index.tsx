@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
           color="deeppink"
           ml={2}
         >
-          <Text>Tumindig</Text>
+          <Text>Test</Text>
         </Flex>
       </Flex>
       {/* {user && <Directory />} */}

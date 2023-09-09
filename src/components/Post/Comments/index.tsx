@@ -19,6 +19,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  Timestamp,
   updateDoc,
   where,
   writeBatch,
@@ -32,6 +33,7 @@ import CommentInput from "./Input";
 import { Reply, ReplyVotes } from "./ReplyItem";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { TfiComments } from "react-icons/tfi";
+import { UserNotification } from "../../../atoms/notificationAtom";
 
 type CommentsProps = {
   selectedPost: Post;
@@ -62,6 +64,8 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
       return;
     }
 
+    const isCreatorCommenting = user?.uid === selectedPost.creatorId;
+
     setCommentCreateLoading(true);
     try {
       const batch = writeBatch(firestore);
@@ -83,6 +87,31 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
           voteValue: 0,
         },
       } as Comment);
+
+      if (!isCreatorCommenting) {
+        const commentNotificationRef = doc(
+          collection(
+            firestore,
+            "users",
+            `${selectedPost.creatorId}/userNotification`
+          )
+        );
+
+        const newNotification: UserNotification = {
+          userDisplayText: user.displayName || user.email!.split("@")[0],
+          userProfile: user.photoURL || "",
+          userId: user.uid,
+          triggerDocumentId: selectedPost.id,
+          creatorId: selectedPost.creatorId,
+          createdAt: serverTimestamp() as Timestamp,
+          communityId: community,
+          notificationId: commentNotificationRef.id,
+          notificationType: "reply",
+          isRead: false,
+        };
+
+        batch.set(commentNotificationRef, newNotification);
+      }
 
       // Update post numberOfComments
       batch.update(doc(firestore, "posts", selectedPost.id), {

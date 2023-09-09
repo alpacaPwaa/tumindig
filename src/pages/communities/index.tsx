@@ -51,6 +51,7 @@ import MenuListPost from "../../components/Navbar/Directory/MenuListPost";
 import { MdGroupOff } from "react-icons/md";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import CommunitiesLoader from "../../components/Community/CommunitiesLoader";
+import { FaUsers } from "react-icons/fa";
 
 type CommunityListProps = {
   communityData: Community;
@@ -494,13 +495,19 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                     p={4}
                   >
                     <Icon
-                      fontSize="70pt"
-                      as={MdGroupOff}
                       color="gray.300"
-                      mb={2}
+                      as={FaUsers}
+                      fontSize={180}
+                      border="8px solid"
+                      borderColor="gray.300"
+                      borderRadius="50%"
+                      mb={3}
                     />
-                    <Text fontWeight={600} fontSize="17pt" color="gray.300">
-                      No Communities Yet
+                    <Text color="gray.500" fontSize="15pt" fontWeight={800}>
+                      No Community Yet
+                    </Text>
+                    <Text color="gray.500" fontSize="11pt" fontWeight={500}>
+                      Join community to get started
                     </Text>
                   </Flex>
                 ) : (

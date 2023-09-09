@@ -371,7 +371,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           variant="solid"
           height="30px"
           onClick={handleCreateCommunity}
-          disabled={!communityCategory || isNameEmpty || loading}
+          disabled={
+            !communityCategory ||
+            !organizationVolunteerType ||
+            isNameEmpty ||
+            loading
+          }
           isLoading={loading}
         >
           Create Community

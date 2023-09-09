@@ -16,15 +16,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
 import { Community, communityState } from "../atoms/communitiesAtom";
-import {
-  Post,
-  PostNotification,
-  PostOptions,
-  postState,
-  PostVote,
-} from "../atoms/postsAtom";
+import { Post, PostOptions, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
 import { useRouter } from "next/router";
+import { UserNotification } from "../atoms/notificationAtom";
 
 const usePosts = (communityData?: Community) => {
   const [user, loadingUser] = useAuthState(auth);
@@ -78,6 +73,8 @@ const usePosts = (communityData?: Community) => {
       ],
     }));
 
+    const isCreatorUpvoting = user.uid === post.creatorId;
+
     // is this an upvote or a downvote?
     // has this user voted on this post already? was it up or down?
 
@@ -88,6 +85,30 @@ const usePosts = (communityData?: Community) => {
       const updatedPost = { ...post };
       const updatedPosts = [...postStateValue.posts];
       let updatedPostVotes = [...postStateValue.postVotes];
+
+      //New Notification
+      if (!isCreatorUpvoting) {
+        const postNotificationRef = doc(
+          collection(firestore, "users", `${post.creatorId}/userNotification`)
+        );
+
+        const newNotification: UserNotification = {
+          userDisplayText: user.displayName || user.email!.split("@")[0],
+          userProfile: user.photoURL || "",
+          userId: user.uid,
+          triggerDocumentId: post.id,
+          creatorId: post.creatorId,
+          notificationType: "post",
+          isRead: false,
+          createdAt: serverTimestamp() as Timestamp,
+          notificationId: postNotificationRef.id,
+          communityId,
+        };
+
+        console.log("NEW Notification!!!", newNotification);
+
+        batch.set(postNotificationRef, newNotification);
+      }
 
       // New vote
       if (!existingVote) {
@@ -110,25 +131,6 @@ const usePosts = (communityData?: Community) => {
         updatedPostVotes = [...updatedPostVotes, newVote];
       }
 
-      if (!existingVote) {
-        const postNotificationRef = doc(
-          collection(firestore, "users", `${post.creatorId}/postNotification`)
-        );
-
-        const newNotification: PostNotification = {
-          userDisplayText: user.displayName || user.email!.split("@")[0],
-          userProfile: user.photoURL || "",
-          userId: user.uid,
-          id: post.id,
-          creatorId: post.creatorId,
-          createdAt: serverTimestamp() as Timestamp,
-          communityId,
-        };
-
-        console.log("NEW Notification!!!", newNotification);
-
-        batch.set(postNotificationRef, newNotification);
-      }
       // Removing existing vote
       else {
         // Used for both possible cases of batch writes

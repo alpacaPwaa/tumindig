@@ -10,7 +10,9 @@ import {
   limit,
   orderBy,
   query,
+  serverTimestamp,
   startAt,
+  Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -29,6 +31,7 @@ import {
 import { auth, firestore } from "../firebase/clientApp";
 import { getMySnippets } from "../helpers/firestore";
 import { User } from "firebase/auth";
+import { UserNotification } from "../atoms/notificationAtom";
 
 // Add ssrCommunityData near end as small optimization
 const useCommunityData = (ssrCommunityData?: boolean) => {
@@ -267,6 +270,9 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
 
   const joinCommunity = async (community: Community) => {
     console.log("JOINING COMMUNITY: ", community.id);
+
+    const isCreatorJoining = user?.uid === community.creatorId;
+
     try {
       const batch = writeBatch(firestore);
 
@@ -288,6 +294,32 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
       batch.update(doc(firestore, "communities", community.id), {
         numberOfMembers: increment(1),
       });
+
+      if (!isCreatorJoining) {
+        const communityNotificationRef = doc(
+          collection(
+            firestore,
+            "users",
+            `${community.creatorId}/userNotification`
+          )
+        );
+
+        const newNotification: UserNotification = {
+          userDisplayText: user?.displayName || user?.email!.split("@")[0],
+          userProfile: user?.photoURL || "",
+          userId: user?.uid,
+          creatorId: community.creatorId,
+          createdAt: serverTimestamp() as Timestamp,
+          communityId: community.id,
+          notificationId: communityNotificationRef.id,
+          notificationType: "community",
+          isRead: false,
+        };
+
+        console.log("NEW Notification!!!", newNotification);
+
+        batch.set(communityNotificationRef, newNotification);
+      }
 
       // perform batch writes
       await batch.commit();
