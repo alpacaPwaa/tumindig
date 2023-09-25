@@ -399,22 +399,24 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                     fontWeight={600}
                   >
                     <Flex align="center" width="80%">
-                      {item.imageURL ? (
-                        <Image
-                          borderRadius="full"
-                          boxSize="35px"
-                          src={item.imageURL}
-                          mr={2}
-                          objectFit="cover"
-                        />
-                      ) : (
-                        <Icon
-                          as={IoPeopleCircleSharp}
-                          fontSize={35}
-                          color="gray.300"
-                          mr={2}
-                        />
-                      )}
+                      <Flex width="10%" align="center" justifyContent="center">
+                        {item.imageURL ? (
+                          <Image
+                            borderRadius="full"
+                            boxSize="35px"
+                            src={item.imageURL}
+                            mr={2}
+                            objectFit="cover"
+                          />
+                        ) : (
+                          <Icon
+                            as={IoPeopleCircleSharp}
+                            fontSize={40}
+                            color="gray.300"
+                            mr={2}
+                          />
+                        )}
+                      </Flex>
                       <Flex direction="column">
                         <Flex alignItems="center">
                           <span
@@ -485,8 +487,8 @@ const CommunityList: React.FC<CommunityListProps> = () => {
             <ModalHeader fontSize="11pt">Choose Community</ModalHeader>
             <Box pr={3} pl={3} maxHeight="400px" overflowY="auto">
               <Divider />
-              <ModalCloseButton />
-              <ModalBody>
+              <ModalCloseButton _focus={{ border: "none" }} />
+              <ModalBody p="10px 0px 10px 0px">
                 {mySnippets.length === 0 ? (
                   <Flex
                     justifyContent="center"
@@ -518,9 +520,6 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                       fontSize="10pt"
                       fontWeight={600}
                     >
-                      <Flex width="10%">
-                        <Text mr={2}>{index + 1}</Text>
-                      </Flex>
                       <MenuListPost
                         key={index}
                         icon={IoPeopleCircleSharp}
@@ -546,7 +545,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
         cursor="pointer"
         border="1px solid"
         borderColor="gray.300"
-        position="sticky"
+        position="fixed"
       >
         <Flex p={3} borderRadius="4px 4px 0px 0px">
           <Text fontWeight={600} fontSize="11pt">

@@ -44,7 +44,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineHeart } from "react-icons/ai";
 import { BiDonateHeart } from "react-icons/bi";
-import { FaDonate } from "react-icons/fa";
+import { FaDonate, FaUsers } from "react-icons/fa";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { Community, communityState } from "../../atoms/communitiesAtom";
@@ -264,7 +264,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
 
   const totalSponsoredCommunities = filteredSponsoredCommunities.length;
 
-  const carouselItemWidth = 186; // Set the width of each carousel item
+  const carouselItemWidth = 175; // Set the width of each carousel item
 
   return (
     <>
@@ -312,7 +312,6 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
         </Flex>
         <Flex
           flexDirection="row"
-          justifyContent="space-between"
           position="relative"
           bg="white"
           ref={carouselRef}
@@ -336,31 +335,31 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                   <Flex
                     key={item.id}
                     flexDirection="column"
+                    justifyContent="center"
                     borderRadius={4}
                     borderWidth="1px"
                     borderColor="gray.300"
                     _hover={{ borderColor: "gray.400" }}
                     cursor="pointer"
                     boxShadow="md"
-                    width="176px"
+                    width="165px"
+                    height="220px"
                     mr="10px"
                   >
-                    {/* Your sponsor community card code */}
                     {item.bannerURL ? (
-                      <Image
-                        height="100%"
-                        src={item.bannerURL}
-                        objectFit="cover"
+                      <div
+                        style={{
+                          backgroundImage: `url(${item.bannerURL})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          flex: 1,
+                        }}
                       />
                     ) : (
-                      <Flex
-                        height="100%"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
+                      <Flex height="51%" justifyContent="center">
                         <Icon
                           as={IoPeopleCircleSharp}
-                          fontSize={130}
+                          fontSize={120}
                           color="gray.300"
                         />
                       </Flex>
@@ -455,7 +454,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
           >
             <ModalCloseButton _focus={{ border: "none" }} />
             <Divider />
-            <ModalBody pb={4}>
+            <ModalBody>
               <>
                 <Flex mb={5}>
                   <InputGroup>
@@ -506,7 +505,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                     borderRadius="1px"
                   />
                   <TabPanels>
-                    <TabPanel>
+                    <TabPanel pb={0}>
                       {searchLoading ? (
                         <Loader />
                       ) : (
@@ -522,36 +521,40 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                           return (
                             <Flex
                               position="relative"
+                              width="100%"
                               align="center"
                               fontSize="10pt"
                               borderColor="gray.200"
-                              p="10px 12px"
                               bg="white"
                               borderRadius={4}
+                              mt={2}
                               cursor="pointer"
                               fontWeight={600}
                             >
-                              <Flex width="5%">
-                                <Text mr={2}>{index + 1}</Text>
-                              </Flex>
                               <Flex align="center" width="80%">
-                                {item.imageURL ? (
-                                  <Image
-                                    borderRadius="full"
-                                    boxSize="35px"
-                                    src={item.imageURL}
-                                    mr={2}
-                                    objectFit="cover"
-                                  />
-                                ) : (
-                                  <Icon
-                                    as={IoPeopleCircleSharp}
-                                    fontSize={30}
-                                    color="gray.300"
-                                    mr={2}
-                                  />
-                                )}
-                                <Flex alignItems="center">
+                                <Flex
+                                  width="15%"
+                                  align="center"
+                                  justifyContent="center"
+                                >
+                                  {item.imageURL ? (
+                                    <Image
+                                      borderRadius="full"
+                                      boxSize="30px"
+                                      src={item.imageURL}
+                                      mr={2}
+                                      objectFit="cover"
+                                    />
+                                  ) : (
+                                    <Icon
+                                      as={IoPeopleCircleSharp}
+                                      fontSize={35}
+                                      color="gray.300"
+                                      mr={2}
+                                    />
+                                  )}
+                                </Flex>
+                                <Flex>
                                   <span
                                     style={{
                                       whiteSpace: "nowrap",
@@ -586,7 +589,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                       )}
                       {sponsorCommunities.length >= currentPage * 10 ? (
                         <Button
-                          mt={2}
+                          mt={4}
                           variant="ghost"
                           size="sm"
                           width="100%"
@@ -601,6 +604,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                           justifyContent="center"
                           fontSize="10pt"
                           fontWeight={800}
+                          mt={4}
                         >
                           <Text>Loading...</Text>
                         </Flex>
@@ -609,6 +613,7 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                           justifyContent="center"
                           fontSize="10pt"
                           fontWeight={800}
+                          mt={4}
                         >
                           <Text>You've reached the end of the communities</Text>
                         </Flex>
@@ -634,33 +639,36 @@ const CommunitySponsor: React.FC<CommunitySponsorProps> = ({
                                 align="center"
                                 fontSize="10pt"
                                 borderColor="gray.200"
-                                p="10px 12px"
                                 bg="white"
                                 borderRadius={4}
+                                mt={2}
                                 cursor="pointer"
                                 fontWeight={600}
                               >
-                                <Flex width="5%">
-                                  <Text mr={2}>{index + 1}</Text>
-                                </Flex>
                                 <Flex align="center" width="80%">
-                                  {item.imageURL ? (
-                                    <Image
-                                      borderRadius="full"
-                                      boxSize="35px"
-                                      src={item.imageURL}
-                                      mr={2}
-                                      objectFit="cover"
-                                    />
-                                  ) : (
-                                    <Icon
-                                      as={IoPeopleCircleSharp}
-                                      fontSize={30}
-                                      color="gray.300"
-                                      mr={2}
-                                    />
-                                  )}
-                                  <Flex alignItems="center">
+                                  <Flex
+                                    width="15%"
+                                    align="center"
+                                    justifyContent="center"
+                                  >
+                                    {item.imageURL ? (
+                                      <Image
+                                        borderRadius="full"
+                                        boxSize="30px"
+                                        src={item.imageURL}
+                                        mr={2}
+                                        objectFit="cover"
+                                      />
+                                    ) : (
+                                      <Icon
+                                        as={IoPeopleCircleSharp}
+                                        fontSize={35}
+                                        color="gray.300"
+                                        mr={2}
+                                      />
+                                    )}
+                                  </Flex>
+                                  <Flex>
                                     <span
                                       style={{
                                         whiteSpace: "nowrap",

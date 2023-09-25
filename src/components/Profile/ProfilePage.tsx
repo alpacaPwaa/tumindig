@@ -52,6 +52,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   const [lastLoginAt, setLastLoginAt] = useState<number | undefined>();
   const [displayNameLoading, setDisplayNameLoading] = useState(false);
   const [charsRemaining, setCharsRemaining] = useState(21);
+  const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -337,6 +338,8 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
               <Input
                 value={updatedDisplayName}
                 onChange={handleUserNameChange}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
                 fontSize="11pt"
                 _focus={{
                   outline: "none",
@@ -344,13 +347,15 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                   border: "1px solid black",
                 }}
               />
-              <Text
-                fontSize="10pt"
-                color={charsRemaining === 0 ? "red" : "gray.500"}
-                pt={2}
-              >
-                {charsRemaining} Characters remaining
-              </Text>
+              {inputFocused && (
+                <Text
+                  fontSize="10pt"
+                  color={charsRemaining === 0 ? "red" : "gray.500"}
+                  pt={2}
+                >
+                  {charsRemaining} Characters remaining
+                </Text>
+              )}
 
               <Flex
                 direction="row"

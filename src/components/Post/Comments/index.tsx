@@ -97,6 +97,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
           )
         );
 
+        //New Notification
         const newNotification: UserNotification = {
           userDisplayText: user.displayName || user.email!.split("@")[0],
           userProfile: user.photoURL || "",

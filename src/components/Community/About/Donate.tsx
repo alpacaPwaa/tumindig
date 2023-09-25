@@ -406,26 +406,29 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                         cursor="pointer"
                         fontWeight={600}
                       >
-                        <Flex width="5%">
-                          <Text mr={2}>{index + 1}</Text>
-                        </Flex>
                         <Flex align="center" width="80%">
-                          {item.imageURL ? (
-                            <Image
-                              borderRadius="full"
-                              boxSize="35px"
-                              src={item.imageURL}
-                              mr={2}
-                              objectFit="cover"
-                            />
-                          ) : (
-                            <Icon
-                              as={IoPeopleCircleSharp}
-                              fontSize={30}
-                              color="gray.300"
-                              mr={2}
-                            />
-                          )}
+                          <Flex
+                            width="15%"
+                            align="center"
+                            justifyContent="center"
+                          >
+                            {item.imageURL ? (
+                              <Image
+                                borderRadius="full"
+                                boxSize="30px"
+                                src={item.imageURL}
+                                mr={2}
+                                objectFit="cover"
+                              />
+                            ) : (
+                              <Icon
+                                as={IoPeopleCircleSharp}
+                                fontSize={38}
+                                color="gray.300"
+                                mr={2}
+                              />
+                            )}
+                          </Flex>
                           <Flex direction="column">
                             <Flex alignItems="center">
                               <span
@@ -485,6 +488,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                     justifyContent="center"
                     fontSize="10pt"
                     fontWeight={800}
+                    mt={2}
                   >
                     <Text>Loading...</Text>
                   </Flex>
@@ -493,6 +497,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                     justifyContent="center"
                     fontSize="10pt"
                     fontWeight={800}
+                    mt={2}
                   >
                     <Text>You've reached the end of the communities</Text>
                   </Flex>
@@ -704,26 +709,29 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                         cursor="pointer"
                         fontWeight={600}
                       >
-                        <Flex width="5%">
-                          <Text mr={2}>{index + 1}</Text>
-                        </Flex>
                         <Flex align="center" width="80%">
-                          {item.imageURL ? (
-                            <Image
-                              borderRadius="full"
-                              boxSize="35px"
-                              src={item.imageURL}
-                              mr={2}
-                              objectFit="cover"
-                            />
-                          ) : (
-                            <Icon
-                              as={IoPeopleCircleSharp}
-                              fontSize={30}
-                              color="gray.300"
-                              mr={2}
-                            />
-                          )}
+                          <Flex
+                            width="15%"
+                            align="center"
+                            justifyContent="center"
+                          >
+                            {item.imageURL ? (
+                              <Image
+                                borderRadius="full"
+                                boxSize="30px"
+                                src={item.imageURL}
+                                mr={2}
+                                objectFit="cover"
+                              />
+                            ) : (
+                              <Icon
+                                as={IoPeopleCircleSharp}
+                                fontSize={35}
+                                color="gray.300"
+                                mr={2}
+                              />
+                            )}
+                          </Flex>
                           <Flex direction="column">
                             <Flex alignItems="center">
                               <span
@@ -783,6 +791,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                     justifyContent="center"
                     fontSize="10pt"
                     fontWeight={800}
+                    mt={2}
                   >
                     <Text>Loading...</Text>
                   </Flex>
@@ -791,6 +800,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                     justifyContent="center"
                     fontSize="10pt"
                     fontWeight={800}
+                    mt={2}
                   >
                     <Text>You've reached the end of the communities</Text>
                   </Flex>

@@ -1,19 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Flex,
-  Icon,
-  Stack,
-  Text,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Divider,
-  Spinner,
-} from "@chakra-ui/react";
+import { Flex, Stack, Text, Spinner } from "@chakra-ui/react";
 import {
   collection,
   DocumentData,
@@ -436,7 +422,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
           </Flex>
         )}
       </>
-      <Stack spacing={5} position="sticky" top="14px">
+      <Stack spacing={5} position="fixed">
         <Recommendations />
         <PersonalHome />
       </Stack>

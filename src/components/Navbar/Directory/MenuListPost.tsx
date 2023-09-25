@@ -3,6 +3,7 @@ import { Button, Divider, Flex, Icon, Image, Text } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 import useDirectory from "../../../hooks/useDirectory";
 import { Community } from "../../../atoms/communitiesAtom";
+import { IoIosArrowForward } from "react-icons/io";
 
 type DirectoryItemProps = {
   displayText: string;
@@ -28,8 +29,10 @@ const MenuListPost: React.FC<DirectoryItemProps> = ({
       justifyContent="space-between"
       width="100%"
       fontSize="10pt"
-      p="10px 0px 10px 0px"
+      borderRadius="md"
+      p="5px"
       cursor="pointer"
+      _hover={{ bg: "gray.100" }}
       onClick={() =>
         onSelectMenuItem({
           displayText,
@@ -56,18 +59,7 @@ const MenuListPost: React.FC<DirectoryItemProps> = ({
           {displayText}
         </Text>
       </Flex>
-      <Flex>
-        <Button
-          size="sm"
-          fontSize="10pt"
-          variant="outline"
-          onClick={() =>
-            onSelectMenuItem({ displayText, icon, iconColor, imageURL, link })
-          }
-        >
-          Post
-        </Button>
-      </Flex>
+      <Icon color="gray.500" fontSize="13pt" as={IoIosArrowForward} />
     </Flex>
   );
 };

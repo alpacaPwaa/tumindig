@@ -64,7 +64,6 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
     reader.onload = (readerEvent) => {
       if (readerEvent.target?.result) {
         setSelectedFile(readerEvent.target?.result as string);
-        setSelectedBanner(undefined);
       }
     };
   };
@@ -78,15 +77,56 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
     reader.onload = (readerEvent) => {
       if (readerEvent.target?.result) {
         setSelectedBanner(readerEvent.target?.result as string);
-        setSelectedFile(undefined);
       }
     };
   };
 
-  const saveChanges = async () => {
+  const updateBanner = async () => {
     try {
-      setSaveLoading(true);
+      if (selectedBanner && selectedBanner.startsWith("data:image/")) {
+        const bannerRef = ref(
+          storage,
+          `communities/${communityData.id}/banner`
+        );
 
+        // Upload the banner as a data URL
+        await uploadString(bannerRef, selectedBanner, "data_url");
+        const downloadURL = await getDownloadURL(bannerRef);
+
+        // Update the community bannerURL
+        await updateDoc(doc(firestore, "communities", communityData.id), {
+          bannerURL: downloadURL,
+        });
+
+        // Update the Recoil state for bannerURL
+        setCommunityStateValue((prev) => ({
+          ...prev,
+          currentCommunity: {
+            ...prev.currentCommunity,
+            bannerURL: downloadURL,
+          },
+        }));
+
+        // Update the bannerURL for associated posts (if necessary)
+        const postQuery = query(
+          collection(firestore, "posts"),
+          where("communityId", "==", communityData.id)
+        );
+        const postSnapshot = await getDocs(postQuery);
+        postSnapshot.forEach(async (postDoc) => {
+          const postId = postDoc.id;
+          await updateDoc(doc(firestore, "posts", postId), {
+            communityBannerURL: downloadURL,
+          });
+        });
+      }
+    } catch (error: any) {
+      console.error("Banner update error", error.message);
+    }
+  };
+
+  const updateProfileImage = async () => {
+    try {
       if (selectedFile) {
         const imageRef = ref(storage, `communities/${communityData.id}/image`);
         await uploadString(imageRef, selectedFile, "data_url");
@@ -110,6 +150,7 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
           });
         });
 
+        // Update the Recoil state for imageURL
         setCommunityStateValue((prev) => ({
           ...prev,
           currentCommunity: {
@@ -118,41 +159,22 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
           },
         }));
       }
+    } catch (error: any) {
+      console.error("Profile image update error", error.message);
+    }
+  };
 
-      if (selectedBanner) {
-        const bannerRef = ref(
-          storage,
-          `communities/${communityData.id}/banner`
-        );
-        await uploadString(bannerRef, selectedBanner, "data_url");
-        const downloadURL = await getDownloadURL(bannerRef);
-        await updateDoc(doc(firestore, "communities", communityData.id), {
-          bannerURL: downloadURL,
-        });
-        setCommunityStateValue((prev) => ({
-          ...prev,
-          currentCommunity: {
-            ...prev.currentCommunity,
-            bannerURL: downloadURL,
-          },
-        }));
+  const saveChanges = async () => {
+    try {
+      setSaveLoading(true);
 
-        const postQuery = query(
-          collection(firestore, "posts"),
-          where("communityId", "==", communityData.id)
-        );
-        const postSnapshot = await getDocs(postQuery);
-        postSnapshot.forEach(async (postDoc) => {
-          const postId = postDoc.id;
-          await updateDoc(doc(firestore, "posts", postId), {
-            communityImageURL: downloadURL,
-          });
-        });
-      }
+      // Call the update functions separately
+      await updateBanner();
+      await updateProfileImage();
 
       handleCloseModal();
     } catch (error: any) {
-      console.log("saveChanges error", error.message);
+      console.error("saveChanges error", error.message);
     } finally {
       setSaveLoading(false);
     }
@@ -204,6 +226,7 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
                 COMMUNITY CUSTOMIZATION
               </Button>
             </Flex>
+
             <Modal isOpen={showModal} onClose={handleCloseModal}>
               <ModalOverlay />
               <ModalContent>

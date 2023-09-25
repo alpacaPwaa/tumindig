@@ -20,6 +20,7 @@ import { Post, PostOptions, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
 import { useRouter } from "next/router";
 import { UserNotification } from "../atoms/notificationAtom";
+import { useToast } from "@chakra-ui/react";
 
 const usePosts = (communityData?: Community) => {
   const [user, loadingUser] = useAuthState(auth);
@@ -31,6 +32,7 @@ const usePosts = (communityData?: Community) => {
   const router = useRouter();
   const [voteStatus, setVoteStatus] = useState(0);
   const communityStateValue = useRecoilValue(communityState);
+  const toast = useToast();
 
   const onSelectPost = (post: Post, postIdx: number) => {
     console.log("HERE IS STUFF", post, postIdx);
@@ -283,6 +285,14 @@ const usePosts = (communityData?: Community) => {
         ),
       }));
 
+      toast({
+        title: "Post Deleted",
+        description: "The post has been deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
       /**
        * Cloud Function will trigger on post delete
        * to delete all comments with postId === post.id
@@ -290,6 +300,13 @@ const usePosts = (communityData?: Community) => {
       return true; // Indicate successful deletion
     } catch (error) {
       console.log("Error deleting post", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the post.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return false; // Indicate deletion failure
     }
   };
@@ -314,16 +331,35 @@ const usePosts = (communityData?: Community) => {
           `users/${user?.uid}/postOptions`,
           postOptionsDoc.id
         );
+
+        // Check if the post is already hidden
+        const isAlreadyHidden = postOptionsDoc.data().isHidden;
+
         const postOptionsData = {
-          isHidden: !postOptionsDoc.data().isHidden,
+          isHidden: !isAlreadyHidden, // Toggle the isHidden property
         };
         batch.update(postOptionsRef, postOptionsData);
+
+        // Display the appropriate toast message
+        const toastMessage = isAlreadyHidden
+          ? "Post unhidden successfully"
+          : "Post hidden successfully";
+
+        toast({
+          title: toastMessage,
+          description: `The post has been ${
+            isAlreadyHidden ? "un" : ""
+          }hidden.`,
+          status: "success",
+          duration: 3000, // The duration for which the toast will be displayed (in milliseconds)
+          isClosable: true, // Whether the toast can be closed by the user
+        });
 
         // Optimistically update the postOptions state
         setPostStateValue((prev) => {
           const updatedPostOptions = prev.postOptions.map((option) =>
             option.postId === post.id
-              ? { ...option, isHidden: !option.isHidden }
+              ? { ...option, isHidden: !isAlreadyHidden }
               : option
           );
           return { ...prev, postOptions: updatedPostOptions };
@@ -347,12 +383,29 @@ const usePosts = (communityData?: Community) => {
           const updatedPostOptions = [...prev.postOptions, postOptionsData];
           return { ...prev, postOptions: updatedPostOptions };
         });
+
+        // Display the "Post hidden successfully" toast
+        toast({
+          title: "Post hidden successfully",
+          description: "The post has been hidden.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       }
 
       // Commit the batch write
       await batch.commit();
     } catch (error) {
       console.log("Error hiding post", error);
+      // Display an error toast if there's an error
+      toast({
+        title: "Error",
+        description: "Failed to hide/unhide the post.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -383,10 +436,26 @@ const usePosts = (communityData?: Community) => {
           `users/${user?.uid}/postOptions`,
           postOptionsDoc.id
         );
+
+        const isAlreadySaved = postOptionsDoc.data().isSaved;
+
         const postOptionsData = {
-          isSaved: !postOptionsDoc.data().isSaved,
+          isSaved: !isAlreadySaved,
         };
         batch.update(postOptionsRef, postOptionsData);
+
+        // Display the appropriate toast message
+        const toastMessage = isAlreadySaved
+          ? "Post unsaved successfully"
+          : "Post saved successfully";
+
+        toast({
+          title: toastMessage,
+          description: `The post has been ${isAlreadySaved ? "un" : ""}saved.`,
+          status: "success",
+          duration: 3000, // The duration for which the toast will be displayed (in milliseconds)
+          isClosable: true, // Whether the toast can be closed by the user
+        });
 
         // Optimistically update the postOptions state
         setPostStateValue((prev) => {
@@ -416,12 +485,29 @@ const usePosts = (communityData?: Community) => {
           const updatedPostOptions = [...prev.postOptions, postOptionsData];
           return { ...prev, postOptions: updatedPostOptions };
         });
+
+        // Display the "Post hidden successfully" toast
+        toast({
+          title: "Post saved successfully",
+          description: "The post has been saved.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       }
 
       // Commit the batch write
       await batch.commit();
     } catch (error) {
       console.log("Error saving post", error);
+      // Display an error toast if there's an error
+      toast({
+        title: "Error",
+        description: "Failed to save/unsave the post.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -478,12 +564,27 @@ const usePosts = (communityData?: Community) => {
           const updatedPostOptions = [...prev.postOptions, postOptionsData];
           return { ...prev, postOptions: updatedPostOptions };
         });
+
+        toast({
+          title: "Post Reported",
+          description: "The post has been reported.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       }
 
       // Commit the batch write
       await batch.commit();
     } catch (error) {
       console.log("Error reporting post", error);
+      toast({
+        title: "Error",
+        description: "Failed to report the post.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 

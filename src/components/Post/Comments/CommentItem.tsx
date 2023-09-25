@@ -36,7 +36,12 @@ import {
 import moment from "moment";
 import { FaReddit, FaUser, FaUserCircle } from "react-icons/fa";
 import ReplyItem, { Reply, ReplyVotes } from "./ReplyItem";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import {
+  IoIosArrowDown,
+  IoIosArrowUp,
+  IoMdArrowDropdown,
+  IoMdArrowDropup,
+} from "react-icons/io";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../../../firebase/clientApp";
 import { useSetRecoilState } from "recoil";
@@ -44,6 +49,7 @@ import { authModalState } from "../../../atoms/authModalAtom";
 import ResizeTextarea from "react-textarea-autosize";
 import { User } from "firebase/auth";
 import { UserNotification } from "../../../atoms/notificationAtom";
+import { BsArrowReturnRight } from "react-icons/bs";
 
 export type Comment = {
   id: string;
@@ -121,6 +127,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [replyFetchLoading, setReplyFetchLoading] = useState(false);
   const [showFullComment, setShowFullComment] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [repliesVisible, setRepliesVisible] = useState(false);
 
   const onCreateCommentReply = async (commentId: string, replyText: string) => {
     setReplyCreateLoading(true);
@@ -147,6 +154,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         createdAt: serverTimestamp(),
       } as Reply);
 
+      //New Notification
       if (!isCreatorReplying) {
         const replyNotificationRef = doc(
           collection(
@@ -679,40 +687,76 @@ const CommentItem: React.FC<CommentItemProps> = ({
           )}
         </Stack>
 
-        {replies.map((item: Reply) => (
-          <ReplyItem
-            userVoteValue={
-              replyVotes.find((reply) => reply.repliesId === item.id)?.voteValue
-            }
-            onVoteReply={onVoteReply}
-            key={item.id}
-            reply={item}
-            handleToggleVisibility={toggleReplyVisible}
-            userId={userId}
-            onUpdateReply={onUpdateReply}
-            isLoadingUpdate={replyUpdateLoading}
-            onDeleteReply={onDeleteReply}
-            isLoadingDelete={deleteReplyLoading === (item.id as string)}
-            communityId={communityId}
-          />
-        ))}
-        {replies.length >= currentPageReply * 3 ? (
+        {!!replies.length && (
           <Text
-            cursor="pointer"
             fontSize="10pt"
+            p="5px 0px 5px 0px"
             fontWeight={700}
-            onClick={handleLoadMoreReply} // Add onClick event handler
+            _hover={{ textDecoration: "underline", cursor: "pointer" }}
+            color="blue.500"
+            onClick={() => setRepliesVisible(!repliesVisible)}
           >
-            &#8212; View Replies
+            {repliesVisible ? (
+              <Flex flexDirection="row" align="center">
+                <Icon mr={2} fontSize={20} as={IoMdArrowDropup} />
+                <Text>Hide Replies</Text>
+              </Flex>
+            ) : (
+              <Flex flexDirection="row" align="center">
+                <Icon mr={2} fontSize={20} as={IoMdArrowDropdown} />
+                <Text>Show Replies</Text>
+              </Flex>
+            )}
           </Text>
-        ) : replyFetchLoading ? (
-          <Flex flexDirection="row">
-            <Spinner size="sm" mr={2} />
-            <Text cursor="pointer" fontSize="10pt" fontWeight={700}>
-              Loading
-            </Text>
-          </Flex>
-        ) : null}
+        )}
+
+        {repliesVisible && (
+          <>
+            {replies.map((item: Reply) => (
+              <ReplyItem
+                userVoteValue={
+                  replyVotes.find((reply) => reply.repliesId === item.id)
+                    ?.voteValue
+                }
+                onVoteReply={onVoteReply}
+                key={item.id}
+                reply={item}
+                handleToggleVisibility={toggleReplyVisible}
+                userId={userId}
+                onUpdateReply={onUpdateReply}
+                isLoadingUpdate={replyUpdateLoading}
+                onDeleteReply={onDeleteReply}
+                isLoadingDelete={deleteReplyLoading === (item.id as string)}
+                communityId={communityId}
+              />
+            ))}
+
+            {replies.length >= currentPageReply * 3 ? (
+              <Flex
+                flexDirection="row"
+                align="center"
+                color="blue.500"
+                _hover={{ textDecoration: "underline", cursor: "pointer" }}
+              >
+                <Icon as={BsArrowReturnRight} mr={2} fontSize={20} />
+                <Text
+                  fontSize="10pt"
+                  fontWeight={700}
+                  onClick={handleLoadMoreReply} // Add onClick event handler
+                >
+                  Show More Replies
+                </Text>
+              </Flex>
+            ) : replyFetchLoading ? (
+              <Flex flexDirection="row" align="center" color="blue.500">
+                <Spinner size="sm" mr={2} />
+                <Text cursor="pointer" fontSize="10pt" fontWeight={700}>
+                  Loading Replies
+                </Text>
+              </Flex>
+            ) : null}
+          </>
+        )}
 
         {replyVisible && (
           <Flex mt={2} flexDirection="column" position="relative">

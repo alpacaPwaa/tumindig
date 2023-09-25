@@ -113,7 +113,7 @@ const About: React.FC<AboutProps> = ({
   );
 
   return (
-    <Box pt={pt} position="sticky" top="14px">
+    <Box pt={pt}>
       <Flex
         direction="column"
         p="5px 12px 12px 12px"
@@ -360,9 +360,11 @@ const About: React.FC<AboutProps> = ({
                   {communityData.communityCategory === "Volunteer" ? (
                     <Flex mt={1} cursor="pointer">
                       <Tag size="sm">Volunteer</Tag>
-                      <Tag size="sm" ml={1}>
-                        {communityData.organizationVolunteerType}
-                      </Tag>
+                      {communityData.organizationVolunteerType && (
+                        <Tag size="sm" ml={1}>
+                          {communityData.organizationVolunteerType}
+                        </Tag>
+                      )}
                     </Flex>
                   ) : communityData.communityCategory === "Sponsor" ? (
                     <Tag mt={1} size="sm" cursor="pointer">
@@ -371,9 +373,11 @@ const About: React.FC<AboutProps> = ({
                   ) : (
                     <Flex mt={1} cursor="pointer">
                       <Tag size="sm">Orgnization</Tag>
-                      <Tag size="sm" ml={1}>
-                        {communityData.organizationVolunteerType}
-                      </Tag>
+                      {communityData.organizationVolunteerType && (
+                        <Tag size="sm" ml={1}>
+                          {communityData.organizationVolunteerType}
+                        </Tag>
+                      )}
                     </Flex>
                   )}
                 </Flex>

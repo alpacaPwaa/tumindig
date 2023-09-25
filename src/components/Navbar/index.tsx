@@ -19,7 +19,10 @@ const Navbar: React.FC = () => {
       padding="3px 14px"
       justifyContent={{ md: "space-between" }}
       boxShadow="base"
-      sx={{ position: "sticky", top: "0" }}
+      position="fixed"
+      top="0"
+      left="0"
+      right="0"
       zIndex="999"
     >
       <Flex

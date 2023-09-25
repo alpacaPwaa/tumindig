@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Button,
   Divider,
@@ -116,27 +117,31 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                     p="10px 12px"
                     fontWeight={600}
                   >
-                    <Flex width="80%" align="center">
-                      <Flex width="10%">
-                        <Text mr={2}>{index + 1}</Text>
-                      </Flex>
-                      <Flex align="center" width="80%">
+                    <Flex width="75%" align="center">
+                      <Flex width="20%" align="center" justifyContent="center">
                         {item.imageURL ? (
-                          <Image
-                            borderRadius="full"
-                            boxSize="28px"
-                            src={item.imageURL}
-                            mr={2}
-                            objectFit="cover"
-                          />
+                          <Box borderRadius="full" boxSize="32px" mr={2}>
+                            <AspectRatio ratio={1 / 1}>
+                              <Image
+                                src={item.imageURL}
+                                boxSize="100%"
+                                style={{
+                                  borderRadius: "50%",
+                                  mask: "url(#circle-mask)",
+                                }}
+                              />
+                            </AspectRatio>
+                          </Box>
                         ) : (
                           <Icon
                             as={IoPeopleCircleSharp}
-                            fontSize={30}
+                            fontSize={32}
                             color="gray.300"
                             mr={2}
                           />
                         )}
+                      </Flex>
+                      <Flex width="80%">
                         <span
                           style={{
                             whiteSpace: "nowrap",

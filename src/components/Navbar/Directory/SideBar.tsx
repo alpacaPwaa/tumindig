@@ -56,8 +56,10 @@ const sideBar: React.FC<sideBarProps> = () => {
       flexDirection="column"
       bg="white"
       p={2}
-      sx={{ position: "sticky", top: "0", bottom: "0" }}
       boxShadow="base"
+      width="20%"
+      position="fixed"
+      zIndex="998"
     >
       <CreateCommunityModal
         isOpen={open}
@@ -218,7 +220,7 @@ const sideBar: React.FC<sideBarProps> = () => {
                       }
                     >
                       <Flex width="80%" align="center">
-                        <Flex align="center" width="100%">
+                        <Flex align="center" width="20%">
                           {snippet.imageURL ? (
                             <Image
                               borderRadius="md"
@@ -235,6 +237,8 @@ const sideBar: React.FC<sideBarProps> = () => {
                               mr={2}
                             />
                           )}
+                        </Flex>
+                        <Flex>
                           <Text>{snippet.communityId}</Text>
                         </Flex>
                       </Flex>

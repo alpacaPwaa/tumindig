@@ -808,7 +808,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     </Stack>
                   </TabPanel>
                   <TabPanel>
-                    <Stack spacing={4} mt={2} mb={8}>
+                    <Stack spacing={4} mt={2}>
                       {searchLoading ? (
                         <Loader />
                       ) : (

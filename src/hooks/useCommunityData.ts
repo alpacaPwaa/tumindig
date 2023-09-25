@@ -295,6 +295,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
         numberOfMembers: increment(1),
       });
 
+      //New Notification
       if (!isCreatorJoining) {
         const communityNotificationRef = doc(
           collection(

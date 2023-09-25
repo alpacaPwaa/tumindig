@@ -104,11 +104,11 @@ const PersonalHome: React.FC = () => {
       <Modal isOpen={openPostModal} onClose={handlecloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize="11pt">Choose Community</ModalHeader>
+          <ModalHeader fontSize="11pt">All Community</ModalHeader>
           <Box pr={3} pl={3} maxHeight="400px" overflowY="auto">
             <Divider />
             <ModalCloseButton _focus={{ border: "none" }} />
-            <ModalBody>
+            <ModalBody p="10px 0px 10px 0px">
               {mySnippets.length === 0 ? (
                 <Flex
                   justifyContent="center"
@@ -134,15 +134,7 @@ const PersonalHome: React.FC = () => {
                 </Flex>
               ) : (
                 mySnippets.map((snippet, index) => (
-                  <Flex
-                    flexDirection="row"
-                    alignItems="center"
-                    fontSize="10pt"
-                    fontWeight={600}
-                  >
-                    <Flex width="10%">
-                      <Text mr={2}>{index + 1}</Text>
-                    </Flex>
+                  <Flex flexDirection="row" fontSize="10pt" fontWeight={600}>
                     <MenuListPost
                       key={index}
                       icon={IoPeopleCircleSharp}
