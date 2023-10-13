@@ -57,8 +57,8 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
   const [isSponsor, setIsSponsor] = useState<boolean>(false);
   const [userList, setUserList] = useState<User[]>([]);
   const [moderatorList, setModeratorList] = useState<User[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!user || !!communityStateValue.mySnippets.length) return;
@@ -261,6 +261,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
       ...prevLoadingMap,
       [community.id]: true, // Set loading state to true for the specific community
     }));
+
     if (isJoined) {
       leaveCommunity(community.id, community);
       return;

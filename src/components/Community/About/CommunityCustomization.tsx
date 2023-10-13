@@ -252,12 +252,12 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
                         variant="ghost"
                         size="sm"
                         color="blue.500"
-                        fontWeight={600}
-                        fontSize="11pt"
+                        fontWeight={700}
+                        fontSize="10pt"
                         mt={1}
                         onClick={() => selectFileRef.current?.click()}
                       >
-                        Edit
+                        EDIT
                       </Button>
                     </Flex>
                     <Text fontSize="10pt" color="gray.500" mb={1}>
@@ -304,12 +304,12 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
                         variant="ghost"
                         size="sm"
                         color="blue.500"
-                        fontWeight={600}
-                        fontSize="11pt"
+                        fontWeight={700}
+                        fontSize="10pt"
                         mt={1}
                         onClick={() => selectBannerRef.current?.click()}
                       >
-                        Edit
+                        EDIT
                       </Button>
                     </Flex>
                     <Text fontSize="10pt" color="gray.500" mb={1}>

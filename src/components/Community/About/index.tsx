@@ -264,14 +264,15 @@ const About: React.FC<AboutProps> = ({
                     cursor="pointer"
                     onClick={() => setIsEditingDescription(true)}
                   >
-                    <Button
-                      variant="ghost"
+                    <Text
+                      _hover={{ textDecoration: "underline" }}
                       fontSize="10pt"
-                      width="100%"
                       color="blue.500"
+                      textAlign="center"
+                      fontWeight="700"
                     >
-                      {description ? "EDIT DESCRIPTION" : "ADD DESCIPTIONS"}
-                    </Button>
+                      {description ? "EDIT DESCRIPTION" : "ADD DESCRIPTION"}
+                    </Text>
                   </Box>
                 </Box>
               )}

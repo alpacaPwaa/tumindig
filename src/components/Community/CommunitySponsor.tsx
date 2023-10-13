@@ -43,8 +43,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineHeart } from "react-icons/ai";
-import { BiDonateHeart } from "react-icons/bi";
-import { FaDonate, FaUsers } from "react-icons/fa";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { Community, communityState } from "../../atoms/communitiesAtom";

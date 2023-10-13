@@ -20,6 +20,15 @@ export type Post = {
   postIdx?: number;
   createdAt: Timestamp;
   editedAt?: Timestamp;
+  location?: string;
+  date?: string;
+  timeStart?: string;
+  timeEnd?: string;
+  phoneNumber?: number;
+  email?: string;
+  eventTitle?: string;
+  eventVolunteer?: number;
+  isPinned?: boolean;
 };
 
 export type PostVote = {
@@ -43,10 +52,17 @@ export type PostOptions = {
   isReported: boolean;
 };
 
+export type PostVolunteer = {
+  id?: string;
+  postId: string;
+  communityId: string;
+};
+
 interface PostState {
   selectedPost: Post | null;
   posts: Post[];
   postOptions: PostOptions[];
+  postVolunteer: PostVolunteer[];
   postVotes: PostVoteOrPartial[];
   postsCache: {
     [key: string]: Post[];
@@ -58,6 +74,7 @@ export const defaultPostState: PostState = {
   selectedPost: null,
   posts: [],
   postOptions: [],
+  postVolunteer: [],
   postVotes: [],
   postsCache: {},
   postUpdateRequired: true,

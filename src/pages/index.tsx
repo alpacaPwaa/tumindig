@@ -27,6 +27,7 @@ import PostItem from "../components/Post/PostItem";
 import { auth, firestore } from "../firebase/clientApp";
 import usePosts from "../hooks/usePosts";
 import PersonalHome from "../components/Community/PersonalHome";
+import Comments from "../components/Post/Comments";
 
 type HomeProps = {
   communityData: Community;
@@ -35,7 +36,6 @@ type HomeProps = {
 
 const Home: NextPage<HomeProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
-  const [openModal, setOpenModal] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -53,14 +53,6 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handlecloseModal = () => {
-    setOpenModal(false);
-  };
 
   const getUserHomePosts = async () => {
     console.log("GETTING NO USER FEED");
@@ -371,41 +363,43 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
           <Flex flexDirection="column">
             <Stack>
               {filteredPosts.map((post: Post, index) => (
-                <PostItem
-                  key={post.id}
-                  post={post}
-                  postIdx={index}
-                  onVote={onVote}
-                  onDeletePost={onDeletePost}
-                  userVoteValue={
-                    postStateValue.postVotes.find(
-                      (item) => item.postId === post.id
-                    )?.voteValue
-                  }
-                  hidePost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isHidden
-                  }
-                  savePost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isSaved
-                  }
-                  reportPost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isReported
-                  }
-                  userIsCreator={user?.uid === post.creatorId}
-                  onSelectPost={onSelectPost}
-                  homePage
-                  mediaURLs={[]}
-                  onHidePost={onHidePost}
-                  onSavePost={onSavePost}
-                  onReportPost={onReportPost}
-                  communityData={communityData}
-                />
+                <>
+                  <PostItem
+                    key={post.id}
+                    post={post}
+                    postIdx={index}
+                    onVote={onVote}
+                    onDeletePost={onDeletePost}
+                    userVoteValue={
+                      postStateValue.postVotes.find(
+                        (item) => item.postId === post.id
+                      )?.voteValue
+                    }
+                    hidePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isHidden
+                    }
+                    savePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isSaved
+                    }
+                    reportPost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isReported
+                    }
+                    userIsCreator={user?.uid === post.creatorId}
+                    onSelectPost={onSelectPost}
+                    homePage
+                    mediaURLs={[]}
+                    onHidePost={onHidePost}
+                    onSavePost={onSavePost}
+                    onReportPost={onReportPost}
+                    communityData={communityData}
+                  />
+                </>
               ))}
             </Stack>
             {fetchPostLoading ? (
@@ -422,7 +416,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
           </Flex>
         )}
       </>
-      <Stack spacing={5} position="fixed">
+      <Stack spacing={5}>
         <Recommendations />
         <PersonalHome />
       </Stack>

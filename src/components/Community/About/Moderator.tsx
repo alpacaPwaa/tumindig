@@ -274,9 +274,8 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     <Divider />
                     <Flex flexDirection="row" justifyContent="flex-end" mt={2}>
                       <Button
-                        position="relative"
+                        width="30%"
                         size="sm"
-                        borderRadius="md"
                         fontSize="12px"
                         isLoading={loadingEmail}
                         onClick={handleEmailSave}
@@ -284,10 +283,9 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                         <Text>Save</Text>
                       </Button>
                       <Button
+                        width="30%"
                         variant="outline"
-                        position="relative"
                         ml={2}
-                        borderRadius="md"
                         size="sm"
                         fontSize="12px"
                         onClick={handleEmailCancel}
@@ -313,11 +311,11 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                             fontSize="10pt"
                             color="blue.600"
                             cursor="pointer"
-                            fontWeight="bold"
+                            fontWeight={700}
                             _hover={{ textDecoration: "underline" }}
                             onClick={handleEmailEditClick}
                           >
-                            {!editedEmail && "Add Email"}
+                            {!editedEmail && "ADD EMAIL"}
                           </Text>
                           <Text fontSize="10pt">{editedEmail}</Text>
                           <Text fontSize="8pt" color="gray.600">
@@ -377,7 +375,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     <Flex flexDirection="row" justifyContent="flex-end" mt={2}>
                       <Button
                         size="sm"
-                        borderRadius="md"
+                        width="30%"
                         fontSize="12px"
                         isLoading={loadingPhone}
                         onClick={handlePhoneSave}
@@ -386,7 +384,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                       </Button>
                       <Button
                         variant="outline"
-                        borderRadius="md"
+                        width="30%"
                         ml={2}
                         size="sm"
                         fontSize="12px"
@@ -413,11 +411,11 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                             fontSize="10pt"
                             color="blue.600"
                             cursor="pointer"
-                            fontWeight="bold"
+                            fontWeight={700}
                             _hover={{ textDecoration: "underline" }}
                             onClick={handlePhoneEditClick}
                           >
-                            {!editedPhone && "Add Phone"}
+                            {!editedPhone && "ADD PHONE"}
                           </Text>
                           <Text fontSize="10pt">{editedPhone}</Text>
                           <Text fontSize="9pt" color="gray.600">
@@ -485,8 +483,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                         mt={2}
                       >
                         <Button
-                          position="relative"
-                          borderRadius="md"
+                          width="30%"
                           size="sm"
                           fontSize="12px"
                           isLoading={loadingSite}
@@ -495,8 +492,8 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                           <Text>Save</Text>
                         </Button>
                         <Button
-                          borderRadius="md"
                           variant="outline"
+                          width="30%"
                           ml={2}
                           size="sm"
                           fontSize="12px"
@@ -523,11 +520,11 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                               fontSize="10pt"
                               color="blue.600"
                               cursor="pointer"
-                              fontWeight="bold"
+                              fontWeight={700}
                               _hover={{ textDecoration: "underline" }}
                               onClick={handleSiteEditClick}
                             >
-                              {!editedSite && "Add Website"}
+                              {!editedSite && "ADD WEBSITE"}
                             </Text>
                             <a
                               href={editedSite}

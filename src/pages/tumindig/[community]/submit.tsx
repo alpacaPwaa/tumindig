@@ -50,6 +50,9 @@ const CreateCommmunityPostPage: NextPage<CreateCommmunityPostPageProps> = ({
         {user && (
           <NewPostForm
             communityId={communityStateValue.currentCommunity.id}
+            communityVisibility={
+              communityStateValue.currentCommunity.privacyType === "restricted"
+            }
             communityImageURL={communityStateValue.currentCommunity.imageURL}
             user={user}
           />

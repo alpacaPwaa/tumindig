@@ -42,7 +42,7 @@ import { RxCross2 } from "react-icons/rx";
 import { Community, communityState } from "../../../atoms/communitiesAtom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../../../firebase/clientApp";
-import { BiHide } from "react-icons/bi";
+import { BiArrowBack, BiHide } from "react-icons/bi";
 import { TbMessageReport, TbTrashX } from "react-icons/tb";
 import { FiShare } from "react-icons/fi";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -71,6 +71,8 @@ import TumblrShareButton from "react-share/lib/TumblrShareButton";
 import TumblrIcon from "react-share/lib/TumblrIcon";
 import PostOptions from "./PostOptions";
 import usePosts from "../../../hooks/usePosts";
+import Comments from "../Comments";
+import MoreDetails from "./MoreDetails";
 
 export type PostItemContentProps = {
   isDisableVote?: boolean;
@@ -117,6 +119,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
   const [user] = useAuthState(auth);
   const [loadingMedia, setLoadingMedia] = useState(true);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const singlePostView = !onSelectPost; // function not passed to [pid]
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullPost, setShowFullPost] = useState(false);
@@ -215,12 +218,17 @@ const PostItem: React.FC<PostItemContentProps> = ({
     <>
       <Flex
         border="1px solid"
+        flexDirection="column"
         bg="white"
         borderColor={singlePostView ? "white" : "gray.300"}
         borderRadius={singlePostView ? "4px 4px 0px 0px" : 4}
         cursor={singlePostView ? "unset" : "pointer"}
         _hover={{ borderColor: singlePostView ? "none" : "gray.500" }}
-        onClick={() => onSelectPost && post && onSelectPost(post, postIdx!)}
+        onClick={() => {
+          if (!singlePostView) {
+            setShowComments(true);
+          }
+        }}
       >
         <Flex direction="column" width="100%">
           <Flex flexDirection="column">
@@ -315,6 +323,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   onSavePost={onSavePost}
                   onReportPost={onReportPost}
                   onDeletePost={onDeletePost}
+                  onSelectPost={onSelectPost}
                   editMode={toggleEditMode}
                   communityData={communityData}
                   post={post}
@@ -439,6 +448,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 </Text>
               )}
             </Flex>
+            <MoreDetails post={post} community={communityData} />
             {post.mediaURLs && (
               <Flex
                 direction="column"
@@ -608,7 +618,15 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 cursor="pointer"
               />
             </Button>
-            <Button variant="ghost" size="sm" flex={1}>
+            <Button
+              variant="ghost"
+              size="sm"
+              flex={1}
+              onClick={(event) => {
+                event.stopPropagation();
+                setShowComments(true);
+              }}
+            >
               <Icon as={BsChat} mr={2} fontSize={20} />
               <Text fontSize="10pt">{post.numberOfComments} Comments</Text>
             </Button>
@@ -623,7 +641,85 @@ const PostItem: React.FC<PostItemContentProps> = ({
             </Button>
           </Flex>
         </Flex>
+        {/* Import Comments */}
       </Flex>
+
+      <Modal
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+        size="xl"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize="14pt" fontWeight={700} width="100%">
+            <Flex alignItems="center">
+              <Button
+                variant="ghost"
+                position="relative"
+                onClick={() => setShowComments(false)}
+              >
+                <Icon
+                  fontSize="20pt"
+                  as={BiArrowBack}
+                  cursor="pointer"
+                  position="absolute"
+                />
+              </Button>
+
+              <Text
+                width="85%"
+                align="center"
+                cursor="pointer"
+                _hover={{ textDecoration: "underline" }}
+                onClick={() =>
+                  onSelectPost && post && onSelectPost(post, postIdx!)
+                }
+              >
+                Go to {post.userDisplayText}'s post
+              </Text>
+            </Flex>
+          </ModalHeader>
+          <Divider />
+
+          <ModalBody>
+            <>
+              <PostItem
+                post={post}
+                onHidePost={onHidePost}
+                onSavePost={onSavePost}
+                onReportPost={onReportPost}
+                onVote={onVote}
+                onDeletePost={onDeletePost}
+                userVoteValue={
+                  postStateValue.postVotes.find(
+                    (item) => item.postId === post.id
+                  )?.voteValue
+                }
+                hidePost={
+                  postStateValue.postOptions.find(
+                    (item) => item.postId === post.id
+                  )?.isHidden
+                }
+                savePost={
+                  postStateValue.postOptions.find(
+                    (item) => item.postId === post.id
+                  )?.isSaved
+                }
+                reportPost={
+                  postStateValue.postOptions.find(
+                    (item) => item.postId === post.id
+                  )?.isReported
+                }
+                userIsCreator={user?.uid === post.creatorId}
+                mediaURLs={[]}
+                communityData={communityData} // Add communityData prop
+              />
+              <Comments community={post.communityId} selectedPost={post} />
+            </>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
 
       <Modal
         isOpen={showShareModal}

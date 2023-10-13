@@ -370,11 +370,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                   variant="ghost"
                   size="sm"
                   color="blue.500"
-                  fontWeight={600}
-                  fontSize="11pt"
+                  fontWeight={700}
+                  fontSize="10pt"
                   onClick={() => selectFileRef.current?.click()}
                 >
-                  Edit
+                  EDIT
                 </Button>
               </Flex>
               <Text fontSize="10pt" color="gray.500">

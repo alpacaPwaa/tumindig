@@ -40,6 +40,7 @@ type PostOptionsProps = {
   onReportPost: (post: Post, communityId: string) => Promise<void>;
   onDeletePost: (post: Post) => Promise<boolean>;
   editMode: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onSelectPost?: (value: Post, postIdx: number) => void;
   hidePost?: boolean;
   savePost?: boolean;
   reportPost?: boolean;
@@ -50,6 +51,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
   post,
   communityData,
   userIsCreator,
+  onSelectPost,
   onHidePost,
   hidePost,
   onSavePost,
@@ -67,6 +69,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
   const [communityStateValue] = useRecoilState(communityState);
   const [user] = useAuthState(auth);
   const [removePostModalOpen, setRemovePostModalOplen] = useState(false);
+  const singlePostView = !onSelectPost; // function not passed to [pid]
 
   const handleDelete = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -82,7 +85,6 @@ const PostOptions: React.FC<PostOptionsProps> = ({
       const success = await onDeletePost(post);
       if (!success) throw new Error("Failed to delete post");
       console.log("Post successfully deleted");
-      if (router) router.back();
     } catch (error: any) {
       console.log("Error deleting post", error.message);
     } finally {
@@ -140,7 +142,6 @@ const PostOptions: React.FC<PostOptionsProps> = ({
       setReportLoading(true); // Set loading to true before starting the reporting process
       await onReportPost(post, post.communityId);
       console.log("Post reported successfully");
-      if (router) router.back();
       setIsReportModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -260,15 +261,17 @@ const PostOptions: React.FC<PostOptionsProps> = ({
               )}
           </MenuList>
         </Menu>
-        <Button
-          variant="ghost"
-          size="sm"
-          color="gray.500"
-          position="relative"
-          onClick={handleHidePost}
-        >
-          <Icon as={RxCross2} fontSize="20px" position="absolute" />
-        </Button>
+        {!singlePostView && (
+          <Button
+            variant="ghost"
+            size="sm"
+            color="gray.500"
+            position="relative"
+            onClick={handleHidePost}
+          >
+            <Icon as={RxCross2} fontSize="20px" position="absolute" />
+          </Button>
+        )}
       </Flex>
 
       <Modal
