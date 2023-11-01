@@ -49,49 +49,16 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [communityType, setCommunityType] = useState("public");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [selectedItem, setSelectedItem] = useState("");
-  const [
-    showOrganizationVolunteerSubMenu,
-    setShowOrganizationVolunteerSubMenu,
-  ] = useState(false);
   const [organizationVolunteerType, setOrganizationVolunteerType] =
     useState("");
   const [user] = useAuthState(auth);
   const isNameEmpty = name.trim() === "";
-
-  const handleItemClick = (text: string) => {
-    setSelectedItem(text);
-    if (text !== "Sponsor") {
-      setShowOrganizationVolunteerSubMenu(true);
-    } else {
-      setShowOrganizationVolunteerSubMenu(false);
-      setOrganizationVolunteerType(""); // reset the organization type when user selects another category
-    }
-    if (
-      text === "Non-Profit" ||
-      text === "Charity" ||
-      text === "Other" ||
-      text === "Education" ||
-      text === "Environment" ||
-      text === "Advocacy" ||
-      text === "Religion"
-    ) {
-      setOrganizationVolunteerType(text); // set the organization type when user selects a relevant option
-    }
-  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 50) return;
     setName(event.target.value);
     setCharsRemaining(50 - event.target.value.length);
   };
-
-  const communityCategory =
-    selectedItem === "Volunteer" ||
-    selectedItem === "Organization" ||
-    selectedItem === "Sponsor"
-      ? selectedItem
-      : "";
 
   const handleCreateCommunity = async () => {
     if (nameError) setNameError("");
@@ -120,7 +87,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           createdAt: serverTimestamp(),
           numberOfMembers: 1,
           privacyType: communityType, // set the privacy type based on user selection
-          communityCategory: communityCategory,
+          communityCategory: "Volunteer",
           organizationVolunteerType: organizationVolunteerType,
           description: "",
           bannerURL: "",
@@ -199,11 +166,11 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           <Text fontSize="9pt" color="red" pt={1}>
             {nameError}
           </Text>
-          <Box mt={4}>
-            <Text fontWeight={600} fontSize={15}>
-              Choose a Category
-            </Text>
+          <Box mt={2}>
             <Menu autoSelect={false} matchWidth>
+              <Text fontWeight={600} fontSize={15}>
+                Choose Volunteer Tag
+              </Text>
               <MenuButton
                 mt={"1"}
                 width="100%"
@@ -218,92 +185,92 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
                 color="gray.500"
                 fontWeight="semibold"
               >
-                {selectedItem ? selectedItem : "Select Category"}
+                {organizationVolunteerType
+                  ? organizationVolunteerType
+                  : "Select Tags"}
               </MenuButton>
+
               <MenuList
                 textAlign="left"
                 color="gray.800"
                 fontSize="14"
                 fontWeight="semibold"
+                maxHeight="250px"
+                overflowY="auto"
               >
-                <MenuItem onClick={() => handleItemClick("Volunteer")}>
-                  Volunteer
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Hunger & Homelessness")
+                  }
+                >
+                  Hunger & Homelessness
                 </MenuItem>
-                <MenuItem onClick={() => handleItemClick("Organization")}>
-                  Organization
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Health & Wellness")
+                  }
+                >
+                  Health & Wellness
                 </MenuItem>
-                <MenuItem onClick={() => handleItemClick("Sponsor")}>
-                  Sponsor
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Faith & Spirituality")
+                  }
+                >
+                  Faith & Spirituality
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Animal & Wildlife")
+                  }
+                >
+                  Animal & Wildlife
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Childrean & Youth")
+                  }
+                >
+                  Childrean & Youth
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Environment & Conservation")
+                  }
+                >
+                  Environment & Conservation
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("Human & Social Services")
+                  }
+                >
+                  Human & Social Services
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    setOrganizationVolunteerType("International Development")
+                  }
+                >
+                  International Development
+                </MenuItem>
+                <MenuItem
+                  onClick={() => setOrganizationVolunteerType("Arts & Culture")}
+                >
+                  Arts & Culture
+                </MenuItem>
+                <MenuItem
+                  onClick={() => setOrganizationVolunteerType("Women & Girls")}
+                >
+                  Women & Girls
+                </MenuItem>
+                <MenuItem
+                  onClick={() => setOrganizationVolunteerType("Others")}
+                >
+                  Others
                 </MenuItem>
               </MenuList>
             </Menu>
-            {showOrganizationVolunteerSubMenu && (
-              <Menu autoSelect={false} matchWidth>
-                <Text fontWeight={600} fontSize={15} mt={"3"}>
-                  Choose Organization Type
-                </Text>
-                <MenuButton
-                  mt={"1"}
-                  width="100%"
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  textAlign="left"
-                  borderRadius="md"
-                  variant={"outline"}
-                  border="1px solid gray"
-                  borderColor="gray.200"
-                  backgroundColor="white"
-                  color="gray.500"
-                  fontWeight="semibold"
-                >
-                  {organizationVolunteerType
-                    ? organizationVolunteerType
-                    : "Select Tags"}
-                </MenuButton>
-                <MenuList
-                  textAlign="left"
-                  color="gray.800"
-                  fontSize="14"
-                  fontWeight="semibold"
-                >
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Non-Profit")}
-                  >
-                    Non-profit
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Charity")}
-                  >
-                    Charity
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Education")}
-                  >
-                    Education
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Environment")}
-                  >
-                    Environment
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Advocacy")}
-                  >
-                    Advocacy
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Religion")}
-                  >
-                    Religion
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setOrganizationVolunteerType("Others")}
-                  >
-                    Others
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            )}
           </Box>
           <Box mt={4} mb={4}>
             <Text fontWeight={600} fontSize={15}>
@@ -343,22 +310,6 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
                   </Text>
                 </Flex>
               </Checkbox>
-              {/* <Checkbox
-                colorScheme="blue"
-                name="private"
-                isChecked={communityType === "private"}
-                onChange={onCommunityTypeChange}
-              >
-                <Flex alignItems="center">
-                  <Icon as={HiLockClosed} color="gray.500" mr={2} />
-                  <Text fontSize="10pt" mr={1}>
-                    Private
-                  </Text>
-                  <Text fontSize="8pt" color="gray.500">
-                    Only approved users can view and submit to this community
-                  </Text>
-                </Flex>
-              </Checkbox> */}
             </Stack>
           </Box>
         </ModalBody>
@@ -371,7 +322,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           variant="solid"
           height="30px"
           onClick={handleCreateCommunity}
-          disabled={!communityCategory || isNameEmpty || loading}
+          disabled={isNameEmpty || loading}
           isLoading={loading}
         >
           Create Community

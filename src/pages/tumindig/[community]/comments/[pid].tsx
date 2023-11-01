@@ -188,7 +188,6 @@ const PostPage: React.FC<PostPageProps> = ({ post, communitySnippets }) => {
           }
           loading={loading}
           post={post}
-          communitySnippets={communitySnippets}
         />
       </>
     </PageContentLayout>

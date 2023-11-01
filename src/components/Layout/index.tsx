@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         gridTemplateRows={"50px 1fr 30px"}
         gridTemplateColumns={isBase ? "1fr" : "270px 1fr"}
       >
-        <GridItem area={"header"}>
+        <GridItem area={"header"} zIndex="999">
           <Navbar />
         </GridItem>
         {!isBase && (

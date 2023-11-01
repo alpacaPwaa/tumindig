@@ -173,6 +173,7 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
 
   useEffect(() => {
     getUserPosts();
+    setFetchPostLoading(true);
   }, [user, currentPage]);
 
   useEffect(() => {
@@ -229,7 +230,7 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
                   />
                 ))}
               </Stack>
-              {fetchPostLoading ? (
+              {fetchPostLoading && (
                 <Flex
                   p={2}
                   justifyContent="center"
@@ -239,7 +240,8 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
                   <Spinner size="sm" mr={2} />
                   <Text>Loading</Text>
                 </Flex>
-              ) : filteredPosts.length === 0 ? (
+              )}
+              {filteredPosts.length === 0 ? (
                 <Flex
                   justifyContent="center"
                   alignItems="center"

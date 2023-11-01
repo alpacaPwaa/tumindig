@@ -8,6 +8,7 @@ import {
   SkeletonText,
   Stack,
   Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
@@ -57,6 +58,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
   const [commentVotes, setCommentVotes] = useState<CommentVotes[]>([]);
   const [replyVotes, setReplyVotes] = useState<ReplyVotes[]>([]);
   const [currentPageComment, setCurrentPageComment] = useState(1);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const onCreateComment = async (commentText: string) => {
     if (!user) {
@@ -213,6 +215,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
         const commentRef = doc(firestore, "comments", commentId);
         await updateDoc(commentRef, {
           text: newText,
+          isEdited: true,
         });
         setComments((prev) =>
           prev.map((item) => {
@@ -404,9 +407,9 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
 
   useEffect(() => {
     const fetchPostComment = async () => {
-      await fetchCommentVotes(); // Fetch reply votes before proceeding
+      await fetchCommentVotes(); // Fetch comment votes before proceeding
       try {
-        // Fetch replies and reply votes from Firestore
+        // Fetch comments and comments votes from Firestore
         const fetchedComments = await getPostComments();
         setComments(fetchedComments);
         setCommentFetchLoading(false);
@@ -504,13 +507,22 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
                 align="center"
                 borderTop="1px solid"
                 borderColor="gray.100"
-                p={20}
+                textAlign="center"
+                p={md ? 20 : 10}
               >
                 <Icon color="gray.300" as={TfiComments} fontSize={150} mb={2} />
-                <Text color="gray.500" fontSize="15pt" fontWeight={800}>
+                <Text
+                  color="gray.500"
+                  fontSize={md ? "15pt" : "12pt"}
+                  fontWeight={800}
+                >
                   No Comments Yet
                 </Text>
-                <Text color="gray.500" fontSize="11pt" fontWeight={500}>
+                <Text
+                  color="gray.500"
+                  fontSize={md ? "11pt" : "9pt"}
+                  fontWeight={500}
+                >
                   Start the conversation with your first comment!
                 </Text>
               </Flex>

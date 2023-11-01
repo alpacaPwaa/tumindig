@@ -81,6 +81,7 @@ const Posts: React.FC<PostsProps> = ({
       const postsQuery = query(
         collection(firestore, "posts"),
         where("communityId", "==", communityData?.id!),
+        orderBy("isPinned", "desc"),
         orderBy("voteStatus", "desc"),
         orderBy("createdAt", "desc"),
         limit(10 * currentPage)
@@ -251,12 +252,14 @@ const Posts: React.FC<PostsProps> = ({
           ))}
         </Stack>
       )}
-      {fetchPostLoading ? (
+      {fetchPostLoading && (
         <Flex p={2} justifyContent="center" fontSize="10pt" fontWeight={800}>
           <Spinner size="sm" mr={2} />
           <Text>Loading</Text>
         </Flex>
-      ) : posts.length === 0 ? (
+      )}
+
+      {posts.length === 0 ? (
         <Flex
           justifyContent="center"
           alignItems="center"

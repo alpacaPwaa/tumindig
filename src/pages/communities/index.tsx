@@ -60,10 +60,8 @@ type CommunityListProps = {
 
 const CommunityList: React.FC<CommunityListProps> = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
-  const [loadingSearch, setLoadingSearch] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMoreCommunity, setLoadingMoreCommunity] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [
     selectedOrganizationVolunteerType,
     setSelectedOrganizationVolunteerType,
@@ -73,7 +71,6 @@ const CommunityList: React.FC<CommunityListProps> = () => {
   const [open, setOpen] = useState(false);
   const [user] = useAuthState(auth);
   const [openPostModal, setOpenPostModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -95,45 +92,15 @@ const CommunityList: React.FC<CommunityListProps> = () => {
         limit(10 * currentPage)
       );
 
-      // Apply filters if category is selected
-      if (selectedCategory) {
+      if (selectedOrganizationVolunteerType) {
         communityQuery = query(
           collection(firestore, "communities"),
-          where("communityCategory", "==", selectedCategory),
-          orderBy("numberOfMembers", "desc"),
-          limit(10 * currentPage)
-        );
-      }
-
-      // Apply filters if category is "Organization" and organization type is selected
-      if (
-        (selectedCategory === "Organization" &&
-          selectedOrganizationVolunteerType) ||
-        (selectedCategory === "Volunteer" && selectedOrganizationVolunteerType)
-      ) {
-        communityQuery = query(
-          collection(firestore, "communities"),
-          where("communityCategory", "==", selectedCategory),
           where(
             "organizationVolunteerType",
             "==",
             selectedOrganizationVolunteerType
           ),
           orderBy("numberOfMembers", "desc"),
-          limit(10 * currentPage)
-        );
-      }
-
-      // Apply search filter if searchQuery is not empty
-      if (searchQuery) {
-        const startAtKeyword = searchQuery.toUpperCase();
-        const endAtKeyword = searchQuery.toLowerCase() + "\uf8ff";
-
-        communityQuery = query(
-          collection(firestore, "communities"),
-          orderBy("communityName"),
-          startAt(startAtKeyword),
-          endAt(endAtKeyword),
           limit(10 * currentPage)
         );
       }
@@ -186,16 +153,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
 
   useEffect(() => {
     getCommunityRecommendations();
-  }, [selectedCategory, selectedOrganizationVolunteerType, currentPage]);
-
-  const handleCategoryChange = (value: string | string[]) => {
-    setLoading(true);
-    if (typeof value === "string") {
-      setSelectedCategory(value);
-    } else if (Array.isArray(value) && value.length > 0) {
-      setSelectedCategory(value[0]);
-    }
-  };
+  }, [selectedOrganizationVolunteerType, currentPage]);
 
   const handleOrganizationVolunteerTypeChange = (value: string | string[]) => {
     setLoading(true);
@@ -204,20 +162,6 @@ const CommunityList: React.FC<CommunityListProps> = () => {
     } else if (Array.isArray(value) && value.length > 0) {
       setSelectedOrganizationVolunteerType(value[0]);
     }
-  };
-
-  const handleSearchEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      setLoading(true);
-      setCurrentPage(1); // Reset page to 1 when searching
-      getCommunityRecommendations();
-    }
-  };
-
-  const handleSearch = () => {
-    setLoading(true);
-    setCurrentPage(1); // Reset page to 1 when searching
-    getCommunityRecommendations();
   };
 
   return (
@@ -238,35 +182,6 @@ const CommunityList: React.FC<CommunityListProps> = () => {
             userId={user?.uid!}
           />
 
-          <Flex>
-            <InputGroup>
-              <InputLeftElement
-                top="50%"
-                transform="translateY(-50%)"
-                color="gray.400"
-              >
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  position="relative"
-                  onClick={handleSearch}
-                >
-                  <SearchIcon fontSize="md" position="absolute" />
-                </Button>
-              </InputLeftElement>
-              <Input
-                pl="3rem"
-                variant="flushed"
-                placeholder="Search All Communities"
-                fontSize="10pt"
-                _placeholder={{ color: "gray.500" }}
-                height="40px"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleSearchEnter} // Add this line to handle Enter key press
-              />
-            </InputGroup>
-          </Flex>
           <Text
             p={1}
             mt={2}
@@ -283,7 +198,6 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 as={Button}
                 rightIcon={<ChevronDownIcon />}
                 mt={1}
-                size="md"
                 width="49%"
                 textAlign="left"
                 borderRadius="md"
@@ -293,8 +207,11 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 backgroundColor="white"
                 color="gray.500"
                 fontWeight="semibold"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
               >
-                {selectedCategory || "All Communities"}
+                {selectedOrganizationVolunteerType || "Filter Communities"}
               </MenuButton>
               <MenuList
                 textAlign="left"
@@ -303,70 +220,43 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 fontWeight="semibold"
               >
                 <MenuOptionGroup
-                  defaultValue=""
-                  value={selectedCategory}
                   type="radio"
-                  onChange={handleCategoryChange}
+                  value={selectedOrganizationVolunteerType}
+                  onChange={handleOrganizationVolunteerTypeChange}
                 >
-                  <MenuItemOption value="">All Categories</MenuItemOption>
-                  <MenuItemOption value="Volunteer">Volunteer</MenuItemOption>
-                  <MenuItemOption value="Organization">
-                    Organization
+                  <MenuItemOption value="">All Communities</MenuItemOption>
+                  <MenuItemOption value="Hunger & Homelessness">
+                    Hunger & Homelessness
                   </MenuItemOption>
-                  <MenuItemOption value="Sponsor">Sponsor</MenuItemOption>
+                  <MenuItemOption value="Health & Wellness">
+                    Health & Wellness
+                  </MenuItemOption>
+                  <MenuItemOption value="Faith & Spirituality">
+                    Faith & Spirituality
+                  </MenuItemOption>
+                  <MenuItemOption value="Animal & Wildlife">
+                    Animal & Wildlife
+                  </MenuItemOption>
+                  <MenuItemOption value="Childrean & Youth">
+                    Childrean & Youth
+                  </MenuItemOption>
+                  <MenuItemOption value="Environment & Conservation">
+                    Environment & Conservation
+                  </MenuItemOption>
+                  <MenuItemOption value="Human & Social Services">
+                    Human & Social Services
+                  </MenuItemOption>
+                  <MenuItemOption value="International Development">
+                    International Development
+                  </MenuItemOption>
+                  <MenuItemOption value="Arts & Culture">
+                    Arts & Culture
+                  </MenuItemOption>
+                  <MenuItemOption value="Others">Others</MenuItemOption>
+                  {/* Add more options for organization types if needed */}
                 </MenuOptionGroup>
               </MenuList>
             </Menu>
-            {(selectedCategory === "Organization" ||
-              selectedCategory === "Volunteer") && (
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  mt={1}
-                  width="49%"
-                  textAlign="left"
-                  borderRadius="md"
-                  variant="outline"
-                  border="1px solid gray"
-                  borderColor="gray.200"
-                  backgroundColor="white"
-                  color="gray.500"
-                  fontWeight="semibold"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {selectedOrganizationVolunteerType || "Filter Communities"}
-                </MenuButton>
-                <MenuList
-                  textAlign="left"
-                  color="gray.800"
-                  fontSize="14"
-                  fontWeight="semibold"
-                >
-                  <MenuOptionGroup
-                    type="radio"
-                    value={selectedOrganizationVolunteerType}
-                    onChange={handleOrganizationVolunteerTypeChange}
-                  >
-                    <MenuItemOption value="">All Organizations</MenuItemOption>
-                    <MenuItemOption value="Non-Profit">
-                      Non-Profit
-                    </MenuItemOption>
-                    <MenuItemOption value="Charity">Charity</MenuItemOption>
-                    <MenuItemOption value="Education">Education</MenuItemOption>
-                    <MenuItemOption value="Environment">
-                      Environment
-                    </MenuItemOption>
-                    <MenuItemOption value="Advocacy">Advocacy</MenuItemOption>
-                    <MenuItemOption value="Religion">Religion</MenuItemOption>
-                    <MenuItemOption value="Others">Others</MenuItemOption>
-                    {/* Add more options for organization types if needed */}
-                  </MenuOptionGroup>
-                </MenuList>
-              </Menu>
-            )}
           </Flex>
         </Flex>
 
@@ -374,9 +264,16 @@ const CommunityList: React.FC<CommunityListProps> = () => {
           {loading ? (
             <CommunitiesLoader />
           ) : (
-            communities.map((item) => {
+            communities.map((item, index) => {
               const isJoined = !!communityStateValue.mySnippets.find(
                 (snippet) => snippet.communityId === item.id
+              );
+
+              const isBanned = !!communityStateValue.bannedSnippet.find(
+                (snippet) =>
+                  snippet.communityId === item.id &&
+                  snippet.isBanned === true &&
+                  snippet.userUid === user?.uid // Add this condition to match the current user
               );
 
               const maxDescriptionLength = 50;
@@ -419,15 +316,12 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                       </Flex>
                       <Flex direction="column">
                         <Flex alignItems="center">
-                          <span
-                            style={{
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
+                          <Text
+                            maxWidth="60%" // Adjust the maximum width as needed
+                            wordBreak="break-word"
                           >
-                            {`${item.id}`}
-                          </span>
+                            {item.id}
+                          </Text>
                           <Text color="gray.500" mx={1}>
                             &middot;
                           </Text>
@@ -454,10 +348,11 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                           event.stopPropagation();
                           onJoinLeaveCommunity(item, isJoined);
                         }}
+                        isDisabled={isBanned}
                         variant={isJoined ? "outline" : "solid"}
                         size="md"
                       >
-                        {isJoined ? "Leave" : "Join"}
+                        {isBanned ? "Banned" : isJoined ? "Joined" : "Join"}
                       </Button>
                     </Box>
                   </Flex>

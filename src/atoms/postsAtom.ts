@@ -28,7 +28,8 @@ export type Post = {
   email?: string;
   eventTitle?: string;
   eventVolunteer?: number;
-  isPinned?: boolean;
+  isEdited?: boolean;
+  isPinned: boolean;
 };
 
 export type PostVote = {

@@ -417,7 +417,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
         )}
       </>
       <Stack spacing={5}>
-        <Recommendations />
+        <Recommendations communityData={communityData} />
         <PersonalHome />
       </Stack>
     </PageContentLayout>

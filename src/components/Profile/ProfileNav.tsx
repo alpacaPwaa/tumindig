@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, useMediaQuery } from "@chakra-ui/react";
 import router, { useRouter } from "next/router";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -9,6 +9,7 @@ type ProfileNavProps = {};
 const ProfileNav: React.FC<ProfileNavProps> = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const goToProfile = () => {
     router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
@@ -45,7 +46,7 @@ const ProfileNav: React.FC<ProfileNavProps> = () => {
         justifyContent="space-between"
         fontWeight={600}
         px={[4, 8, 12, 100]}
-        fontSize="10pt"
+        fontSize={md ? "10pt" : "9pt"}
         position="absolute"
         bottom="0"
       >

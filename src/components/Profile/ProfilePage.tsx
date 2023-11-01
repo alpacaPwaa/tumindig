@@ -49,7 +49,6 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
     string | undefined
   >(user?.displayName || undefined);
   const [createdAt, setCreatedAt] = useState<number | undefined>();
-  const [lastLoginAt, setLastLoginAt] = useState<number | undefined>();
   const [displayNameLoading, setDisplayNameLoading] = useState(false);
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [inputFocused, setInputFocused] = useState(false);
@@ -63,7 +62,6 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
           if (userDocSnapshot.exists()) {
             const userData = userDocSnapshot.data();
             setCreatedAt(userData.createdAt);
-            setLastLoginAt(userData.lastLoginAt); // Set the lastLoginAt value
           }
         } catch (error) {
           console.log("Error fetching user data:", error);
@@ -223,21 +221,6 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
         borderRadius="4px 4px 0px 0px"
         position="relative"
       >
-        {/* <Flex position="absolute">
-          <Button
-            border="1px"
-            borderColor="white"
-            size="sm"
-            onClick={openModal}
-          >
-            <Icon
-              as={AiOutlineSetting}
-              fontSize="14pt"
-              color="white"
-              position="absolute"
-            />
-          </Button>
-        </Flex> */}
         <Flex mt={2} position="absolute" left="40%">
           {user?.displayName ? (
             <Text fontSize="11pt" color="white" fontWeight={700}>

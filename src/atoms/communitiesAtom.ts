@@ -11,16 +11,20 @@ export interface Community {
   privacyType: "public" | "restricted" | "private";
   createdAt?: Timestamp;
   imageURL?: string;
-  communityCategory: "Volunteer" | "Organization" | "Sponsor";
+  communityCategory: "Volunteer";
   description: string;
   bannerURL: string;
   organizationVolunteerType?:
-    | "Non-Profit"
-    | "Education"
-    | "Environment"
-    | "Advocacy"
-    | "Religion"
-    | "Charity"
+    | "Hunge & Homelessness"
+    | "Health & Wellness"
+    | "Faith & Spirituality"
+    | "Animal & Wildlife"
+    | "Childrean & Youth"
+    | "Environment & Conservation"
+    | "Human & Social Services"
+    | "International Development"
+    | "Arts & Culture"
+    | "Women & Girls"
     | "Others";
   emailContact?: string;
   phoneContact?: number;
@@ -47,11 +51,18 @@ export interface SponsorSnippet {
   userUid?: string;
 }
 
+export interface BanSnippet {
+  communityId: string;
+  isBanned?: boolean;
+  userUid?: string;
+}
+
 interface CommunityState {
   [key: string]:
     | ModeratorSnippet[]
     | CommunitySnippet[]
     | SponsorSnippet[]
+    | BanSnippet[]
     | { [key: string]: Community }
     | Community
     | boolean
@@ -59,6 +70,7 @@ interface CommunityState {
   mySnippets: CommunitySnippet[];
   moderatorSnippets: ModeratorSnippet[];
   sponsorSnippets: SponsorSnippet[];
+  bannedSnippet: BanSnippet[];
   initSnippetsFetched: boolean;
   visitedCommunities: {
     [key: string]: Community;
@@ -83,6 +95,7 @@ export const defaultCommunityState: CommunityState = {
   mySnippets: [],
   moderatorSnippets: [],
   sponsorSnippets: [],
+  bannedSnippet: [],
   initSnippetsFetched: false,
   visitedCommunities: {},
   currentCommunity: defaultCommunity,

@@ -19,7 +19,6 @@ import { Post, PostVote } from "../../../atoms/postsAtom";
 import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
 import ProfileNav from "../../../components/Profile/ProfileNav";
-import { FaUsers } from "react-icons/fa";
 import { AiOutlineFolderOpen } from "react-icons/ai";
 
 type DownvotedPostProps = { profile: string; communityData: Community };
@@ -174,6 +173,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
 
   useEffect(() => {
     getUserPosts();
+    setFetchPostLoading(true);
   }, [user, currentPage]);
 
   useEffect(() => {
@@ -230,7 +230,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
                   />
                 ))}
               </Stack>
-              {fetchPostLoading ? (
+              {fetchPostLoading && (
                 <Flex
                   p={2}
                   justifyContent="center"
@@ -240,7 +240,9 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
                   <Spinner size="sm" mr={2} />
                   <Text>Loading</Text>
                 </Flex>
-              ) : filteredPosts.length === 0 ? (
+              )}
+
+              {filteredPosts.length === 0 ? (
                 <Flex
                   justifyContent="center"
                   alignItems="center"

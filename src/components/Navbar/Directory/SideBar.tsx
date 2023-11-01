@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   AspectRatio,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -33,6 +34,7 @@ const sideBar: React.FC<sideBarProps> = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
   const { onSelectMenuItem } = useDirectory();
   const router = useRouter();
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const goToCommunityList = () => {
     router.push(`/communities`); // Use router.push to navigate to the profile page
@@ -55,10 +57,10 @@ const sideBar: React.FC<sideBarProps> = () => {
     <Flex
       flexDirection="column"
       bg="white"
-      p={2}
-      boxShadow="base"
-      width="20%"
-      position="fixed"
+      p={md ? 2 : 0}
+      boxShadow={md ? "base" : "none"}
+      width={md ? "20%" : "100%"}
+      position={md ? "fixed" : "unset"}
       zIndex="998"
     >
       <CreateCommunityModal
@@ -239,7 +241,12 @@ const sideBar: React.FC<sideBarProps> = () => {
                           )}
                         </Flex>
                         <Flex>
-                          <Text>{snippet.communityId}</Text>
+                          <Text
+                            maxWidth="100%" // Adjust the maximum width as needed
+                            wordBreak="break-word"
+                          >
+                            {snippet.communityId}
+                          </Text>
                         </Flex>
                       </Flex>
                     </Flex>
@@ -291,7 +298,12 @@ const sideBar: React.FC<sideBarProps> = () => {
                         mr={2}
                       />
                     )}
-                    <Text>{snippet.communityId}</Text>
+                    <Text
+                      maxWidth="100%" // Adjust the maximum width as needed
+                      wordBreak="break-word"
+                    >
+                      {snippet.communityId}
+                    </Text>
                   </Flex>
                 </Flex>
               </Flex>

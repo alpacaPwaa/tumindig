@@ -44,16 +44,9 @@ type AboutProps = {
   pt?: number;
   onCreatePage?: boolean;
   loading?: boolean;
-  communitySnippets: CommunitySnippet[];
 };
 
-const About: React.FC<AboutProps> = ({
-  post,
-  communityData,
-  pt,
-  loading,
-  communitySnippets,
-}) => {
+const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
   const [user] = useAuthState(auth); // will revisit how 'auth' state is passed
   const setCommunityStateValue = useSetRecoilState(communityState);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -358,29 +351,14 @@ const About: React.FC<AboutProps> = ({
                   <Text fontWeight={600} fontSize="11pt">
                     Tags
                   </Text>
-                  {communityData.communityCategory === "Volunteer" ? (
-                    <Flex mt={1} cursor="pointer">
-                      <Tag size="sm">Volunteer</Tag>
-                      {communityData.organizationVolunteerType && (
-                        <Tag size="sm" ml={1}>
-                          {communityData.organizationVolunteerType}
-                        </Tag>
-                      )}
-                    </Flex>
-                  ) : communityData.communityCategory === "Sponsor" ? (
-                    <Tag mt={1} size="sm" cursor="pointer">
-                      Sponsor
-                    </Tag>
-                  ) : (
-                    <Flex mt={1} cursor="pointer">
-                      <Tag size="sm">Orgnization</Tag>
-                      {communityData.organizationVolunteerType && (
-                        <Tag size="sm" ml={1}>
-                          {communityData.organizationVolunteerType}
-                        </Tag>
-                      )}
-                    </Flex>
-                  )}
+                  <Flex mt={1} cursor="pointer">
+                    <Tag size="sm">{communityData.communityCategory}</Tag>
+                    {communityData.organizationVolunteerType && (
+                      <Tag size="sm" ml={1}>
+                        {communityData.organizationVolunteerType}
+                      </Tag>
+                    )}
+                  </Flex>
                 </Flex>
               </Flex>
               <CommunityCustomization
@@ -391,14 +369,11 @@ const About: React.FC<AboutProps> = ({
           </>
         )}
       </Flex>
-      <Box>
+      {/* <Box>
         <Donate communityData={communityData} />
-      </Box>
+      </Box> */}
       <Box>
-        <Moderator
-          communityData={communityData}
-          communitySnippets={communitySnippets}
-        />
+        <Moderator communityData={communityData} />
       </Box>
       <Box>
         <Rules communityData={communityData} />

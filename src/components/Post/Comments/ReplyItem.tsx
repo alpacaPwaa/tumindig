@@ -40,6 +40,7 @@ export type Reply = {
     id?: string;
     voteValue: number;
   };
+  isEdited?: boolean;
 };
 
 export type ReplyVotes = {
@@ -141,6 +142,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
               {moment(new Date(reply.createdAt?.seconds * 1000)).fromNow()}
             </Text>
           )}
+          {reply.isEdited && <Text color="gray.500">Edited</Text>}
         </Stack>
         {editReplyMode ? (
           <Textarea

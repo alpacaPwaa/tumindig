@@ -67,6 +67,7 @@ export type Comment = {
     id?: string;
     voteValue: number;
   };
+  isEdited?: boolean;
 };
 
 export type CommentVotes = {
@@ -238,6 +239,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         const replyRef = doc(firestore, "replies", replyId);
         await updateDoc(replyRef, {
           text: newText,
+          isEdited: true,
         });
         setReplies((prev) =>
           prev.map((item) => {
@@ -526,6 +528,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               {moment(new Date(comment.createdAt?.seconds * 1000)).fromNow()}
             </Text>
           )}
+          {comment.isEdited && <Text color="gray.500">Edited</Text>}
         </Stack>
         {editMode ? (
           <Textarea

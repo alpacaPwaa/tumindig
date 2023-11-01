@@ -1,4 +1,9 @@
-import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import React from "react";
 
@@ -14,9 +19,11 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [md] = useMediaQuery("(min-width: 768px)");
+
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal isOpen={isOpen} onClose={onClose} size={md ? "lg" : "full"}>
         <ModalOverlay />
         <ModalContent width={{ base: "sm", md: "xl" }}>{children}</ModalContent>
       </Modal>

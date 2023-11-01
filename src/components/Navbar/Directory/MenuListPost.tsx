@@ -55,7 +55,12 @@ const MenuListPost: React.FC<DirectoryItemProps> = ({
         ) : (
           <Icon fontSize={36} mr={2} as={icon} color={iconColor} />
         )}
-        <Text fontWeight={600} fontSize="10pt">
+        <Text
+          maxWidth="100%" // Adjust the maximum width as needed
+          wordBreak="break-word"
+          fontWeight={600}
+          fontSize="10pt"
+        >
           {displayText}
         </Text>
       </Flex>

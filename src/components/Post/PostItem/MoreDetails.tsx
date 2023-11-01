@@ -12,6 +12,7 @@ import {
   Text,
   Image,
   Icon,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import {
   writeBatch,
@@ -43,6 +44,24 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
   const isJoined = !!postStateValue.postVolunteer.find(
     (item) => item.postId === post.id && item.id === user?.uid
   );
+  const [md] = useMediaQuery("(min-width: 768px)");
+
+  const convertToStandardDateMobile = (date: string | undefined) => {
+    if (date) {
+      const [year, month] = date.split("-");
+      const standardDate = new Date(Number(year), Number(month) - 1);
+
+      // Use toLocaleDateString with options to format the date as "Day, Month Day, Year"
+      const formattedDate = standardDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+      });
+
+      return formattedDate;
+    }
+    return ""; // Return an empty string if date is undefined
+  };
 
   const convertToStandardDate = (date: string | undefined) => {
     if (date) {
@@ -169,7 +188,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
   useEffect(() => {
     if (!user) return;
     getVolunteers();
-  });
+  }, [user]);
 
   return (
     <>
@@ -189,6 +208,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
             shadow="sm"
             p={2}
             mb={2}
+            mt={2}
             borderRadius="md"
             alignItems="center"
           >
@@ -217,7 +237,9 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
             >
               <Flex flexDirection="column" maxW="90%" pl={1}>
                 <Text fontSize="10pt" fontWeight={600} color="gray.600">
-                  {convertToStandardDate(post.date)}
+                  {md
+                    ? convertToStandardDate(post.date)
+                    : convertToStandardDateMobile(post.date)}
                 </Text>
                 <Text fontSize="11pt" fontWeight={600}>
                   {post.eventTitle}
@@ -246,6 +268,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
         blockScrollOnMount={false}
         isOpen={showDetails}
         onClose={() => setShowDetails(false)}
+        size={md ? "md" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>

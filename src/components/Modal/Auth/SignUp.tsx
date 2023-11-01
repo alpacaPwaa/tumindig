@@ -48,7 +48,12 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
 
   const createUserDocument = async (user: User) => {
     const userDocRef = doc(firestore, "users", user.uid);
-    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)));
+    const displayName = user.email?.split("@")[0];
+    const updatedUser = {
+      ...JSON.parse(JSON.stringify(user)), // Include the existing user data
+      displayName, // Update the displayName field
+    };
+    await setDoc(userDocRef, updatedUser);
   };
 
   useEffect(() => {

@@ -17,6 +17,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
@@ -49,6 +50,7 @@ import { Community, communityState } from "../../../atoms/communitiesAtom";
 import { FiAlertTriangle } from "react-icons/fi";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineEventAvailable } from "react-icons/md";
+import { TbSpeakerphone } from "react-icons/tb";
 
 export type TabItemType = {
   title: string;
@@ -96,6 +98,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
   const [communityStateValue] = useRecoilState(communityState);
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   const phoneRegex = /^\d{11}$/;
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const handleCreatePost = async () => {
     setLoading(true);
@@ -145,7 +148,8 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
         communityId,
         communityImageURL: communityImageURL || "",
         creatorId: user.uid,
-        userDisplayText: user.email!.split("@")[0],
+        userDisplayText: user.displayName,
+        isPinned: false,
         title,
         body,
         location,
@@ -401,13 +405,16 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                   </Flex>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>Raise Fund</MenuItem>
+                  {/* <MenuItem>Raise Fund</MenuItem> */}
                   <MenuItem
                     onClick={() => {
                       setDetails(true);
                     }}
                   >
-                    Add Event
+                    <Icon as={TbSpeakerphone} fontSize={20} mr={2} />
+                    <Text fontSize="11pt" fontWeight={600}>
+                      Add Event
+                    </Text>
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -712,7 +719,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                 justify="center"
                 align="center"
                 flexDirection="column"
-                p={20}
+                p={md ? 20 : 10}
                 border="1px"
                 borderColor="gray.200"
                 bg="gray.50"

@@ -3,9 +3,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import { auth, firestore } from "../../../firebase/clientApp";
 import ProfilePage from "../../../components/Profile/ProfilePage";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -26,6 +28,7 @@ type ProfileProps = { profile: string; communityData: Community };
 const Profile: NextPage<ProfileProps> = ({ communityData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
   const {
     postStateValue,
@@ -36,17 +39,16 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     onVote,
     onSelectPost,
     onDeletePost,
-    loading,
-    setLoading,
   } = usePosts();
   const [user] = useAuthState(auth);
 
-  const getUserPosts = async () => {
+  const getUserPosts = async (): Promise<Post[]> => {
     console.log("GETTING NO USER FEED");
 
     try {
       const postQuery = query(
         collection(firestore, "posts"),
+        where("creatorId", "==", user?.uid),
         orderBy("createdAt", "desc"),
         limit(8 * currentPage)
       );
@@ -74,6 +76,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     }
     setLoading(false);
     setFetchPostLoading(false);
+    return [];
   };
 
   const getUserPostVotes = async (postId: string) => {
@@ -163,6 +166,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
 
   useEffect(() => {
     getUserPosts();
+    setFetchPostLoading(true);
   }, [user, currentPage]);
 
   useEffect(() => {
@@ -181,47 +185,45 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
           ) : (
             <Flex flexDirection="column">
               <Stack>
-                {postStateValue.posts
-                  .filter((post) => user?.uid === post.creatorId)
-                  .map((post: Post, index) => (
-                    <PostItem
-                      key={post.id}
-                      post={post}
-                      postIdx={index}
-                      onVote={onVote}
-                      onDeletePost={onDeletePost}
-                      userVoteValue={
-                        postStateValue.postVotes.find(
-                          (item) => item.postId === post.id
-                        )?.voteValue
-                      }
-                      hidePost={
-                        postStateValue.postOptions.find(
-                          (item) => item.postId === post.id
-                        )?.isHidden
-                      }
-                      savePost={
-                        postStateValue.postOptions.find(
-                          (item) => item.postId === post.id
-                        )?.isSaved
-                      }
-                      reportPost={
-                        postStateValue.postOptions.find(
-                          (item) => item.postId === post.id
-                        )?.isReported
-                      }
-                      userIsCreator={user?.uid === post.creatorId}
-                      onSelectPost={onSelectPost}
-                      homePage
-                      mediaURLs={[]}
-                      onHidePost={onHidePost}
-                      onSavePost={onSavePost}
-                      onReportPost={onReportPost}
-                      communityData={communityData}
-                    />
-                  ))}
+                {postStateValue.posts.map((post: Post, index) => (
+                  <PostItem
+                    key={post.id}
+                    post={post}
+                    postIdx={index}
+                    onVote={onVote}
+                    onDeletePost={onDeletePost}
+                    userVoteValue={
+                      postStateValue.postVotes.find(
+                        (item) => item.postId === post.id
+                      )?.voteValue
+                    }
+                    hidePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isHidden
+                    }
+                    savePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isSaved
+                    }
+                    reportPost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isReported
+                    }
+                    userIsCreator={user?.uid === post.creatorId}
+                    onSelectPost={onSelectPost}
+                    homePage
+                    mediaURLs={[]}
+                    onHidePost={onHidePost}
+                    onSavePost={onSavePost}
+                    onReportPost={onReportPost}
+                    communityData={communityData}
+                  />
+                ))}
               </Stack>
-              {fetchPostLoading ? (
+              {fetchPostLoading && (
                 <Flex
                   p={2}
                   justifyContent="center"
@@ -231,7 +233,11 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
                   <Spinner size="sm" mr={2} />
                   <Text>Loading</Text>
                 </Flex>
-              ) : postStateValue.posts.length === 0 ? (
+              )}
+
+              {postStateValue.posts.filter(
+                (post) => user?.uid === post.creatorId
+              ).length === 0 && (
                 <Flex
                   justifyContent="center"
                   alignItems="center"
@@ -247,10 +253,10 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
                     No Post Yet
                   </Text>
                   <Text color="gray.500" fontSize="11pt" fontWeight={500}>
-                    All your post will appear here.
+                    All your posts will appear here.
                   </Text>
                 </Flex>
-              ) : null}
+              )}
             </Flex>
           )}
         </>

@@ -23,6 +23,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
 import moment from "moment";
@@ -33,6 +34,7 @@ import {
   BsBookmarkCheck,
   BsChat,
   BsExclamationCircleFill,
+  BsFillPinAngleFill,
 } from "react-icons/bs";
 import { Post, postState } from "../../../atoms/postsAtom";
 import Link from "next/link";
@@ -66,11 +68,9 @@ import {
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { doc, updateDoc } from "firebase/firestore";
 import { useRecoilState } from "recoil";
-import { RiEditLine } from "react-icons/ri";
 import TumblrShareButton from "react-share/lib/TumblrShareButton";
 import TumblrIcon from "react-share/lib/TumblrIcon";
 import PostOptions from "./PostOptions";
-import usePosts from "../../../hooks/usePosts";
 import Comments from "../Comments";
 import MoreDetails from "./MoreDetails";
 
@@ -128,9 +128,13 @@ const PostItem: React.FC<PostItemContentProps> = ({
   const [originalPostBody, setOriginalPostBody] = useState(post.body);
   const [bodyUpdateLoading, setBodyUpdateLoading] = useState(false);
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
+  const [pinPost, setPinPost] = useState(post.isPinned);
+  const [pinLoading, setPinLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const link = `https://www.tumindig.com/tumindig/${post.communityId}/comments/${post.id}`;
   const { mediaTypes } = post;
+  const [communityStateValue] = useRecoilState(communityState);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const onUpdatePostBody = useCallback(
     async (postId: string, newBody: string) => {
@@ -139,6 +143,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
         const postRef = doc(firestore, "posts", postId);
         await updateDoc(postRef, {
           body: newBody,
+          isEdited: true,
         });
         setPostStateValue((prev) => ({
           ...prev,
@@ -162,6 +167,37 @@ const PostItem: React.FC<PostItemContentProps> = ({
       }
     },
     [setPostStateValue]
+  );
+
+  const onUpdatePostPin = useCallback(
+    async (postId: string, isPinned: boolean | undefined) => {
+      setPinLoading(true);
+      try {
+        const postRef = doc(firestore, "posts", postId);
+        await updateDoc(postRef, {
+          isPinned: !isPinned,
+        });
+        setPostStateValue((prev) => ({
+          ...prev,
+          posts: prev.posts.map((item) => {
+            if (item.id === postId) {
+              return {
+                ...item,
+                isPinned: !isPinned,
+              };
+            }
+            return item;
+          }),
+        }));
+
+        setPinLoading(false);
+        setPinPost(!pinPost);
+      } catch (error: any) {
+        console.log("Error pinning post", error.message);
+        setPinLoading(false);
+      }
+    },
+    [setPostStateValue, pinPost]
   );
 
   const toggleEditMode = (
@@ -213,6 +249,13 @@ const PostItem: React.FC<PostItemContentProps> = ({
   const toggleShowMorePost = () => {
     setShowFullPost(!showFullPost);
   };
+
+  const isUserModerator = !!communityStateValue.moderatorSnippets.find(
+    (snippet) =>
+      snippet.communityId === communityData?.id &&
+      snippet.isModerator === true &&
+      snippet.userUid === user?.uid
+  );
 
   return (
     <>
@@ -267,67 +310,113 @@ const PostItem: React.FC<PostItemContentProps> = ({
                         <Link href={`tumindig/${post.communityId}`}>
                           <Text
                             fontWeight={700}
+                            maxWidth="100%" // Adjust the maximum width as needed
+                            wordBreak="break-word"
                             _hover={{ textDecoration: "underline" }}
                             onClick={(event) => event.stopPropagation()}
                           >{`${post.communityId}`}</Text>
                         </Link>
-                        <Flex flexDirection="row">
-                          <Text color="gray.500">
-                            Posted by {post.userDisplayText}
-                          </Text>
-                          <Text color="gray.500" mx={1}>
-                            &middot;
-                          </Text>
-                          <Text color="gray.500">
+                        <HStack color="gray.500">
+                          <Text>Posted by {post.userDisplayText}</Text>
+                          <Text mx={1}>&middot;</Text>
+                          <Text>
                             {moment(
                               new Date(post.createdAt.seconds * 1000)
                             ).fromNow()}
                           </Text>
-                        </Flex>
+                          {post.isEdited && <Text>Edited</Text>}
+                        </HStack>
                       </Flex>
                     </Flex>
                   ) : (
-                    <Flex>
-                      <Text color="gray.500">
-                        Posted by {post.userDisplayText}
-                      </Text>
-                      <Text color="gray.500" mx={1}>
-                        &middot;
-                      </Text>
-                      <Text color="gray.500">
+                    <HStack color="gray.500">
+                      {md ? (
+                        <Text>Posted by {post.userDisplayText}</Text>
+                      ) : (
+                        <Text>{post.userDisplayText}</Text>
+                      )}
+                      <Text mx={1}>&middot;</Text>
+                      <Text>
                         {moment(
                           new Date(post.createdAt.seconds * 1000)
                         ).fromNow()}
                       </Text>
-                    </Flex>
+                      {post.isPinned && md && <Text>Pinned</Text>}
+                    </HStack>
                   )}
                 </Stack>
-                <PostOptions
-                  hidePost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isHidden
-                  }
-                  savePost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isSaved
-                  }
-                  reportPost={
-                    postStateValue.postOptions.find(
-                      (item) => item.postId === post.id
-                    )?.isReported
-                  }
-                  userIsCreator={user?.uid === post.creatorId}
-                  onHidePost={onHidePost}
-                  onSavePost={onSavePost}
-                  onReportPost={onReportPost}
-                  onDeletePost={onDeletePost}
-                  onSelectPost={onSelectPost}
-                  editMode={toggleEditMode}
-                  communityData={communityData}
-                  post={post}
-                />
+                <Flex alignItems="center">
+                  {user &&
+                  (user.uid === communityData?.creatorId || isUserModerator) ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      borderRadius="full"
+                      position="relative"
+                      ml="auto"
+                      isLoading={pinLoading}
+                      onClick={(event) => {
+                        event.stopPropagation(); // Stop event propagation
+                        onUpdatePostPin(post.id, post.isPinned);
+                      }}
+                    >
+                      <Flex align="center" justify="center">
+                        <Icon
+                          fontSize="18px"
+                          position="absolute"
+                          color={pinPost ? "blue.500" : "gray.500"}
+                          as={BsFillPinAngleFill}
+                        />
+                      </Flex>
+                    </Button>
+                  ) : pinPost && !homePage ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      borderRadius="full"
+                      position="relative"
+                      ml="auto"
+                      onClick={(event) => {
+                        event.stopPropagation(); // Stop event propagation
+                      }}
+                    >
+                      <Flex align="center" justify="center">
+                        <Icon
+                          fontSize="18px"
+                          position="absolute"
+                          color="blue.500"
+                          as={BsFillPinAngleFill}
+                        />
+                      </Flex>
+                    </Button>
+                  ) : null}
+                  <PostOptions
+                    hidePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isHidden
+                    }
+                    savePost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isSaved
+                    }
+                    reportPost={
+                      postStateValue.postOptions.find(
+                        (item) => item.postId === post.id
+                      )?.isReported
+                    }
+                    userIsCreator={user?.uid === post.creatorId}
+                    onHidePost={onHidePost}
+                    onSavePost={onSavePost}
+                    onReportPost={onReportPost}
+                    onDeletePost={onDeletePost}
+                    onSelectPost={onSelectPost}
+                    editMode={toggleEditMode}
+                    communityData={communityData}
+                    post={post}
+                  />
+                </Flex>
               </Flex>
             )}
             <Flex p="8px 10px 8px 10px" flexDirection="column">
@@ -448,7 +537,6 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 </Text>
               )}
             </Flex>
-            <MoreDetails post={post} community={communityData} />
             {post.mediaURLs && (
               <Flex
                 direction="column"
@@ -567,24 +655,33 @@ const PostItem: React.FC<PostItemContentProps> = ({
               </Flex>
             )}
           </Flex>
-          <Flex color="gray.500" fontWeight={600} alignItems="center" m={3}>
-            <Button
-              size="sm"
-              variant="ghost"
-              borderEndRadius={0}
-              isDisabled={isDisableVote}
-              onClick={(event) => onVote(event, post, 1, post.communityId)}
-            >
-              <Icon
-                as={
-                  userVoteValue === 1
-                    ? IoIosArrowDropupCircle
-                    : IoIosArrowDropup
-                }
-                color={userVoteValue === 1 ? "blue.500" : "gray.500"}
-                fontSize={24}
-                cursor="pointer"
-              />
+          <MoreDetails post={post} community={communityData} />
+          <Flex
+            color="gray.500"
+            fontWeight={600}
+            justifyContent="space-around"
+            alignItems="center"
+            m={3}
+          >
+            <Flex alignItems="center">
+              <Button
+                size="sm"
+                variant="ghost"
+                position="relative"
+                isDisabled={isDisableVote}
+                onClick={(event) => onVote(event, post, 1, post.communityId)}
+              >
+                <Icon
+                  as={
+                    userVoteValue === 1
+                      ? IoIosArrowDropupCircle
+                      : IoIosArrowDropup
+                  }
+                  color={userVoteValue === 1 ? "blue.500" : "gray.500"}
+                  fontSize={24}
+                  position="absolute"
+                />
+              </Button>
               <Text
                 fontSize="10pt"
                 mr={1}
@@ -597,45 +694,43 @@ const PostItem: React.FC<PostItemContentProps> = ({
                     : "gray.500"
                 }
               >
-                {post.voteStatus} Upvotes
+                {post.voteStatus} {md ? "Upvotes" : null}
               </Text>
-            </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                position="relative"
+                isDisabled={isDisableVote}
+                onClick={(event) => onVote(event, post, -1, post.communityId)}
+              >
+                <Icon
+                  as={
+                    userVoteValue === -1
+                      ? IoIosArrowDropdownCircle
+                      : IoIosArrowDropdown
+                  }
+                  color={userVoteValue === -1 ? "red.500" : "gray.500"}
+                  fontSize={24}
+                  position="absolute"
+                />
+              </Button>
+            </Flex>
             <Button
-              size="sm"
-              variant="ghost"
-              borderStartRadius={0}
-              isDisabled={isDisableVote}
-              onClick={(event) => onVote(event, post, -1, post.communityId)}
-            >
-              <Icon
-                as={
-                  userVoteValue === -1
-                    ? IoIosArrowDropdownCircle
-                    : IoIosArrowDropdown
-                }
-                color={userVoteValue === -1 ? "red.500" : "gray.500"}
-                fontSize={24}
-                cursor="pointer"
-              />
-            </Button>
-            <Button
               variant="ghost"
               size="sm"
-              flex={1}
               onClick={(event) => {
-                event.stopPropagation();
-                setShowComments(true);
+                if (!singlePostView) {
+                  event.stopPropagation();
+                  setShowComments(true);
+                }
               }}
             >
               <Icon as={BsChat} mr={2} fontSize={20} />
-              <Text fontSize="10pt">{post.numberOfComments} Comments</Text>
+              <Text fontSize="10pt">
+                {post.numberOfComments} {md ? "Comments" : null}
+              </Text>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              flex={1}
-              onClick={handleSharePostModal}
-            >
+            <Button variant="ghost" size="sm" onClick={handleSharePostModal}>
               <Icon as={FiShare} mr={2} fontSize={20} />
               <Text fontSize="10pt">Share</Text>
             </Button>
@@ -647,7 +742,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
       <Modal
         isOpen={showComments}
         onClose={() => setShowComments(false)}
-        size="xl"
+        size={md ? "xl" : "full"}
       >
         <ModalOverlay />
         <ModalContent>
@@ -725,6 +820,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         isCentered
+        size={md ? "sm" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>

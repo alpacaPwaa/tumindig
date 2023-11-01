@@ -1,4 +1,4 @@
-import { SearchIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   AspectRatio,
   Box,
@@ -26,10 +26,16 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Link,
 } from "@chakra-ui/react";
 import { updateDoc, doc } from "firebase/firestore";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { BiSearchAlt2 } from "react-icons/bi";
 import {
   FaUserCheck,
   FaUserCircle,
@@ -40,6 +46,7 @@ import {
 } from "react-icons/fa";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoPersonAddSharp, IoPersonRemoveSharp } from "react-icons/io5";
+import { TbUserSearch } from "react-icons/tb";
 import { useRecoilState } from "recoil";
 import {
   Community,
@@ -52,7 +59,6 @@ import Loader from "./Loader";
 
 type ModeratorProps = {
   communityData: Community;
-  communitySnippets: CommunitySnippet[];
 };
 
 const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
@@ -62,12 +68,13 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
   const {
     userList,
     moderatorList,
+    banList,
     loadingModeratorMap,
-    loadMoreLoading,
+    loadingBanMap,
     searchLoading,
-    currentPage,
+    errorSearch,
     onAddRemoveModerator,
-    onLoadMore,
+    onAddRemoveBan,
     onSearchUser,
     handleSearch,
     setSearchQuery,
@@ -423,7 +430,9 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                           </Text>
                         </Flex>
                       </Flex>
-                    ) : null}
+                    ) : (
+                      ""
+                    )}
                   </>
                 )}
               </Flex>
@@ -526,14 +535,15 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                             >
                               {!editedSite && "ADD WEBSITE"}
                             </Text>
-                            <a
+                            <Link
+                              isExternal
                               href={editedSite}
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{ fontSize: "10pt" }}
                             >
                               {editedSite}
-                            </a>
+                            </Link>
                             <Text fontSize="9pt" color="gray.600">
                               Website
                             </Text>
@@ -584,7 +594,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     color="blue.500"
                     cursor="pointer"
                   />
-                  ADD MODERATOR
+                  MANAGE COMMUNITY
                 </Button>
               </>
             )}
@@ -594,7 +604,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize="11pt">Add Moderator</ModalHeader>
+          <ModalHeader fontSize="11pt">Manage Community</ModalHeader>
           <Box
             maxHeight="400px"
             overflowY="auto"
@@ -612,9 +622,9 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
               <ModalCloseButton _focus={{ border: "none" }} />
               <Divider />
 
-              <Flex mb={5} mt={5}>
+              <Flex mb={1} mt={5} flexDirection="column">
                 <InputGroup>
-                  <InputLeftElement
+                  <InputRightElement
                     top="50%"
                     transform="translateY(-50%)"
                     color="gray.400"
@@ -624,33 +634,50 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                       variant="ghost"
                       position="relative"
                       onClick={handleSearch}
+                      isLoading={searchLoading}
                     >
                       <SearchIcon fontSize="md" position="absolute" />
                     </Button>
-                  </InputLeftElement>
+                  </InputRightElement>
                   <Input
-                    pl="2.5rem"
+                    pl="1.5rem"
                     variant="flushed"
-                    placeholder="Search Users"
-                    fontSize="10pt"
+                    placeholder="Enter Username"
+                    fontSize="14px"
                     _placeholder={{ color: "gray.500" }}
                     height="40px"
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={onSearchUser}
                   />
                 </InputGroup>
+                {errorSearch && (
+                  <Text
+                    color="red.500"
+                    fontWeight={600}
+                    fontSize="10pt"
+                    textAlign="center"
+                    p={2}
+                  >
+                    {errorSearch}
+                  </Text>
+                )}
               </Flex>
 
               <Tabs position="relative" variant="unstyled">
                 <TabList>
                   <Tab _focus={{ border: "none" }}>
-                    <Text fontSize="11pt" fontWeight={600} color="gray.500">
+                    <Text fontSize="14px" fontWeight={600} color="gray.500">
                       Users
                     </Text>
                   </Tab>
                   <Tab _focus={{ border: "none" }}>
-                    <Text fontSize="11pt" fontWeight={600} color="gray.500">
+                    <Text fontSize="14px" fontWeight={600} color="gray.500">
                       Moderators
+                    </Text>
+                  </Tab>
+                  <Tab _focus={{ border: "none" }}>
+                    <Text fontSize="14px" fontWeight={600} color="gray.500">
+                      Ban
                     </Text>
                   </Tab>
                 </TabList>
@@ -662,259 +689,408 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                 />
                 <TabPanels>
                   <TabPanel>
-                    <Stack spacing={4} mt={2}>
-                      {searchLoading ? (
-                        <Loader />
-                      ) : (
-                        userList.map((user) => {
-                          const isModerator =
-                            !!communityStateValue.moderatorSnippets.find(
-                              (snippet) =>
-                                snippet.communityId === communityData.id &&
-                                snippet.isModerator === true &&
-                                snippet.userUid === user.uid // Add this condition to match the current user
-                            );
+                    <Stack spacing={4}>
+                      {userList.map((user) => {
+                        const isModerator =
+                          !!communityStateValue.moderatorSnippets.find(
+                            (snippet) =>
+                              snippet.communityId === communityData.id &&
+                              snippet.isModerator === true &&
+                              snippet.userUid === user.uid // Add this condition to match the current user
+                          );
 
-                          return (
-                            <Flex
-                              key={user.uid}
-                              cursor="pointer"
-                              flexDirection="column"
-                            >
-                              <Flex justifyContent="space-between">
-                                <Flex alignItems="center">
-                                  {user?.photoURL ? (
-                                    <Box
-                                      borderRadius="full"
-                                      overflow="hidden"
-                                      boxSize="36px"
-                                      mr={3}
-                                    >
-                                      <AspectRatio ratio={1 / 1}>
-                                        <Image
-                                          src={user.photoURL}
-                                          alt="User Photo"
-                                          objectFit="cover"
-                                          boxSize="100%"
-                                          style={{
-                                            borderRadius: "50%",
-                                            mask: "url(#circle-mask)",
-                                          }}
-                                        />
-                                      </AspectRatio>
-                                    </Box>
-                                  ) : (
-                                    <Icon
-                                      as={FaUserCircle}
-                                      fontSize={36}
-                                      color="gray.300"
-                                      mr={3}
-                                    />
-                                  )}
-                                  {user?.displayName ? (
-                                    <Text fontSize="10pt" fontWeight={600}>
-                                      {user.displayName}
-                                    </Text>
-                                  ) : (
-                                    <Text fontSize="10pt" fontWeight={600}>
-                                      {user?.email?.split("@")[0]}
-                                    </Text>
-                                  )}
-                                </Flex>
+                        const isBanned =
+                          !!communityStateValue.bannedSnippet.find(
+                            (snippet) =>
+                              snippet.communityId === communityData.id &&
+                              snippet.isBanned === true &&
+                              snippet.userUid === user.uid // Add this condition to match the current user
+                          );
 
-                                <Flex>
-                                  {isModerator ? (
-                                    <Button
-                                      key={user.uid}
-                                      size="sm"
-                                      fontSize="10pt"
-                                      isLoading={loadingModeratorMap[user.uid]}
-                                      onClick={() =>
-                                        onAddRemoveModerator(
-                                          user,
-                                          communityData,
-                                          isModerator
-                                        )
-                                      }
-                                    >
-                                      <Icon
-                                        as={FaUserCheck}
-                                        mr={1}
-                                        fontSize="md"
+                        return (
+                          <Flex
+                            key={user.uid}
+                            cursor="pointer"
+                            flexDirection="column"
+                          >
+                            <Flex justifyContent="space-between">
+                              <Flex alignItems="center">
+                                {user?.photoURL ? (
+                                  <Box
+                                    borderRadius="full"
+                                    overflow="hidden"
+                                    boxSize="36px"
+                                    mr={3}
+                                  >
+                                    <AspectRatio ratio={1 / 1}>
+                                      <Image
+                                        src={user.photoURL}
+                                        alt="User Photo"
+                                        objectFit="cover"
+                                        boxSize="100%"
+                                        style={{
+                                          borderRadius: "50%",
+                                          mask: "url(#circle-mask)",
+                                        }}
                                       />
-                                      Added
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      key={user.uid}
-                                      size="sm"
-                                      fontSize="10pt"
-                                      isLoading={loadingModeratorMap[user.uid]}
-                                      onClick={() =>
-                                        onAddRemoveModerator(
-                                          user,
-                                          communityData,
-                                          isModerator
-                                        )
-                                      }
-                                    >
-                                      <Icon
-                                        as={IoPersonAddSharp}
-                                        mr={1}
-                                        fontSize="sm"
-                                      />
-                                      Add
-                                    </Button>
-                                  )}
-                                </Flex>
+                                    </AspectRatio>
+                                  </Box>
+                                ) : (
+                                  <Icon
+                                    as={FaUserCircle}
+                                    fontSize={36}
+                                    color="gray.300"
+                                    mr={3}
+                                  />
+                                )}
+                                {user?.displayName ? (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user.displayName}
+                                  </Text>
+                                ) : (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user?.email?.split("@")[0]}
+                                  </Text>
+                                )}
+                              </Flex>
+
+                              <Flex>
+                                <Menu closeOnSelect={false}>
+                                  <MenuButton
+                                    size="sm"
+                                    fontSize="10pt"
+                                    as={Button}
+                                    rightIcon={<ChevronDownIcon />}
+                                  >
+                                    Actions
+                                  </MenuButton>
+
+                                  <MenuList>
+                                    <MenuItem>
+                                      {isModerator ? (
+                                        <Flex
+                                          key={user.uid}
+                                          alignItems="center"
+                                          justifyContent="center"
+                                          cursor="pointer"
+                                          fontSize="10pt"
+                                          color="gray.600"
+                                          fontWeight={600}
+                                          p={1}
+                                          onClick={() =>
+                                            onAddRemoveModerator(
+                                              user,
+                                              communityData,
+                                              isModerator
+                                            )
+                                          }
+                                        >
+                                          <Icon
+                                            as={FaUserCheck}
+                                            mr={2}
+                                            fontSize={15}
+                                          />
+                                          {loadingModeratorMap[user.uid] ? (
+                                            <Spinner size="xs" />
+                                          ) : (
+                                            "Added"
+                                          )}
+                                        </Flex>
+                                      ) : (
+                                        <Flex
+                                          key={user.uid}
+                                          alignItems="center"
+                                          cursor="pointer"
+                                          fontSize="10pt"
+                                          color="gray.600"
+                                          fontWeight={600}
+                                          p={1}
+                                          onClick={() =>
+                                            onAddRemoveModerator(
+                                              user,
+                                              communityData,
+                                              isModerator
+                                            )
+                                          }
+                                        >
+                                          <Icon
+                                            as={IoPersonAddSharp}
+                                            mr={2}
+                                            fontSize={15}
+                                          />
+                                          {loadingModeratorMap[user.uid] ? (
+                                            <Spinner size="xs" />
+                                          ) : (
+                                            "Add Moderator"
+                                          )}
+                                        </Flex>
+                                      )}
+                                    </MenuItem>
+                                    <MenuItem>
+                                      {isBanned ? (
+                                        <Flex
+                                          key={user.uid}
+                                          alignItems="center"
+                                          cursor="pointer"
+                                          fontSize="10pt"
+                                          color="red.500"
+                                          fontWeight={700}
+                                          p={1}
+                                          onClick={() =>
+                                            onAddRemoveBan(
+                                              user,
+                                              communityData,
+                                              isBanned
+                                            )
+                                          }
+                                        >
+                                          <Icon
+                                            as={FaUserCheck}
+                                            mr={2}
+                                            fontSize={15}
+                                          />
+                                          {loadingBanMap[user.uid] ? (
+                                            <Spinner size="xs" />
+                                          ) : (
+                                            "Unban"
+                                          )}
+                                        </Flex>
+                                      ) : (
+                                        <Flex
+                                          key={user.uid}
+                                          alignItems="center"
+                                          cursor="pointer"
+                                          fontSize="10pt"
+                                          color="red.500"
+                                          fontWeight={700}
+                                          p={1}
+                                          onClick={() =>
+                                            onAddRemoveBan(
+                                              user,
+                                              communityData,
+                                              isBanned
+                                            )
+                                          }
+                                        >
+                                          <Icon
+                                            as={IoPersonAddSharp}
+                                            mr={2}
+                                            fontSize={15}
+                                          />
+                                          {loadingBanMap[user.uid] ? (
+                                            <Spinner size="xs" />
+                                          ) : (
+                                            "Ban User"
+                                          )}
+                                        </Flex>
+                                      )}
+                                    </MenuItem>
+                                  </MenuList>
+                                </Menu>
                               </Flex>
                             </Flex>
-                          );
-                        })
-                      )}
+                          </Flex>
+                        );
+                      })}
 
-                      {userList.length >= currentPage * 10 ? (
-                        <Button
-                          mt={2}
-                          variant="ghost"
-                          size="sm"
-                          width="100%"
-                          fontSize="10pt"
-                          fontWeight={800}
-                          onClick={onLoadMore} // Add onClick event handler
-                        >
-                          Load More
-                        </Button>
-                      ) : loadMoreLoading ? (
+                      {userList.length == 0 && (
                         <Flex
                           justifyContent="center"
+                          alignItems="center"
                           fontSize="10pt"
-                          fontWeight={800}
+                          flexDirection="column"
                         >
-                          <Text>Loading...</Text>
-                        </Flex>
-                      ) : (
-                        <Flex
-                          justifyContent="center"
-                          fontSize="10pt"
-                          fontWeight={800}
-                        >
-                          <Text>You've reached the end of users</Text>
+                          <Icon
+                            color="gray.400"
+                            fontSize={150}
+                            as={TbUserSearch}
+                            p={2}
+                          />
+                          <Text fontWeight={800}>
+                            Enter username in the search box
+                          </Text>
                         </Flex>
                       )}
                     </Stack>
                   </TabPanel>
                   <TabPanel>
                     <Stack spacing={4} mt={2}>
-                      {searchLoading ? (
-                        <Loader />
-                      ) : (
-                        moderatorList.map((user) => {
-                          const isModerator =
-                            !!communityStateValue.moderatorSnippets.find(
-                              (snippet) =>
-                                snippet.communityId === communityData.id &&
-                                snippet.isModerator === true &&
-                                snippet.userUid === user.uid // Add this condition to match the current user
-                            );
+                      {moderatorList.map((user) => {
+                        const isModerator =
+                          !!communityStateValue.moderatorSnippets.find(
+                            (snippet) =>
+                              snippet.communityId === communityData.id &&
+                              snippet.isModerator === true &&
+                              snippet.userUid === user.uid // Add this condition to match the current user
+                          );
 
-                          return isModerator ? (
+                        return isModerator ? (
+                          <Flex
+                            key={user.uid}
+                            cursor="pointer"
+                            flexDirection="column"
+                          >
                             <Flex
-                              key={user.uid}
-                              cursor="pointer"
-                              flexDirection="column"
+                              justifyContent="space-between"
+                              alignItems="center"
                             >
-                              <Flex
-                                justifyContent="space-between"
-                                alignItems="center"
-                              >
-                                <Flex alignItems="center">
-                                  {user?.photoURL ? (
-                                    <Box
-                                      borderRadius="full"
-                                      overflow="hidden"
-                                      boxSize="36px"
-                                      mr={3}
-                                    >
-                                      <AspectRatio ratio={1 / 1}>
-                                        <Image
-                                          src={user.photoURL}
-                                          alt="User Photo"
-                                          objectFit="cover"
-                                          boxSize="100%"
-                                        />
-                                      </AspectRatio>
-                                    </Box>
-                                  ) : (
-                                    <Icon
-                                      as={FaUserCircle}
-                                      fontSize={36}
-                                      color="gray.300"
-                                      mr={3}
-                                    />
-                                  )}
-                                  {user?.displayName ? (
-                                    <Text fontSize="10pt" fontWeight={600}>
-                                      {user.displayName}
-                                    </Text>
-                                  ) : (
-                                    <Text fontSize="10pt" fontWeight={600}>
-                                      {user?.email?.split("@")[0]}
-                                    </Text>
-                                  )}
-                                </Flex>
+                              <Flex alignItems="center">
+                                {user?.photoURL ? (
+                                  <Box
+                                    borderRadius="full"
+                                    overflow="hidden"
+                                    boxSize="36px"
+                                    mr={3}
+                                  >
+                                    <AspectRatio ratio={1 / 1}>
+                                      <Image
+                                        src={user.photoURL}
+                                        alt="User Photo"
+                                        objectFit="cover"
+                                        boxSize="100%"
+                                      />
+                                    </AspectRatio>
+                                  </Box>
+                                ) : (
+                                  <Icon
+                                    as={FaUserCircle}
+                                    fontSize={36}
+                                    color="gray.300"
+                                    mr={3}
+                                  />
+                                )}
+                                {user?.displayName ? (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user.displayName}
+                                  </Text>
+                                ) : (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user?.email?.split("@")[0]}
+                                  </Text>
+                                )}
+                              </Flex>
 
-                                <Flex>
-                                  {isModerator ? (
-                                    <Button
-                                      key={user.uid}
-                                      size="sm"
-                                      fontSize="10pt"
-                                      variant="outline"
-                                      isLoading={loadingModeratorMap[user.uid]}
-                                      onClick={() =>
-                                        onAddRemoveModerator(
-                                          user,
-                                          communityData,
-                                          isModerator
-                                        )
-                                      }
-                                    >
-                                      <Icon
-                                        as={IoPersonRemoveSharp}
-                                        mr={1}
-                                        fontSize="sm"
-                                      />
-                                      Remove
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      key={user.uid}
-                                      size="sm"
-                                      fontSize="10pt"
-                                      isLoading={loadingModeratorMap[user.uid]}
-                                      onClick={() =>
-                                        onAddRemoveModerator(
-                                          user,
-                                          communityData,
-                                          isModerator
-                                        )
-                                      }
-                                    >
-                                      <Icon
-                                        as={IoPersonAddSharp}
-                                        mr={1}
-                                        fontSize="sm"
-                                      />
-                                      Add
-                                    </Button>
-                                  )}
-                                </Flex>
+                              <Flex>
+                                {isModerator && (
+                                  <Button
+                                    key={user.uid}
+                                    size="sm"
+                                    fontSize="10pt"
+                                    variant="outline"
+                                    isLoading={loadingModeratorMap[user.uid]}
+                                    onClick={() =>
+                                      onAddRemoveModerator(
+                                        user,
+                                        communityData,
+                                        isModerator
+                                      )
+                                    }
+                                  >
+                                    <Icon
+                                      as={IoPersonRemoveSharp}
+                                      mr={1}
+                                      fontSize="sm"
+                                    />
+                                    Remove
+                                  </Button>
+                                )}
                               </Flex>
                             </Flex>
-                          ) : null;
-                        })
-                      )}
+                          </Flex>
+                        ) : null;
+                      })}
+                    </Stack>
+                  </TabPanel>
+
+                  <TabPanel>
+                    <Stack spacing={4} mt={2}>
+                      {banList.map((user) => {
+                        const isBanned =
+                          !!communityStateValue.bannedSnippet.find(
+                            (snippet) =>
+                              snippet.communityId === communityData.id &&
+                              snippet.isBanned === true &&
+                              snippet.userUid === user.uid // Add this condition to match the current user
+                          );
+
+                        return isBanned ? (
+                          <Flex
+                            key={user.uid}
+                            cursor="pointer"
+                            flexDirection="column"
+                          >
+                            <Flex
+                              justifyContent="space-between"
+                              alignItems="center"
+                            >
+                              <Flex alignItems="center">
+                                {user?.photoURL ? (
+                                  <Box
+                                    borderRadius="full"
+                                    overflow="hidden"
+                                    boxSize="36px"
+                                    mr={3}
+                                  >
+                                    <AspectRatio ratio={1 / 1}>
+                                      <Image
+                                        src={user.photoURL}
+                                        alt="User Photo"
+                                        objectFit="cover"
+                                        boxSize="100%"
+                                      />
+                                    </AspectRatio>
+                                  </Box>
+                                ) : (
+                                  <Icon
+                                    as={FaUserCircle}
+                                    fontSize={36}
+                                    color="gray.300"
+                                    mr={3}
+                                  />
+                                )}
+                                {user?.displayName ? (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user.displayName}
+                                  </Text>
+                                ) : (
+                                  <Text fontSize="10pt" fontWeight={600}>
+                                    {user?.email?.split("@")[0]}
+                                  </Text>
+                                )}
+                              </Flex>
+
+                              <Flex>
+                                {isBanned && (
+                                  <Button
+                                    key={user.uid}
+                                    size="sm"
+                                    fontSize="10pt"
+                                    variant="ghost"
+                                    border="1px"
+                                    borderColor="red.500"
+                                    color="red.500"
+                                    isLoading={loadingBanMap[user.uid]}
+                                    onClick={() =>
+                                      onAddRemoveBan(
+                                        user,
+                                        communityData,
+                                        isBanned
+                                      )
+                                    }
+                                  >
+                                    <Icon
+                                      as={IoPersonRemoveSharp}
+                                      mr={1}
+                                      fontSize="sm"
+                                    />
+                                    Unban
+                                  </Button>
+                                )}
+                              </Flex>
+                            </Flex>
+                          </Flex>
+                        ) : null;
+                      })}
                     </Stack>
                   </TabPanel>
                 </TabPanels>

@@ -15,18 +15,22 @@ import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
 import router from "next/router";
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { Community } from "../../atoms/communitiesAtom";
-import { firestore } from "../../firebase/clientApp";
+import { auth, firestore } from "../../firebase/clientApp";
 import useCommunityData from "../../hooks/useCommunityData";
+import useDirectory from "../../hooks/useDirectory";
 
-type RecommendationsProps = {};
+type RecommendationsProps = { communityData: Community };
 
-const Recommendations: React.FC<RecommendationsProps> = () => {
+const Recommendations: React.FC<RecommendationsProps> = ({ communityData }) => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(false);
   const { communityStateValue, loadingCommunityMap, onJoinLeaveCommunity } =
     useCommunityData();
+  const { onSelectMenuItem } = useDirectory();
+  const [user] = useAuthState(auth);
 
   const goToCommunityList = () => {
     router.push(`/communities`); // Use router.push to navigate to the profile page
@@ -108,6 +112,14 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
               const isJoined = !!communityStateValue.mySnippets.find(
                 (snippet) => snippet.communityId === item.id
               );
+
+              const isBanned = !!communityStateValue.bannedSnippet.find(
+                (snippet) =>
+                  snippet.communityId === item.id &&
+                  snippet.isBanned === true &&
+                  snippet.userUid === user?.uid // Add this condition to match the current user
+              );
+
               return (
                 <Link key={item.id} href={`/tumindig/${item.id}`}>
                   <Flex
@@ -161,9 +173,10 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                           event.stopPropagation();
                           onJoinLeaveCommunity(item, isJoined);
                         }}
+                        isDisabled={isBanned}
                         variant={isJoined ? "outline" : "solid"}
                       >
-                        {isJoined ? "Joined" : "Join"}
+                        {isBanned ? "Banned" : isJoined ? "Joined" : "Join"}
                       </Button>
                     </Box>
                   </Flex>

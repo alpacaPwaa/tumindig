@@ -216,6 +216,7 @@ const HiddenPost: NextPage<HiddenPostProps> = ({ communityData }) => {
 
   useEffect(() => {
     getUserPosts();
+    setFetchPostLoading(true);
   }, [user, currentPage]);
 
   useEffect(() => {
@@ -272,7 +273,7 @@ const HiddenPost: NextPage<HiddenPostProps> = ({ communityData }) => {
                   />
                 ))}
               </Stack>
-              {fetchPostLoading ? (
+              {fetchPostLoading && (
                 <Flex
                   p={2}
                   justifyContent="center"
@@ -282,7 +283,8 @@ const HiddenPost: NextPage<HiddenPostProps> = ({ communityData }) => {
                   <Spinner size="sm" mr={2} />
                   <Text>Loading</Text>
                 </Flex>
-              ) : filteredPosts.length === 0 ? (
+              )}
+              {filteredPosts.length === 0 ? (
                 <Flex
                   justifyContent="center"
                   alignItems="center"

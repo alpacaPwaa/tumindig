@@ -16,21 +16,27 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useMediaQuery,
 } from "@chakra-ui/react";
+import { doc, updateDoc } from "firebase/firestore";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineDelete } from "react-icons/ai";
 import { BiHide } from "react-icons/bi";
-import { BsBookmarkCheck, BsBookmark } from "react-icons/bs";
+import {
+  BsBookmarkCheck,
+  BsBookmark,
+  BsFillPinAngleFill,
+} from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RiEditLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TbMessageReport, TbTrashX } from "react-icons/tb";
 import { useRecoilState } from "recoil";
 import { Community, communityState } from "../../../atoms/communitiesAtom";
-import { Post } from "../../../atoms/postsAtom";
-import { auth } from "../../../firebase/clientApp";
+import { Post, postState } from "../../../atoms/postsAtom";
+import { auth, firestore } from "../../../firebase/clientApp";
 
 type PostOptionsProps = {
   post: Post;
@@ -70,6 +76,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
   const [user] = useAuthState(auth);
   const [removePostModalOpen, setRemovePostModalOplen] = useState(false);
   const singlePostView = !onSelectPost; // function not passed to [pid]
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const handleDelete = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -226,7 +233,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
               </>
             )}
             <Divider />
-            <MenuItem
+            {/* <MenuItem
               onClick={handleReportPostModal}
               color={reportPost ? "red.500" : ""}
             >
@@ -234,7 +241,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
               <Text fontSize="10pt" pl={1} fontWeight={600}>
                 {reportPost ? "Reported" : "Report"}
               </Text>
-            </MenuItem>
+            </MenuItem> */}
             {user &&
               (user.uid === communityData?.creatorId || isUserModerator) && ( // Compare community creator ID with the user's ID
                 <>
@@ -334,10 +341,12 @@ const PostOptions: React.FC<PostOptionsProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
       <Modal
         isOpen={removePostModalOpen}
         onClose={handleCancelRemovePostModal}
         isCentered
+        size={md ? "sm" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>
@@ -396,10 +405,12 @@ const PostOptions: React.FC<PostOptionsProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
       <Modal
         isOpen={showDeleteConfirmationModal}
         onClose={() => setShowDeleteConfirmationModal(false)}
         isCentered
+        size={md ? "sm" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>

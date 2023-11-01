@@ -21,6 +21,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
 import {
+  BanSnippet,
   Community,
   CommunitySnippet,
   communityState,
@@ -46,17 +47,23 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
   const [loadingModeratorMap, setLoadingModeratorMap] = useState<{
     [userId: string]: boolean;
   }>({});
+  const [loadingBanMap, setLoadingBanMap] = useState<{
+    [userId: string]: boolean;
+  }>({});
   const [loadingCommunityMap, setLoadingCommunityMap] = useState<{
     [communityId: string]: boolean;
   }>({});
   const [loadingSponsorMap, setLoadingSponsorMap] = useState<{
     [sponsorId: string]: boolean;
   }>({});
+  const [errorSearch, setErrorSearch] = useState("");
   const [error, setError] = useState("");
   const [isModerator, setIsModerator] = useState<boolean>(false);
+  const [isBanned, setIsBanned] = useState<boolean>(false);
   const [isSponsor, setIsSponsor] = useState<boolean>(false);
   const [userList, setUserList] = useState<User[]>([]);
   const [moderatorList, setModeratorList] = useState<User[]>([]);
+  const [banList, setBanList] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -72,7 +79,13 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     getModeratorSnippets();
   }, [user]);
 
-  const getAllUsersSnippets = async () => {
+  useEffect(() => {
+    if (!user || !!communityStateValue.bannedSnippet.length) return;
+
+    getBannedSnippets();
+  }, [user]);
+
+  const getAllModeratorSnippets = async () => {
     const snippetsCollection = collectionGroup(firestore, "moderatorSnippets");
     const snippetsDocs = await getDocs(snippetsCollection);
     const snippets: ModeratorSnippet[] = [];
@@ -88,13 +101,46 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     return snippets;
   };
 
+  const getAllBanSnippets = async () => {
+    const snippetsCollection = collectionGroup(firestore, "banSnippets");
+    const snippetsDocs = await getDocs(snippetsCollection);
+    const snippets: BanSnippet[] = [];
+
+    snippetsDocs.forEach((doc) => {
+      const snippet = doc.data() as BanSnippet;
+
+      if (snippet.isBanned === true) {
+        snippets.push({ ...snippet });
+      }
+    });
+
+    return snippets;
+  };
+
   const getModeratorSnippets = async () => {
     setLoading(true);
     try {
-      const snippets = await getAllUsersSnippets();
+      const snippets = await getAllModeratorSnippets();
       setCommunityStateValue((prev) => ({
         ...prev,
         moderatorSnippets: [...snippets], // Replace the existing snippets with the new ones
+        initSnippetsFetched: true,
+      }));
+      setLoading(false);
+    } catch (error: any) {
+      console.log("Error getting snippets", error);
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
+  const getBannedSnippets = async () => {
+    setLoading(true);
+    try {
+      const snippets = await getAllBanSnippets();
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        bannedSnippet: [...snippets], // Replace the existing snippets with the new ones
         initSnippetsFetched: true,
       }));
       setLoading(false);
@@ -125,33 +171,43 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
   const fetchUserList = async () => {
     setLoadMoreLoading(true);
     const list: User[] = [];
+
     try {
       let querySnapshot;
-      if (searchQuery) {
-        const startAtKeyword = searchQuery.toUpperCase();
-        const endAtKeyword = searchQuery.toLowerCase() + "\uf8ff";
+      const displayNameFilter = searchQuery.toLowerCase(); // Convert search query to lowercase
 
-        const queryRef = query(
+      querySnapshot = await getDocs(
+        query(
           collection(firestore, "users"),
           orderBy("displayName"),
-          startAt(startAtKeyword),
-          endAt(endAtKeyword),
           limit(10 * currentPage)
-        );
-        querySnapshot = await getDocs(queryRef);
-      } else {
-        querySnapshot = await getDocs(
-          query(collection(firestore, "users"), limit(10 * currentPage))
-        );
-      }
+        )
+      );
 
       querySnapshot.forEach((doc) => {
-        list.push(doc.data() as User);
+        const user = doc.data() as User;
+
+        // Null check for user.displayName
+        if (user.displayName) {
+          const userDisplayName = user.displayName.toLowerCase(); // Convert display name to lowercase
+          if (userDisplayName.includes(displayNameFilter)) {
+            // Filter results based on display name
+            list.push(user);
+          }
+        }
       });
-      setUserList(list);
+
+      if (list.length === 0) {
+        setErrorSearch("No users match the display name."); // Set the error message
+        setUserList([]); // Clear the user list
+      } else {
+        setErrorSearch(""); // Clear the error message
+        setUserList(list);
+      }
     } catch (error: any) {
       console.log("error", error);
     }
+
     setSearchLoading(false);
     setLoadMoreLoading(false);
   };
@@ -187,25 +243,58 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     setLoadMoreLoading(false);
   };
 
+  const fetchBannedList = async () => {
+    setLoadMoreLoading(true);
+    const list: User[] = [];
+    try {
+      let querySnapshot;
+      if (searchQuery) {
+        const startAtKeyword = searchQuery.toUpperCase();
+        const endAtKeyword = searchQuery.toLowerCase() + "\uf8ff";
+
+        const queryRef = query(
+          collection(firestore, "users"),
+          orderBy("displayName"),
+          startAt(startAtKeyword),
+          endAt(endAtKeyword)
+        );
+        querySnapshot = await getDocs(queryRef);
+      } else {
+        querySnapshot = await getDocs(query(collection(firestore, "users")));
+      }
+
+      querySnapshot.forEach((doc) => {
+        list.push(doc.data() as User);
+      });
+      setBanList(list);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+    setSearchLoading(false);
+    setLoadMoreLoading(false);
+  };
+
   useEffect(() => {
-    fetchUserList();
     fetchModeratorList();
+    fetchBannedList();
   }, [currentPage]);
 
   const onSearchUser = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      setSearchLoading(true);
-      setCurrentPage(1); // Reset page to 1 when searching
-      fetchModeratorList();
-      fetchUserList();
+    if (searchQuery) {
+      if (event.key === "Enter") {
+        setSearchLoading(true);
+        setCurrentPage(1); // Reset page to 1 when searching
+        fetchUserList();
+      }
     }
   };
 
   const handleSearch = () => {
-    setSearchLoading(true);
-    setCurrentPage(1); // Reset page to 1 when searching
-    fetchModeratorList();
-    fetchUserList();
+    if (searchQuery) {
+      setSearchLoading(true);
+      setCurrentPage(1); // Reset page to 1 when searching
+      fetchUserList();
+    }
   };
 
   const onLoadMore = () => {
@@ -507,6 +596,109 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     }
   };
 
+  const leaveOnBanCommunity = async (
+    user: User,
+    communityId: string,
+    community: Community
+  ) => {
+    try {
+      const batch = writeBatch(firestore);
+
+      batch.delete(
+        doc(firestore, `users/${user?.uid}/communitySnippets/${communityId}`)
+      );
+
+      batch.update(doc(firestore, "communities", communityId), {
+        numberOfMembers: increment(-1),
+      });
+
+      await batch.commit();
+
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        mySnippets: prev.mySnippets.filter(
+          (item) =>
+            item.communityId !== communityId || item.userUid !== user.uid
+        ),
+      }));
+      setLoadingCommunityMap((prevLoadingMap) => ({
+        ...prevLoadingMap,
+        [community.id]: false, // Set loading state to true for the specific user
+      }));
+    } catch (error) {
+      console.log("leaveCommunity error", error);
+    }
+    setLoading(false);
+  };
+
+  const onAddRemoveBan = async (
+    user: User,
+    communityData: Community,
+    isBanned?: boolean
+  ) => {
+    try {
+      setLoadingBanMap((prevLoadingMap) => ({
+        ...prevLoadingMap,
+        [user.uid]: true, // Set loading state to true for the specific user
+      }));
+
+      if (!isBanned) {
+        // Change the condition here
+        // User is not a ban, add them
+        const newSnippet: BanSnippet = {
+          communityId: communityData.id,
+          isBanned: true,
+          userUid: user.uid,
+        };
+
+        const batch = writeBatch(firestore);
+        batch.set(
+          doc(firestore, `users/${user?.uid}/banSnippets`, communityData.id),
+          newSnippet
+        );
+
+        // Leave the community
+        // Call the leaveCommunity function here
+        await leaveOnBanCommunity(user, communityData.id, communityData);
+
+        await batch.commit();
+
+        setCommunityStateValue((prev) => ({
+          ...prev,
+          bannedSnippet: [...prev.bannedSnippet, newSnippet],
+        }));
+
+        setIsBanned(true);
+      } else {
+        // User is already a banned, remove them
+        const batch = writeBatch(firestore);
+        batch.delete(
+          doc(firestore, `users/${user?.uid}/banSnippets/${communityData.id}`)
+        );
+
+        await batch.commit();
+
+        setCommunityStateValue((prev) => ({
+          ...prev,
+          bannedSnippet: prev.bannedSnippet.filter(
+            (snippet) =>
+              snippet.communityId !== communityData.id ||
+              snippet.userUid !== user.uid
+          ),
+        }));
+
+        setIsBanned(false);
+      }
+
+      setLoadingBanMap((prevLoadingMap) => ({
+        ...prevLoadingMap,
+        [user.uid]: false, // Set loading state to true for the specific user
+      }));
+    } catch (error) {
+      console.log("handleAddRemoveModerator error", error);
+    }
+  };
+
   // useEffect(() => {
   //   if (ssrCommunityData) return;
   //   const { community } = router.query;
@@ -550,6 +742,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     setCommunityStateValue,
     onJoinLeaveCommunity,
     onAddRemoveModerator,
+    onAddRemoveBan,
     onAddRemoveSponsor,
     onLoadMore,
     onSearchUser,
@@ -558,12 +751,15 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     loadingModeratorMap,
     loadingCommunityMap,
     loadingSponsorMap,
+    loadingBanMap,
     loadMoreLoading,
     searchLoading,
     loading,
     userList,
     moderatorList,
+    banList,
     currentPage,
+    errorSearch,
   };
 };
 

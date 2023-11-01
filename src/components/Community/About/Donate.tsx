@@ -308,7 +308,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
         </Button>
         {user && (user.uid === communityData.creatorId || isUserModerator) && (
           <Flex mt={2}>
-            {communityData.communityCategory === "Sponsor" ? (
+            {communityData.communityCategory === "Volunteer" ? (
               <Button
                 variant="outline"
                 width="100%"
@@ -431,7 +431,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                           </Flex>
                           <Flex direction="column">
                             <Flex alignItems="center">
-                              <span
+                              <Text
                                 style={{
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
@@ -439,7 +439,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                                 }}
                               >
                                 {`${item.id}`}
-                              </span>
+                              </Text>
                               <Text color="gray.500" mx={1}>
                                 &middot;
                               </Text>
@@ -734,7 +734,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                           </Flex>
                           <Flex direction="column">
                             <Flex alignItems="center">
-                              <span
+                              <Text
                                 style={{
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
@@ -742,7 +742,7 @@ const Donate: React.FC<DonateProps> = ({ communityData }) => {
                                 }}
                               >
                                 {`${item.id}`}
-                              </span>
+                              </Text>
                               <Text color="gray.500" mx={1}>
                                 &middot;
                               </Text>

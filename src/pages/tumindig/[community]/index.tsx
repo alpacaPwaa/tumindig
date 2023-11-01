@@ -19,6 +19,26 @@ import { auth, firestore } from "../../../firebase/clientApp";
 import { Post } from "../../../atoms/postsAtom";
 import { useRouter } from "next/router";
 import CommunitySponsor from "../../../components/Community/CommunitySponsor";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Text,
+  Button,
+  Stack,
+  Icon,
+  Box,
+  Flex,
+  useMediaQuery,
+} from "@chakra-ui/react";
+import { FaUserAltSlash } from "react-icons/fa";
+import { RiUserUnfollowFill } from "react-icons/ri";
+import useDirectory from "../../../hooks/useDirectory";
+import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
 
 interface CommunityPageProps {
   post: Post;
@@ -32,6 +52,9 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
   post,
 }) => {
   const [user, loadingUser] = useAuthState(auth);
+  const [bannedUser, setBannedUser] = useState(false);
+  const { onSelectMenuItem } = useDirectory();
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
@@ -54,6 +77,19 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
     }));
   }, [communityData]);
 
+  useEffect(() => {
+    const isBanned = !!communityStateValue.bannedSnippet.find(
+      (snippet) =>
+        snippet.communityId === communityData.id &&
+        snippet.isBanned === true &&
+        snippet.userUid === user?.uid
+    );
+
+    if (isBanned) {
+      setBannedUser(true);
+    }
+  }, [communityStateValue, user]);
+
   // Community was not found in the database
   if (!communityData) {
     return <CommunityNotFound />;
@@ -71,9 +107,9 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
         {/* Left Content */}
         <>
           <CreatePostLink />
-          {communityData.communityCategory != "Sponsor" && (
+          {/* {communityData.communityCategory != "Sponsor" && (
             <CommunitySponsor communityData={communityData} />
-          )}
+          )} */}
           <Posts
             key={selectedCommunityId}
             communityData={communityData}
@@ -86,11 +122,52 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
           <About
             key={selectedCommunityId}
             communityData={communityData}
-            communitySnippets={communutySnippet}
             post={post}
           />
         </>
       </PageContentLayout>
+
+      <Modal
+        isOpen={bannedUser}
+        closeOnOverlayClick={false}
+        onClose={() => setBannedUser(false)}
+        size={md ? "md" : "xs"}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody p={6}>
+            <Stack spacing={4} alignItems="center" justifyContent="center">
+              <Flex
+                bg="red.500"
+                height="100px"
+                width="100px"
+                borderRadius="full"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon color="white" as={RiUserUnfollowFill} fontSize={80} />
+              </Flex>
+              <Text textAlign="center" fontWeight={700} fontSize="11pt">
+                {user && (user.displayName || user?.email!.split("@")[0])} has
+                been banned from {communityData.id}
+              </Text>
+              <Text textAlign="center" fontSize="10pt" color="gray.500">
+                It appears that you may have violated the community rules.
+                Please contact the community moderators or administrators for
+                more information.
+              </Text>
+              <Button
+                onClick={() => onSelectMenuItem(defaultMenuItem)}
+                width="100%"
+                size="md"
+                fontSize="11pt"
+              >
+                Go Back
+              </Button>
+            </Stack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

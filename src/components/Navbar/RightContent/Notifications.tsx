@@ -245,6 +245,7 @@ const Notifications: React.FC<NotificationsProps> = () => {
                   w={"300px"}
                   display="flex"
                   flexDirection="row"
+                  position="relative"
                 >
                   <Link
                     href={
@@ -304,7 +305,14 @@ const Notifications: React.FC<NotificationsProps> = () => {
                     </Flex>
                   </Link>
                   {!notification.isRead && (
-                    <Box boxSize={2} p={1} bg="blue.500" borderRadius="full" />
+                    <Box
+                      position="absolute"
+                      boxSize={2}
+                      p={1}
+                      bg="blue.500"
+                      borderRadius="full"
+                      right={5}
+                    />
                   )}
                 </MenuItem>
               ))
