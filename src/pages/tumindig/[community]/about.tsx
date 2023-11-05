@@ -13,7 +13,7 @@ import useCommunityData from "../../../hooks/useCommunityData";
 
 type aboutProps = { communitySnippet: CommunitySnippet[]; post: Post };
 
-const about: React.FC<aboutProps> = ({ communitySnippet, post }) => {
+const AboutPage: React.FC<aboutProps> = ({ communitySnippet, post }) => {
   const communityStateValue = useRecoilValue(communityState);
   const { loading } = useCommunityData();
 
@@ -43,4 +43,4 @@ const about: React.FC<aboutProps> = ({ communitySnippet, post }) => {
     </>
   );
 };
-export default about;
+export default AboutPage;

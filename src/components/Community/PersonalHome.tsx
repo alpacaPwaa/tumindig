@@ -134,9 +134,13 @@ const PersonalHome: React.FC = () => {
                 </Flex>
               ) : (
                 mySnippets.map((snippet, index) => (
-                  <Flex flexDirection="row" fontSize="10pt" fontWeight={600}>
+                  <Flex
+                    key={index}
+                    flexDirection="row"
+                    fontSize="10pt"
+                    fontWeight={600}
+                  >
                     <MenuListPost
-                      key={index}
                       icon={IoPeopleCircleSharp}
                       displayText={`${snippet.communityId}`}
                       link={`/tumindig/${snippet.communityId}/submit`}

@@ -383,7 +383,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                 </Button>
               </Flex>
               <Text fontSize="10pt" color="gray.500">
-                It's recommended to use JPEG or PNG image.
+                It&apos;s recommended to use JPEG or PNG image.
               </Text>
               <Box
                 flexDirection="column"

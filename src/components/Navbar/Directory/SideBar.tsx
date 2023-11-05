@@ -25,9 +25,9 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdPeopleAlt } from "react-icons/md";
 import { authModalState } from "../../../atoms/authModalAtom";
 
-type sideBarProps = { onClose?: () => void };
+type SideBarProps = { onClose?: () => void };
 
-const sideBar: React.FC<sideBarProps> = ({ onClose }) => {
+const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
@@ -235,8 +235,9 @@ const sideBar: React.FC<sideBarProps> = ({ onClose }) => {
                 </Text>
                 {mySnippets
                   .filter((item) => item.isAdmin)
-                  .map((snippet) => (
+                  .map((snippet, index) => (
                     <Flex
+                      key={index}
                       position="relative"
                       align="center"
                       fontSize="10pt"
@@ -262,6 +263,7 @@ const sideBar: React.FC<sideBarProps> = ({ onClose }) => {
                               src={snippet.imageURL}
                               mr={2}
                               objectFit="cover"
+                              alt="Image"
                             />
                           ) : (
                             <Icon
@@ -354,4 +356,4 @@ const sideBar: React.FC<sideBarProps> = ({ onClose }) => {
   );
 };
 
-export default sideBar;
+export default SideBar;
