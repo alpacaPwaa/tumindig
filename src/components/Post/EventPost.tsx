@@ -72,6 +72,7 @@ const EventPosts: React.FC<EventPostsProps> = ({
     }
 
     getPosts();
+    //eslint-disable-next-line
   }, [communityData, postStateValue.postUpdateRequired]);
 
   const getPosts = async () => {

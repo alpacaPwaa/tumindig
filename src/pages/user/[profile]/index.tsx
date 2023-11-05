@@ -171,6 +171,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   useEffect(() => {

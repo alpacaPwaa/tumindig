@@ -221,6 +221,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                   mr={2}
                   objectFit="cover"
                   borderRadius="md"
+                  alt="Image"
                 />
               </Flex>
             ) : (

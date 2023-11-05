@@ -315,6 +315,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                             src={item.imageURL}
                             mr={2}
                             objectFit="cover"
+                            alt="Image"
                           />
                         ) : (
                           <Icon
@@ -374,7 +375,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
           {!loadingMoreCommunity ? (
             <Flex justifyContent="center" flexDirection="row">
               <Text justifyContent="center" fontSize="10pt" fontWeight={800}>
-                You've reached the end of the communities
+                You&apos;ve reached the end of the communities
               </Text>
             </Flex>
           ) : (

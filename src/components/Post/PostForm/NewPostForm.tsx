@@ -695,6 +695,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                               width="100%"
                               maxHeight="400px"
                               objectFit="contain"
+                              alt="Image"
                             />
                           ) : file.startsWith("data:video/") ? (
                             <video
