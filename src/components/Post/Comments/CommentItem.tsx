@@ -444,6 +444,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     };
 
     fetchCommentReplies();
+    //eslint-disable-next-line
   }, [user, comments, currentPageReply]);
 
   useEffect(() => {

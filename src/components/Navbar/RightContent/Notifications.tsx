@@ -121,7 +121,8 @@ const Notifications: React.FC<NotificationsProps> = () => {
 
   useEffect(() => {
     setLoadMoreLoading(true);
-    getUserNotifications(); // Call the function to fetch user notifications
+    getUserNotifications();
+    //eslint-disable-next-line
   }, [currentPage, user]);
 
   useEffect(() => {
@@ -230,7 +231,7 @@ const Notifications: React.FC<NotificationsProps> = () => {
                   No Notification!
                 </Text>
                 <Text color="gray.500" fontSize="11pt" fontWeight={500}>
-                  You're up to date
+                  You&apos;re up to date
                 </Text>
               </Flex>
             ) : (
@@ -264,6 +265,7 @@ const Notifications: React.FC<NotificationsProps> = () => {
                             mt={1}
                             mr={2}
                             objectFit="cover"
+                            alt=""
                           />
                         </Flex>
                       ) : (

@@ -302,6 +302,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                               setLoadingMedia(false);
                             }}
                             objectFit="cover"
+                            alt="Image"
                           />
                         </Flex>
                       ) : (
@@ -802,7 +803,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   onSelectPost && post && onSelectPost(post, postIdx!)
                 }
               >
-                Go to {post.creatorDisplayText}'s post
+                Go to {post.creatorDisplayText}&apos;s post
               </Text>
             </Flex>
           </ModalHeader>

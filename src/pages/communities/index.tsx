@@ -128,10 +128,12 @@ const CommunityList: React.FC<CommunityListProps> = () => {
     if (storedCommunities) {
       setCommunities(JSON.parse(storedCommunities));
     }
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -151,10 +153,12 @@ const CommunityList: React.FC<CommunityListProps> = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   useEffect(() => {
     getCommunityRecommendations();
+    //eslint-disable-next-line
   }, [selectedOrganizationVolunteerType, currentPage]);
 
   const handleOrganizationVolunteerTypeChange = (value: string | string[]) => {

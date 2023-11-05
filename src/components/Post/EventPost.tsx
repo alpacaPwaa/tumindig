@@ -139,6 +139,7 @@ const EventPosts: React.FC<EventPostsProps> = ({
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   const getUserPostVotes = async (postId: string) => {
@@ -203,15 +204,18 @@ const EventPosts: React.FC<EventPostsProps> = ({
         fetchVotesForPost(votedPostId); // Fetch votes only for the voted post
       }
     });
+    //eslint-disable-next-line
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   useEffect(() => {
     setFetchPostLoading(true);
     getPosts();
+    //eslint-disable-next-line
   }, [currentPage]);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, []);
 
   console.log("HERE IS POST STATE", postStateValue);

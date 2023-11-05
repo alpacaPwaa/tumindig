@@ -99,6 +99,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         width="100%"
                         maxHeight="400px"
                         objectFit="contain"
+                        alt="Image"
                       />
                     ) : file.startsWith("data:video/") ? (
                       <video

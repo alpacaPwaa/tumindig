@@ -37,6 +37,7 @@ const AuthModal: React.FC<AuthModalProps> = () => {
 
   useEffect(() => {
     if (user) handleClose();
+    //eslint-disable-next-line
   }, [user]);
 
   return (

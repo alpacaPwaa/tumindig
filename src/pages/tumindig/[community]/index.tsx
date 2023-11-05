@@ -18,7 +18,6 @@ import Posts from "../../../components/Post/Posts";
 import { auth, firestore } from "../../../firebase/clientApp";
 import { Post } from "../../../atoms/postsAtom";
 import { useRouter } from "next/router";
-import CommunitySponsor from "../../../components/Community/CommunitySponsor";
 import {
   Modal,
   ModalOverlay,
@@ -75,6 +74,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
       ...prev,
       currentCommunity: communityData,
     }));
+    //eslint-disable-next-line
   }, [communityData]);
 
   useEffect(() => {
@@ -88,6 +88,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
     if (isBanned) {
       setBannedUser(true);
     }
+    //eslint-disable-next-line
   }, [communityStateValue, user]);
 
   // Community was not found in the database

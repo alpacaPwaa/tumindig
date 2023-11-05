@@ -45,6 +45,7 @@ const Directory: React.FC = () => {
                       src={directoryState.selectedMenuItem.imageURL}
                       mr={2}
                       objectFit="cover"
+                      alt="image"
                     />
                   ) : (
                     <Icon

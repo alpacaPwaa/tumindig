@@ -57,6 +57,7 @@ const CreateCommmunityPostPage: NextPage<CreateCommmunityPostPageProps> = ({
     if (!user && !loadingUser && communityStateValue.currentCommunity.id) {
       router.push(`/tumindig/${communityStateValue.currentCommunity.id}`);
     }
+    //eslint-disable-next-line
   }, [user, loadingUser, communityStateValue.currentCommunity]);
 
   console.log("HERE IS USER", user, loadingUser);

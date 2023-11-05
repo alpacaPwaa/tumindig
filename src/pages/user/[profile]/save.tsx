@@ -138,6 +138,7 @@ const SavePost: NextPage<SavePostProps> = ({ communityData }) => {
         fetchVotesForPost(votedPostId); // Fetch votes only for the voted post
       }
     });
+    //eslint-disable-next-line
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   // Fetch post options when the component mounts
@@ -180,6 +181,7 @@ const SavePost: NextPage<SavePostProps> = ({ communityData }) => {
     };
 
     getUserPostOptions();
+    //eslint-disable-next-line
   }, [user?.uid, postStateValue.posts]);
 
   useEffect(() => {
@@ -201,6 +203,7 @@ const SavePost: NextPage<SavePostProps> = ({ communityData }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   const filteredPosts = postStateValue.posts.filter((post) => {
@@ -217,10 +220,12 @@ const SavePost: NextPage<SavePostProps> = ({ communityData }) => {
   useEffect(() => {
     getUserPosts();
     setFetchPostLoading(true);
+    //eslint-disable-next-line
   }, [user, currentPage]);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, [user]);
 
   return (

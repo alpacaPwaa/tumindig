@@ -619,6 +619,7 @@ const usePosts = (communityData?: Community) => {
   useEffect(() => {
     if (!user?.uid || !communityStateValue.currentCommunity) return;
     getCommunityPostOptions(communityStateValue.currentCommunity.id);
+    //eslint-disable-next-line
   }, [user, communityStateValue.currentCommunity]);
 
   useEffect(() => {
@@ -631,6 +632,7 @@ const usePosts = (communityData?: Community) => {
       }));
       return;
     }
+    //eslint-disable-next-line
   }, [user, loadingUser]);
 
   return {

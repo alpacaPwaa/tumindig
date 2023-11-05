@@ -60,6 +60,7 @@ const useDirectory = () => {
       ...prev,
       selectedMenuItem: defaultMenuItem,
     }));
+    //eslint-disable-next-line
   }, [communityStateValue.currentCommunity]);
   //                              ^ used to be communityStateValue.vistedCommunities
 

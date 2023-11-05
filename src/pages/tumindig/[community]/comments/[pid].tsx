@@ -67,6 +67,7 @@ const PostPage: React.FC<PostPageProps> = ({ post, communitySnippets }) => {
     if (pid && !postStateValue.selectedPost) {
       fetchPost();
     }
+    //eslint-disable-next-line
   }, [router.query, postStateValue.selectedPost]);
 
   const getUserPostVotes = async (postId: string) => {
@@ -123,6 +124,7 @@ const PostPage: React.FC<PostPageProps> = ({ post, communitySnippets }) => {
     if (votedPostId) {
       fetchVotesForPost(votedPostId);
     }
+    //eslint-disable-next-line
   }, [pid, user?.uid]);
 
   return (

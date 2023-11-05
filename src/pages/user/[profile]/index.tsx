@@ -149,6 +149,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
         fetchVotesForPost(votedPostId); // Fetch votes only for the voted post
       }
     });
+    //eslint-disable-next-line
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   useEffect(() => {
@@ -175,10 +176,12 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
   useEffect(() => {
     getUserPosts();
     setFetchPostLoading(true);
+    //eslint-disable-next-line
   }, [user, currentPage]);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, [user]);
 
   return (

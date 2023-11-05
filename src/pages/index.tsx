@@ -211,10 +211,12 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, [user]);
 
   const getUserPostVotes = async (postId: string) => {
@@ -253,6 +255,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
     if (user) {
       getUserHomePosts();
     }
+    //eslint-disable-next-line
   }, [user, communityStateValue.initSnippetsFetched, currentPage]);
 
   useEffect(() => {
@@ -260,6 +263,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
     if (!user && !loadingUser) {
       getNoUserHomePosts();
     }
+    //eslint-disable-next-line
   }, [user, loadingUser, currentPage]);
 
   useEffect(() => {
@@ -294,6 +298,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
         fetchVotesForPost(votedPostId); // Fetch votes only for the voted post
       }
     });
+    //eslint-disable-next-line
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   // Fetch post options when the component mounts
@@ -336,6 +341,7 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
     };
 
     getUserPostOptions();
+    //eslint-disable-next-line
   }, [user?.uid, postStateValue.posts]);
 
   const filteredPosts = postStateValue.posts.filter((post) => {

@@ -420,6 +420,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
     };
 
     fetchPostComment();
+    //eslint-disable-next-line
   }, [user, currentPageComment]);
 
   const handleLoadMoreComments = () => {

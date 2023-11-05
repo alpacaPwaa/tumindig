@@ -71,18 +71,21 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     if (!user || !!communityStateValue.mySnippets.length) return;
 
     getSnippets();
+    //eslint-disable-next-line
   }, [user]);
 
   useEffect(() => {
     if (!user || !!communityStateValue.moderatorSnippets.length) return;
 
     getModeratorSnippets();
+    //eslint-disable-next-line
   }, [user]);
 
   useEffect(() => {
     if (!user || !!communityStateValue.bannedSnippet.length) return;
 
     getBannedSnippets();
+    //eslint-disable-next-line
   }, [user]);
 
   const getAllModeratorSnippets = async () => {
@@ -277,6 +280,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
   useEffect(() => {
     fetchModeratorList();
     fetchBannedList();
+    //eslint-disable-next-line
   }, [currentPage]);
 
   const onSearchUser = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -733,6 +737,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
         currentCommunity: defaultCommunity,
       }));
     }
+    //eslint-disable-next-line
   }, [router.query, communityStateValue.currentCommunity]);
 
   // console.log("LOL", communityStateValue);

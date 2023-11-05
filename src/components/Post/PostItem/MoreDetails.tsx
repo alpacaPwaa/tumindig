@@ -188,6 +188,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
   useEffect(() => {
     if (!user) return;
     getVolunteers();
+    //eslint-disable-next-line
   }, [user]);
 
   return (
@@ -288,8 +289,9 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
               mb={2}
             >
               <Text>
-                Before clicking 'Volunteer,' know that you're reserving a spot
-                for this volunteer opportunity. We're eager to see you soon!
+                Before clicking &apos;Volunteer,&apos; know that you&apos;re
+                reserving a spot for this volunteer opportunity. We&apos;re
+                eager to see you soon!
               </Text>
             </Flex>
             <Stack fontSize="14px" p={2}>

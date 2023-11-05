@@ -139,6 +139,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
         fetchVotesForPost(votedPostId); // Fetch votes only for the voted post
       }
     });
+    //eslint-disable-next-line
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   useEffect(() => {
@@ -160,6 +161,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    //eslint-disable-next-line
   }, [hasMore, currentPage]);
 
   const filteredPosts = postStateValue.posts.filter((post) => {
@@ -174,10 +176,12 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
   useEffect(() => {
     getUserPosts();
     setFetchPostLoading(true);
+    //eslint-disable-next-line
   }, [user, currentPage]);
 
   useEffect(() => {
     setLoading(true);
+    //eslint-disable-next-line
   }, [user]);
 
   return (

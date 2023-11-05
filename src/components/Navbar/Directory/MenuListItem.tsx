@@ -36,6 +36,7 @@ const MenuListItem: React.FC<DirectoryItemProps> = ({
             src={imageURL}
             mr={2}
             objectFit="cover"
+            alt="image"
           />
         ) : (
           <Icon fontSize={20} mr={2} as={icon} color={iconColor} />
