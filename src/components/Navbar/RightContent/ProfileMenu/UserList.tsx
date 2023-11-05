@@ -20,6 +20,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { FaUserCircle } from "react-icons/fa";
 import { VscAccount } from "react-icons/vsc";
 import { RxDotFilled } from "react-icons/rx";
+import { RiLogoutBoxRLine } from "react-icons/ri";
 
 type UserListProps = {};
 
@@ -40,7 +41,7 @@ const UserList: React.FC<UserListProps> = () => {
   return (
     <>
       <MenuItem>
-        <Flex alignItems="center">
+        <Flex alignItems="center" width="220px">
           {user ? (
             <>
               {user?.photoURL ? (
@@ -71,14 +72,11 @@ const UserList: React.FC<UserListProps> = () => {
           ) : (
             <Icon fontSize={24} mr={1} color="gray.400" as={VscAccount} />
           )}
-        </Flex>
-        <Flex flexDirection="column">
-          <Text fontWeight={700} fontSize="10pt">
-            {user?.displayName || user?.email?.split("@")[0]}
-          </Text>
-          <Text fontWeight={700} color="blue.500" fontSize="9pt">
-            Username
-          </Text>
+          <Flex flexDirection="column">
+            <Text fontWeight={700} fontSize="10pt">
+              {user?.displayName || user?.email?.split("@")[0]}
+            </Text>
+          </Flex>
         </Flex>
       </MenuItem>
       <MenuDivider />
@@ -89,7 +87,7 @@ const UserList: React.FC<UserListProps> = () => {
         onClick={goToProfile}
       >
         <Flex alignItems="center">
-          <Icon fontSize={20} mr={2} as={CgProfile} />
+          <Icon fontSize={22} mr="8px" ml="7px" as={CgProfile} />
           Profile
         </Flex>
       </MenuItem>
@@ -101,7 +99,7 @@ const UserList: React.FC<UserListProps> = () => {
         onClick={logout}
       >
         <Flex alignItems="center">
-          <Icon fontSize={20} mr={2} as={MdOutlineLogin} />
+          <Icon fontSize={22} mr="8px" ml="7px" as={RiLogoutBoxRLine} />
           Log Out
         </Flex>
       </MenuItem>

@@ -16,6 +16,7 @@ import {
   Box,
   ModalFooter,
   Input,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore, storage } from "../../firebase/clientApp";
@@ -52,6 +53,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   const [displayNameLoading, setDisplayNameLoading] = useState(false);
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [inputFocused, setInputFocused] = useState(false);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     if (user) {
@@ -171,6 +173,19 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
           });
         });
 
+        // Update the creatorDisplayText for each post associated with the user
+        const postQuery = query(
+          collection(firestore, "posts"),
+          where("creatorId", "==", user?.uid)
+        );
+        const postSnapshot = await getDocs(postQuery);
+        postSnapshot.forEach(async (postDoc) => {
+          const postId = postDoc.id;
+          await updateDoc(doc(firestore, "posts", postId), {
+            creatorDisplayText: updatedDisplayName,
+          });
+        });
+
         if (user) {
           await updateProfile(user, {
             displayName: updatedDisplayName,
@@ -207,7 +222,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   return (
     <Flex
       direction="column"
-      width={300}
+      width={md ? 300 : "100%"}
       borderRadius={4}
       cursor="pointer"
       bg="white"
@@ -216,14 +231,21 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
       position="sticky"
     >
       <Flex
-        p="40px 12px"
+        width="100%"
+        height="60px"
         bg="blue.500"
         borderRadius="4px 4px 0px 0px"
-        position="relative"
+        alignItems="flex-end"
       >
-        <Flex mt={2} position="absolute" left="40%">
+        <Flex mt={2} pl="105px" pb="5px">
           {user?.displayName ? (
-            <Text fontSize="11pt" color="white" fontWeight={700}>
+            <Text
+              fontSize="11pt"
+              color="white"
+              fontWeight={700}
+              maxWidth="100%" // Adjust the maximum width as needed
+              wordBreak="break-word"
+            >
               {user.displayName}
             </Text>
           ) : (

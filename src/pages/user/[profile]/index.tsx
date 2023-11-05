@@ -16,7 +16,14 @@ import {
 } from "firebase/firestore";
 import usePosts from "../../../hooks/usePosts";
 import { Community } from "../../../atoms/communitiesAtom";
-import { Flex, Stack, Spinner, Text, Icon } from "@chakra-ui/react";
+import {
+  Flex,
+  Stack,
+  Spinner,
+  Text,
+  Icon,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { Post, PostVote } from "../../../atoms/postsAtom";
 import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
@@ -41,6 +48,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     onDeletePost,
   } = usePosts();
   const [user] = useAuthState(auth);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const getUserPosts = async (): Promise<Post[]> => {
     console.log("GETTING NO USER FEED");
@@ -176,6 +184,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
   return (
     <PageContentLayout>
       <>
+        {!md && <ProfilePage />}
         <ProfileNav />
       </>
       <>

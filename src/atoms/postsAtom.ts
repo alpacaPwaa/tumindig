@@ -6,7 +6,7 @@ export type Post = {
   id: string;
   communityId: string;
   communityImageURL?: string;
-  userDisplayText: string;
+  creatorDisplayText: string;
   creatorId: string;
   title: string;
   body: string;
@@ -30,6 +30,7 @@ export type Post = {
   eventVolunteer?: number;
   isEdited?: boolean;
   isPinned: boolean;
+  isVolunteer?: boolean;
 };
 
 export type PostVote = {

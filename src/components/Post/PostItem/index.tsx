@@ -35,6 +35,7 @@ import {
   BsChat,
   BsExclamationCircleFill,
   BsFillPinAngleFill,
+  BsPencilFill,
 } from "react-icons/bs";
 import { Post, postState } from "../../../atoms/postsAtom";
 import Link from "next/link";
@@ -272,8 +273,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
             setShowComments(true);
           }
         }}
+        width="100%"
       >
-        <Flex direction="column" width="100%">
+        <Flex direction="column">
           <Flex flexDirection="column">
             {post.createdAt && (
               <Flex
@@ -281,11 +283,15 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 align="center"
                 p="10px 10px 0px 10px"
               >
-                <Stack direction="column" align="center" fontSize="10pt">
+                <Flex
+                  flexDirection="column"
+                  fontSize="10pt"
+                  width={md ? "" : "100%"}
+                >
                   {homePage ? (
                     <Flex alignItems="center">
                       {post.communityImageURL ? (
-                        <Flex>
+                        <Flex width={md ? "" : "20%"}>
                           <Image
                             borderRadius="full"
                             boxSize="35px"
@@ -316,35 +322,57 @@ const PostItem: React.FC<PostItemContentProps> = ({
                             onClick={(event) => event.stopPropagation()}
                           >{`${post.communityId}`}</Text>
                         </Link>
-                        <HStack color="gray.500">
-                          <Text>Posted by {post.userDisplayText}</Text>
+                        <HStack color="gray.500" alignItems="flex-start">
+                          <Text
+                            maxWidth={md ? "100%" : "50%"} // Adjust the maximum width as needed
+                            wordBreak="break-word"
+                          >
+                            {md && "Posted by"} {post.creatorDisplayText}
+                          </Text>
                           <Text mx={1}>&middot;</Text>
-                          <Text>
+                          <Text position="relative">
                             {moment(
                               new Date(post.createdAt.seconds * 1000)
-                            ).fromNow()}
+                            ).fromNow(true)}
+                            {post.isEdited && (
+                              <Icon
+                                position="absolute"
+                                top="2px"
+                                ml={2}
+                                textAlign="center"
+                                as={BsPencilFill}
+                              />
+                            )}
                           </Text>
-                          {post.isEdited && <Text>Edited</Text>}
                         </HStack>
                       </Flex>
                     </Flex>
                   ) : (
-                    <HStack color="gray.500">
-                      {md ? (
-                        <Text>Posted by {post.userDisplayText}</Text>
-                      ) : (
-                        <Text>{post.userDisplayText}</Text>
-                      )}
+                    <HStack color="gray.500" alignItems="flex-start">
+                      <Text
+                        maxWidth={md ? "100%" : "60%"} // Adjust the maximum width as needed
+                        wordBreak="break-word"
+                      >
+                        Posted by {post.creatorDisplayText}
+                      </Text>
                       <Text mx={1}>&middot;</Text>
-                      <Text>
+                      <Text position="relative">
                         {moment(
                           new Date(post.createdAt.seconds * 1000)
-                        ).fromNow()}
+                        ).fromNow(true)}
+                        {post.isEdited && (
+                          <Icon
+                            position="absolute"
+                            top="2px"
+                            ml={2}
+                            textAlign="center"
+                            as={BsPencilFill}
+                          />
+                        )}
                       </Text>
-                      {post.isPinned && md && <Text>Pinned</Text>}
                     </HStack>
                   )}
-                </Stack>
+                </Flex>
                 <Flex alignItems="center">
                   {user &&
                   (user.uid === communityData?.creatorId || isUserModerator) ? (
@@ -746,7 +774,11 @@ const PostItem: React.FC<PostItemContentProps> = ({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize="14pt" fontWeight={700} width="100%">
+          <ModalHeader
+            fontSize={md ? "14pt" : "11pt"}
+            fontWeight={700}
+            width="100%"
+          >
             <Flex alignItems="center">
               <Button
                 variant="ghost"
@@ -770,7 +802,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   onSelectPost && post && onSelectPost(post, postIdx!)
                 }
               >
-                Go to {post.userDisplayText}'s post
+                Go to {post.creatorDisplayText}'s post
               </Text>
             </Flex>
           </ModalHeader>
@@ -820,7 +852,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         isCentered
-        size={md ? "sm" : "xs"}
+        size={md ? "md" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>
@@ -832,7 +864,12 @@ const PostItem: React.FC<PostItemContentProps> = ({
             <ModalCloseButton _focus={{ border: "none" }} />
             <ModalBody>
               <>
-                <HStack mt={5} mb={5} p={2} justifyContent="space-evenly">
+                <HStack
+                  mt={md ? 5 : 2}
+                  mb={md ? 5 : 2}
+                  p={2}
+                  justifyContent="space-evenly"
+                >
                   <FacebookShareButton
                     onClick={(e) => e.stopPropagation()}
                     quote={`${post.title}`}

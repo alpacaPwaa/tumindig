@@ -47,6 +47,10 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     router.push(`/tumindig/${communityData.id}/about`); // Use router.push to navigate to the profile page
   };
 
+  const goToEventPage = () => {
+    router.push(`/tumindig/${communityData.id}/events`); // Use router.push to navigate to the profile page
+  };
+
   // Replace the existing useEffect with this one
   useEffect(() => {
     const communityDocRef = doc(firestore, "communities", communityData.id);
@@ -68,18 +72,18 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   return (
     <Flex bgColor="white" flexDirection="column">
       <Flex flexDirection="row">
-        <Flex direction="column" width="100%" maxHeight="220px">
+        <Flex direction="column" width="100%" maxHeight="250px">
           {!shouldShowBanner ? (
             <Box height="75px" bg="blue.400" />
           ) : (
             <Box
-              height="220px"
+              height="250px"
               bg={`url(${bannerURL})`}
               bgSize="cover"
               bgPosition="center"
             />
           )}
-          <Flex justifyContent="center" bg="white" height="60%">
+          <Flex justifyContent="center" bg="white" height="50%">
             <Flex width="95%" maxWidth="860px">
               {/* IMAGE URL IS ADDED AT THE VERY END BEFORE DUMMY DATA - USE ICON AT FIRST */}
               {communityData.imageURL ? (
@@ -201,32 +205,46 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
           </Flex>
         </Flex>
       </Flex>
-      {!md && (
-        <HStack
-          spacing={9}
-          p="0px 10px 0px 10px"
-          justifyContent="center"
-          fontSize="11pt"
-          fontWeight={700}
+
+      <HStack
+        spacing={9}
+        p="0px 10px 0px 10px"
+        justifyContent={md ? "" : "center"}
+        ml={md ? "100px" : ""}
+        fontSize="11pt"
+        fontWeight={700}
+      >
+        <Text
+          onClick={goToCommunity}
+          _hover={{
+            cursor: "pointer",
+            color: "blue.500",
+          }}
+          color={
+            router.pathname === "/tumindig/[community]"
+              ? "blue.500"
+              : "gray.500"
+          }
+          borderBottom={
+            router.pathname === "/tumindig/[community]" ? "2px" : "none"
+          }
+          pb={1}
         >
-          <Text
-            onClick={goToCommunity}
-            _hover={{
-              cursor: "pointer",
-              color: "blue.500",
-            }}
-            color={
-              router.pathname === "/tumindig/[community]"
-                ? "blue.500"
-                : "gray.500"
-            }
-            borderBottom={
-              router.pathname === "/tumindig/[community]" ? "2px" : "none"
-            }
-            pb={1}
-          >
-            Post
-          </Text>
+          Post
+        </Text>
+        <Text
+          onClick={goToEventPage}
+          _hover={{
+            cursor: "pointer",
+            color: "blue.500",
+          }}
+          color={router.pathname.includes("events") ? "blue.500" : "gray.500"}
+          borderBottom={router.pathname.includes("events") ? "2px" : "none"}
+          pb={1}
+        >
+          Events
+        </Text>
+        {!md && (
           <Text
             onClick={goToAboutPage}
             _hover={{
@@ -239,8 +257,8 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
           >
             About
           </Text>
-        </HStack>
-      )}
+        )}
+      </HStack>
     </Flex>
   );
 };

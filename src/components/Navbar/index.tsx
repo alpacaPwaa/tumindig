@@ -31,6 +31,10 @@ const Navbar: React.FC<NavbarProps> = () => {
   const { onSelectMenuItem } = useDirectory();
   const [showSideBar, setShowSideBar] = useState(false);
 
+  const closeSideBar = () => {
+    setShowSideBar(false);
+  };
+
   return (
     <Flex
       bg="white"
@@ -97,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             <DrawerCloseButton _focus={{ border: "none" }} />
             <DrawerHeader>Profile</DrawerHeader>
             <DrawerBody p={1} m={0}>
-              <SideBar />
+              <SideBar onClose={closeSideBar} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>

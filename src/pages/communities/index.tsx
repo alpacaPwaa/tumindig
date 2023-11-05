@@ -23,6 +23,7 @@ import {
   MenuItemOption,
   MenuOptionGroup,
   Spinner,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import {
   query,
@@ -74,6 +75,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const handleOpenPostModal = () => {
     setOpenPostModal(true);
@@ -175,6 +177,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
           justifyContent="space-between"
           direction="column"
           bg="white"
+          width="100%"
         >
           <CreateCommunityModal
             isOpen={open}
@@ -296,7 +299,11 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                     fontWeight={600}
                   >
                     <Flex align="center" width="80%">
-                      <Flex width="10%" align="center" justifyContent="center">
+                      <Flex
+                        width={md ? "" : "18%"}
+                        align="center"
+                        justifyContent="center"
+                      >
                         {item.imageURL ? (
                           <Image
                             borderRadius="full"

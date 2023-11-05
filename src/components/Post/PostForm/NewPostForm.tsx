@@ -82,6 +82,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
     timeStart: "",
     timeEnd: "",
     eventTitle: "",
+    isVolunteer: false,
   });
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
@@ -112,6 +113,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
       timeStart,
       timeEnd,
       eventTitle,
+      isVolunteer,
     } = textInputs;
 
     if (email && !emailRegex.test(email)) {
@@ -144,12 +146,15 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
     }
 
     try {
-      const postDocRef = await addDoc(collection(firestore, "posts"), {
+      const isVolunteer = !!eventTitle; // Check if eventTitle is not empty
+
+      const postDocData = {
         communityId,
         communityImageURL: communityImageURL || "",
         creatorId: user.uid,
-        userDisplayText: user.displayName,
+        creatorDisplayText: user.displayName,
         isPinned: false,
+        isVolunteer: false,
         title,
         body,
         location,
@@ -163,7 +168,16 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
         voteStatus: 0,
         createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
-      });
+      };
+
+      if (isVolunteer) {
+        postDocData.isVolunteer = true;
+      }
+
+      const postDocRef = await addDoc(
+        collection(firestore, "posts"),
+        postDocData
+      );
 
       // Get the ID of the newly created post
       const postId = postDocRef.id;

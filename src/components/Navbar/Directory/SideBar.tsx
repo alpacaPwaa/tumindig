@@ -25,9 +25,9 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdPeopleAlt } from "react-icons/md";
 import { authModalState } from "../../../atoms/authModalAtom";
 
-type sideBarProps = {};
+type sideBarProps = { onClose?: () => void };
 
-const sideBar: React.FC<sideBarProps> = () => {
+const sideBar: React.FC<sideBarProps> = ({ onClose }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
@@ -53,14 +53,20 @@ const sideBar: React.FC<sideBarProps> = () => {
     setOpen(true);
   };
 
+  const handleSidebarItemClick = () => {
+    if (onClose) {
+      onClose(); // Close the drawer when an item is clicked
+    }
+  };
+
   return (
     <Flex
       flexDirection="column"
       bg="white"
       p={md ? 2 : 0}
       boxShadow={md ? "base" : "none"}
-      width={md ? "20%" : "100%"}
-      position={md ? "fixed" : "unset"}
+      width={md ? "20%" : "95%"}
+      position="fixed"
       zIndex="998"
     >
       <CreateCommunityModal
@@ -91,7 +97,14 @@ const sideBar: React.FC<sideBarProps> = () => {
                 backgroundColor={
                   router.pathname === "/user/[profile]" ? "gray.100" : ""
                 }
-                onClick={goToProfile}
+                onClick={() => {
+                  if (!md) {
+                    // Check if it's not a medium or large screen
+                    handleSidebarItemClick();
+                    goToProfile();
+                  }
+                  goToProfile();
+                }}
                 cursor="pointer"
                 p={2}
                 mt={3}
@@ -133,7 +146,14 @@ const sideBar: React.FC<sideBarProps> = () => {
               p={2}
               _hover={{ bg: "gray.100" }}
               backgroundColor={router.pathname === "/" ? "gray.100" : ""}
-              onClick={() => onSelectMenuItem(defaultMenuItem)}
+              onClick={() => {
+                if (!md) {
+                  // Check if it's not a medium or large screen
+                  handleSidebarItemClick();
+                  onSelectMenuItem(defaultMenuItem);
+                }
+                onSelectMenuItem(defaultMenuItem);
+              }}
             >
               <Flex alignItems="center">
                 <Icon
@@ -157,7 +177,14 @@ const sideBar: React.FC<sideBarProps> = () => {
               backgroundColor={
                 router.pathname === "/communities" ? "gray.100" : ""
               }
-              onClick={goToCommunityList}
+              onClick={() => {
+                if (!md) {
+                  // Check if it's not a medium or large screen
+                  handleSidebarItemClick();
+                  goToCommunityList();
+                }
+                goToCommunityList();
+              }}
             >
               <Flex alignItems="center">
                 <Icon
@@ -217,9 +244,14 @@ const sideBar: React.FC<sideBarProps> = () => {
                       fontWeight={600}
                       cursor="pointer"
                       _hover={{ bg: "gray.100" }}
-                      onClick={() =>
-                        router.push(`/tumindig/${snippet.communityId}`)
-                      }
+                      onClick={() => {
+                        if (!md) {
+                          // Check if it's not a medium or large screen
+                          handleSidebarItemClick();
+                          router.push(`/tumindig/${snippet.communityId}`);
+                        }
+                        router.push(`/tumindig/${snippet.communityId}`);
+                      }}
                     >
                       <Flex width="80%" align="center">
                         <Flex align="center" width="20%">
@@ -274,7 +306,14 @@ const sideBar: React.FC<sideBarProps> = () => {
                 fontWeight={600}
                 cursor="pointer"
                 _hover={{ bg: "gray.100" }}
-                onClick={() => router.push(`/tumindig/${snippet.communityId}`)}
+                onClick={() => {
+                  if (!md) {
+                    // Check if it's not a medium or large screen
+                    handleSidebarItemClick();
+                    router.push(`/tumindig/${snippet.communityId}`);
+                  }
+                  router.push(`/tumindig/${snippet.communityId}`);
+                }}
               >
                 <Flex width="80%" align="center">
                   <Flex
