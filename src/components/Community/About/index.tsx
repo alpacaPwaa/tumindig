@@ -31,7 +31,6 @@ import {
 import moment from "moment";
 import { useSetRecoilState } from "recoil";
 import { doc, updateDoc } from "firebase/firestore";
-import Donate from "./Donate";
 import Rules from "./Rules";
 import Moderator from "./Moderator";
 import CommunityCustomization from "./CommunityCustomization";
