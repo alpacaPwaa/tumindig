@@ -65,7 +65,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
       bg="white"
       p={md ? 2 : 0}
       boxShadow={md ? "base" : "none"}
-      width={!md ? "95%" : "20%"}
+      width="20%"
       position="fixed"
       zIndex="998"
     >
