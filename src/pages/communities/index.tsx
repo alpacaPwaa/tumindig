@@ -422,13 +422,13 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 ) : (
                   mySnippets.map((snippet, index) => (
                     <Flex
+                      key={index}
                       flexDirection="row"
                       alignItems="center"
                       fontSize="10pt"
                       fontWeight={600}
                     >
                       <MenuListPost
-                        key={index}
                         icon={IoPeopleCircleSharp}
                         displayText={`${snippet.communityId}`}
                         link={`/tumindig/${snippet.communityId}/submit`}
