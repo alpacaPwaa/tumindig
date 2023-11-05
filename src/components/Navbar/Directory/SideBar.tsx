@@ -301,6 +301,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
             </Text>
             {mySnippets.map((snippet, index) => (
               <Flex
+                key={index}
                 position="relative"
                 align="center"
                 fontSize="10pt"
@@ -330,6 +331,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
                         src={snippet.imageURL}
                         mr={2}
                         objectFit="cover"
+                        alt="Image"
                       />
                     ) : (
                       <Icon
