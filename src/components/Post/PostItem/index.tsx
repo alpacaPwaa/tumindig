@@ -325,25 +325,15 @@ const PostItem: React.FC<PostItemContentProps> = ({
                         </Link>
                         <HStack color="gray.500" alignItems="flex-start">
                           <Text
-                            maxWidth={md ? "100%" : "50%"} // Adjust the maximum width as needed
+                            maxWidth={md || !user ? "100%" : "90%"} // Adjust the maximum width as needed
                             wordBreak="break-word"
                           >
-                            {md && "Posted by"} {post.creatorDisplayText}
-                          </Text>
-                          <Text mx={1}>&middot;</Text>
-                          <Text position="relative">
+                            {md && "Posted by"} {post.creatorDisplayText}{" "}
+                            &middot;{" "}
                             {moment(
                               new Date(post.createdAt.seconds * 1000)
-                            ).fromNow(true)}
-                            {post.isEdited && (
-                              <Icon
-                                position="absolute"
-                                top="2px"
-                                ml={2}
-                                textAlign="center"
-                                as={BsPencilFill}
-                              />
-                            )}
+                            ).fromNow(true)}{" "}
+                            {post.isEdited && "Edited"}
                           </Text>
                         </HStack>
                       </Flex>
@@ -351,25 +341,14 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   ) : (
                     <HStack color="gray.500" alignItems="flex-start">
                       <Text
-                        maxWidth={md ? "100%" : "60%"} // Adjust the maximum width as needed
+                        maxWidth={md || !user ? "100%" : "80%"} // Adjust the maximum width as needed
                         wordBreak="break-word"
                       >
-                        Posted by {post.creatorDisplayText}
-                      </Text>
-                      <Text mx={1}>&middot;</Text>
-                      <Text position="relative">
+                        Posted by {post.creatorDisplayText} &middot;{" "}
                         {moment(
                           new Date(post.createdAt.seconds * 1000)
-                        ).fromNow(true)}
-                        {post.isEdited && (
-                          <Icon
-                            position="absolute"
-                            top="2px"
-                            ml={2}
-                            textAlign="center"
-                            as={BsPencilFill}
-                          />
-                        )}
+                        ).fromNow(true)}{" "}
+                        {post.isEdited && "Edited"}
                       </Text>
                     </HStack>
                   )}

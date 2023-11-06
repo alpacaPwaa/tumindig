@@ -34,7 +34,26 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
   const setAuthModalState = useSetRecoilState(authModalState);
   const { onSelectMenuItem } = useDirectory();
   const router = useRouter();
-  const [md] = useMediaQuery("(min-width: 768px)");
+  const [isBase] = useMediaQuery("(min-width: 768px)");
+  const [md, setMd] = useState(true);
+
+  const handleResize = () => {
+    setMd(window.innerWidth >= 768);
+  };
+
+  useEffect(() => {
+    // Attach the event listener when the component mounts
+    window.addEventListener("resize", handleResize);
+
+    // Set the initial state based on the window width
+    handleResize();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+    //eslint-disable-next-line
+  }, []);
 
   const goToCommunityList = () => {
     router.push(`/communities`); // Use router.push to navigate to the profile page
@@ -63,11 +82,10 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
     <Flex
       flexDirection="column"
       bg="white"
-      p={md ? 2 : 0}
       boxShadow={md ? "base" : "none"}
-      width="20%"
+      width={md ? "20%" : "95%"}
+      padding={md ? 2 : 0}
       position="fixed"
-      zIndex="998"
     >
       <CreateCommunityModal
         isOpen={open}

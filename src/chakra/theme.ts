@@ -19,7 +19,22 @@ export const theme = extendTheme({
     }),
   },
   components: {
+    Drawer: {
+      parts: ["dialog", "header", "body"],
+      variants: {
+        primary: {
+          dialog: {
+            maxW: "220px",
+          },
+        },
+        secondary: {
+          dialog: {
+            maxW: "290px",
+          },
+        },
+      },
+    },
     Button,
-    // Input, // not working for some reason - come back to this
+    // Input,
   },
 });

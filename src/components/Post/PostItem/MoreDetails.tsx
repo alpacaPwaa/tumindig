@@ -247,7 +247,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                   {post.eventTitle}
                 </Text>
                 <Text fontSize="10pt" fontWeight={600} color="gray.600">
-                  {post.eventVolunteer ? post.eventVolunteer : "0"} event
+                  {post.eventVolunteer ? post.eventVolunteer : "0"} {""}
                   volunteers
                 </Text>
               </Flex>

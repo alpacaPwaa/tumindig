@@ -47,12 +47,13 @@ import {
 import PageContentLayout from "../../components/Layout/PageContent";
 import { useAuthState } from "react-firebase-hooks/auth";
 import CreateCommunityModal from "../../components/Modal/CreateCommunity";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import MenuListPost from "../../components/Navbar/Directory/MenuListPost";
 import { MdGroupOff } from "react-icons/md";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import CommunitiesLoader from "../../components/Community/CommunitiesLoader";
 import { FaUsers } from "react-icons/fa";
+import { authModalState } from "../../atoms/authModalAtom";
 
 type CommunityListProps = {
   communityData: Community;
@@ -76,13 +77,27 @@ const CommunityList: React.FC<CommunityListProps> = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [md] = useMediaQuery("(min-width: 768px)");
+  const setAuthModalState = useSetRecoilState(authModalState);
 
   const handleOpenPostModal = () => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
     setOpenPostModal(true);
   };
 
   const handleclosePostModal = () => {
     setOpenPostModal(false);
+  };
+
+  const handleOpenModal = () => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
+    setOpen(true);
   };
 
   const getCommunityRecommendations = async () => {
@@ -327,24 +342,10 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                         )}
                       </Flex>
                       <Flex direction="column">
-                        <Flex alignItems="center">
-                          <Text
-                            maxWidth="60%" // Adjust the maximum width as needed
-                            wordBreak="break-word"
-                          >
-                            {item.id}
-                          </Text>
-                          <Text color="gray.500" mx={1}>
-                            &middot;
-                          </Text>
-                          <Text
-                            fontSize="11px"
-                            fontWeight={600}
-                            color="gray.600"
-                          >
-                            {`${item.numberOfMembers}`} Members
-                          </Text>
-                        </Flex>
+                        <Text wordBreak="break-word">{item.id}</Text>
+                        <Text fontSize="11px" fontWeight={600} color="gray.600">
+                          {`${item.numberOfMembers}`} Members
+                        </Text>
                         <Text fontWeight={600} color="gray.600">
                           {truncatedDescription}
                         </Text>
@@ -472,7 +473,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
               size="sm"
               fontSize="10pt"
               variant="outline"
-              onClick={() => setOpen(true)}
+              onClick={handleOpenModal}
             >
               Create Community
             </Button>

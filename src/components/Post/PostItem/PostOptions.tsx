@@ -168,24 +168,26 @@ const PostOptions: React.FC<PostOptionsProps> = ({
     <>
       <Flex align="center">
         <Menu closeOnSelect={false}>
-          <MenuButton
-            as={Button}
-            variant="ghost"
-            size="sm"
-            borderRadius="full"
-            position="relative"
-            ml="auto"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <Flex align="center" justify="center">
-              <Icon
-                as={HiOutlineDotsHorizontal}
-                fontSize="20px"
-                position="absolute"
-                color="gray.500"
-              />
-            </Flex>
-          </MenuButton>
+          {user && (
+            <MenuButton
+              as={Button}
+              variant="ghost"
+              size="sm"
+              borderRadius="full"
+              position="relative"
+              ml="auto"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Flex align="center" justify="center">
+                <Icon
+                  as={HiOutlineDotsHorizontal}
+                  fontSize="20px"
+                  position="absolute"
+                  color="gray.500"
+                />
+              </Flex>
+            </MenuButton>
+          )}
           <MenuList>
             <MenuItem
               onClick={handleSavePost}
@@ -268,7 +270,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
               )}
           </MenuList>
         </Menu>
-        {!singlePostView && (
+        {!singlePostView && user && (
           <Button
             variant="ghost"
             size="sm"
