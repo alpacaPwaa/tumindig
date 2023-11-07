@@ -115,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
                   <Text
                     fontWeight={800}
                     fontSize={md ? "16pt" : "10pt"}
-                    maxWidth="80%" // Adjust the maximum width as needed
+                    maxWidth={md ? "80%" : "100%"} // Adjust the maximum width as needed
                     wordBreak="break-word"
                   >
                     {communityData.id}

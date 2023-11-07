@@ -298,7 +298,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                   snippet.userUid === user?.uid // Add this condition to match the current user
               );
 
-              const maxDescriptionLength = 50;
+              const maxDescriptionLength = 100;
               const truncatedDescription =
                 item.description?.length > maxDescriptionLength
                   ? `${item.description.slice(0, maxDescriptionLength)}...`
@@ -319,14 +319,14 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                   >
                     <Flex align="center" width="80%">
                       <Flex
-                        width={md ? "" : "18%"}
+                        width={md ? "" : "20%"}
                         align="center"
                         justifyContent="center"
                       >
                         {item.imageURL ? (
                           <Image
-                            borderRadius="full"
-                            boxSize="35px"
+                            borderRadius="md"
+                            boxSize="50px"
                             src={item.imageURL}
                             mr={2}
                             objectFit="cover"
@@ -335,20 +335,34 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                         ) : (
                           <Icon
                             as={IoPeopleCircleSharp}
-                            fontSize={40}
+                            fontSize={50}
                             color="gray.300"
                             mr={2}
                           />
                         )}
                       </Flex>
                       <Flex direction="column">
-                        <Text wordBreak="break-word">{item.id}</Text>
+                        <Text
+                          wordBreak="break-word"
+                          fontWeight={600}
+                          fontSize="12px"
+                        >
+                          {item.id}
+                        </Text>
                         <Text fontSize="11px" fontWeight={600} color="gray.600">
                           {`${item.numberOfMembers}`} Members
                         </Text>
-                        <Text fontWeight={600} color="gray.600">
-                          {truncatedDescription}
-                        </Text>
+                        {md && (
+                          <Text
+                            fontWeight={600}
+                            fontSize="11px"
+                            color="gray.600"
+                            maxWidth="100%"
+                            wordBreak="break-word"
+                          >
+                            {truncatedDescription}
+                          </Text>
+                        )}
                       </Flex>
                     </Flex>
                     <Box position="absolute" right="10px">
@@ -363,7 +377,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                         }}
                         isDisabled={isBanned}
                         variant={isJoined ? "outline" : "solid"}
-                        size="md"
+                        size={md ? "md" : "sm"}
                       >
                         {isBanned ? "Banned" : isJoined ? "Joined" : "Join"}
                       </Button>

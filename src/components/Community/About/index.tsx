@@ -23,11 +23,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../../../firebase/clientApp";
 import ResizeTextarea from "react-textarea-autosize";
-import {
-  Community,
-  CommunitySnippet,
-  communityState,
-} from "../../../atoms/communitiesAtom";
+import { Community, communityState } from "../../../atoms/communitiesAtom";
 import moment from "moment";
 import { useSetRecoilState } from "recoil";
 import { doc, updateDoc } from "firebase/firestore";
@@ -171,9 +167,10 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                     },
                   }}
                 />
-                <Box mt={2}>
+                <Box mt={2} display="flex">
                   <Text
                     fontSize="10pt"
+                    width="100%"
                     color={description?.length > 200 ? "red.500" : "gray.500"}
                   >
                     Remaining characters: {200 - description?.length}
@@ -214,7 +211,7 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                 </Box>
               </>
             ) : (
-              <Flex>
+              <Flex flexDirection="column">
                 {!showFullDescription && description?.length > 100 ? (
                   <Text fontSize="11pt">
                     {description.slice(0, 100)}
