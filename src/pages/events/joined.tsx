@@ -35,7 +35,7 @@ type JoinedCommunitiesHomeProps = {
   snippets: CommunitySnippet[];
 };
 
-const joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
+const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
@@ -362,4 +362,4 @@ const joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
   );
 };
 
-export default joined;
+export default Joined;

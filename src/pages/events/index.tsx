@@ -35,7 +35,7 @@ type EventHomeProps = {
   snippets: CommunitySnippet[];
 };
 
-const events: NextPage<EventHomeProps> = ({ communityData }) => {
+const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
@@ -335,4 +335,4 @@ const events: NextPage<EventHomeProps> = ({ communityData }) => {
   );
 };
 
-export default events;
+export default Events;
