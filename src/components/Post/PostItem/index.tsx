@@ -28,25 +28,18 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import { NextRouter } from "next/router";
-import { AiOutlineDelete } from "react-icons/ai";
 import {
-  BsBookmark,
-  BsBookmarkCheck,
   BsChat,
   BsExclamationCircleFill,
   BsFillPinAngleFill,
-  BsPencilFill,
 } from "react-icons/bs";
 import { Post, postState } from "../../../atoms/postsAtom";
 import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { RxCross2 } from "react-icons/rx";
 import { Community, communityState } from "../../../atoms/communitiesAtom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../../../firebase/clientApp";
-import { BiArrowBack, BiHide } from "react-icons/bi";
-import { TbMessageReport, TbTrashX } from "react-icons/tb";
+import { BiArrowBack } from "react-icons/bi";
 import { FiShare } from "react-icons/fi";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ResizeTextarea from "react-textarea-autosize";

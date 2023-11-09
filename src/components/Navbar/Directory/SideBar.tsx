@@ -16,7 +16,7 @@ import { communityState } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
 import useDirectory from "../../../hooks/useDirectory";
 import CreateCommunityModal from "../../Modal/CreateCommunity";
-import { AiFillCompass } from "react-icons/ai";
+import { AiFillCalendar, AiFillCompass } from "react-icons/ai";
 import { IoPeopleCircleSharp } from "react-icons/io5";
 import { TiHome } from "react-icons/ti";
 import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
@@ -56,7 +56,11 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
   }, []);
 
   const goToCommunityList = () => {
-    router.push(`/communities`); // Use router.push to navigate to the profile page
+    router.push(`/communities`); // Use router.push to navigate to the communities page
+  };
+
+  const goToEventList = () => {
+    router.push(`/events`); // Use router.push to navigate to the events page
   };
 
   const goToProfile = () => {
@@ -113,7 +117,13 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
                 alignItems="center"
                 _hover={{ bg: "gray.100" }}
                 backgroundColor={
-                  router.pathname === "/user/[profile]" ? "gray.100" : ""
+                  router.pathname === "/user/[profile]" ||
+                  router.pathname.includes("save") ||
+                  router.pathname.includes("hidden") ||
+                  router.pathname.includes("upvote") ||
+                  router.pathname.includes("downvote")
+                    ? "gray.100"
+                    : ""
                 }
                 onClick={() => {
                   if (!md) {
@@ -193,6 +203,40 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
               p={2}
               _hover={{ bg: "gray.100" }}
               backgroundColor={
+                router.pathname === "/events" ||
+                router.pathname.includes("joined")
+                  ? "gray.100"
+                  : ""
+              }
+              onClick={() => {
+                if (!md) {
+                  // Check if it's not a medium or large screen
+                  handleSidebarItemClick();
+                  goToEventList();
+                }
+                goToEventList();
+              }}
+            >
+              <Flex alignItems="center">
+                <Icon
+                  fontSize={32}
+                  mr={2}
+                  as={AiFillCalendar}
+                  bg="gray.200"
+                  p="5px"
+                  borderRadius="full"
+                />
+                Events
+              </Flex>
+            </Box>
+            <Box
+              as="button"
+              width="100%"
+              fontSize="10pt"
+              fontWeight={600}
+              p={2}
+              _hover={{ bg: "gray.100" }}
+              backgroundColor={
                 router.pathname === "/communities" ? "gray.100" : ""
               }
               onClick={() => {
@@ -213,9 +257,10 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
                   p="5px"
                   borderRadius="full"
                 />
-                Discover
+                Communities
               </Flex>
             </Box>
+
             <Box
               as="button"
               fontSize="10pt"

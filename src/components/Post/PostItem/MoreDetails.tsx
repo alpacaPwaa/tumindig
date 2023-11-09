@@ -227,7 +227,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
             ) : (
               <Icon
                 as={IoPeopleCircleSharp}
-                boxSize="35px"
+                boxSize="65px"
                 mr={1}
                 color="gray.300"
               />

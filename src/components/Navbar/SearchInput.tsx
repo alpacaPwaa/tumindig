@@ -21,8 +21,9 @@ const SearchInput: React.FC<SearchInputProps> = ({ user }) => {
           <SearchIcon />
         </InputLeftElement>
         <Input
+          isDisabled
           pl="2.5rem"
-          placeholder="Search Tumindig"
+          placeholder="Search Unavailable"
           fontSize="10pt"
           _placeholder={{ color: "gray.500" }}
           _hover={{

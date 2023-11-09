@@ -36,16 +36,13 @@ import useDirectory from "../../../hooks/useDirectory";
 import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
 import EventPost from "../../../components/Post/EventPost";
 
-interface CommunityPageProps {
+interface EventPageProps {
   post: Post;
   communityData: Community;
   communutySnippet: CommunitySnippet[];
 }
 
-const CommunityPage: NextPage<CommunityPageProps> = ({
-  communityData,
-  post,
-}) => {
+const EventPage: NextPage<EventPageProps> = ({ communityData, post }) => {
   const [user, loadingUser] = useAuthState(auth);
   const [bannedUser, setBannedUser] = useState(false);
   const { onSelectMenuItem } = useDirectory();
@@ -168,7 +165,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
   );
 };
 
-export default CommunityPage;
+export default EventPage;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   console.log("GET SERVER SIDE PROPS RUNNING");

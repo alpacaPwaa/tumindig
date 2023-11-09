@@ -33,6 +33,7 @@ export type Reply = {
   creatorPhotoURL: string;
   communityId: string;
   commentId: string;
+  replyId: string;
   text: string;
   createdAt?: Timestamp;
   voteStatus: number;

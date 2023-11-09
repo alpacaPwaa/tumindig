@@ -449,7 +449,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                 width="48%"
               >
                 <Text fontSize="10pt" fontWeight={600}>
-                  Cancel
+                  Done
                 </Text>
               </Button>
               <Button
