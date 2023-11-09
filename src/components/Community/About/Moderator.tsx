@@ -31,6 +31,7 @@ import {
   MenuItem,
   MenuList,
   Link,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { updateDoc, doc } from "firebase/firestore";
 import React, { useState } from "react";
@@ -100,6 +101,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
   );
   const [isEditingSite, setEditingSite] = useState(false);
   const [loadingSite, setLoadingSite] = useState(false);
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   const handleAddModeratorClick = () => {
     setModalOpen(true);
@@ -253,12 +255,9 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
           </Text>
           <Flex flexDirection="column" fontWeight={600}>
             <Flex justifyContent="space-between">
-              <Flex
-                justifyContent={isEditingEmail ? "center" : ""}
-                width="100%"
-              >
+              <Flex justifyContent={isEditingEmail ? "center" : ""} width="90%">
                 {isEditingEmail ? (
-                  <Flex flexDirection="column" width="90%" mt={5}>
+                  <Flex flexDirection="column" width="100%" mt={5}>
                     <Input
                       value={editedEmail}
                       onChange={(e) => setEditedEmail(e.target.value)}
@@ -302,18 +301,18 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     </Flex>
                   </Flex>
                 ) : (
-                  <>
+                  <Flex width="80%">
                     {editedEmail ||
                     user?.uid === communityData.creatorId ||
                     isUserModerator ? (
-                      <Flex alignItems="flex-start" mt={5}>
+                      <Flex alignItems="flex-start" mt={5} width="100%">
                         <Icon
                           as={FaEnvelope}
                           fontSize={35}
                           p={2}
                           color="gray.500"
                         />
-                        <Flex flexDirection="column" ml={1}>
+                        <Flex flexDirection="column" ml={1} width="100%">
                           <Text
                             fontSize="10pt"
                             color="blue.600"
@@ -331,7 +330,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                         </Flex>
                       </Flex>
                     ) : null}
-                  </>
+                  </Flex>
                 )}
               </Flex>
               {user &&
@@ -355,13 +354,10 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                   </Flex>
                 )}
             </Flex>
-            <Flex>
-              <Flex
-                justifyContent={isEditingPhone ? "center" : ""}
-                width="100%"
-              >
+            <Flex justifyContent="center">
+              <Flex justifyContent={isEditingPhone ? "center" : ""} width="90%">
                 {isEditingPhone ? (
-                  <Flex flexDirection="column" width="90%" mt={5}>
+                  <Flex flexDirection="column" width="100%" mt={5}>
                     <Input
                       value={editedPhone}
                       type="number"
@@ -402,18 +398,18 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     </Flex>
                   </Flex>
                 ) : (
-                  <>
+                  <Flex width="80%">
                     {editedPhone ||
                     user?.uid === communityData.creatorId ||
                     isUserModerator ? (
-                      <Flex alignItems="flex-start" mt={5}>
+                      <Flex alignItems="flex-start" mt={5} width="100%">
                         <Icon
                           fontSize={35}
                           p={2}
                           as={FaPhone}
                           color="gray.500"
                         />
-                        <Flex flexDirection="column" ml={1}>
+                        <Flex flexDirection="column" ml={1} width="100%">
                           <Text
                             fontSize="10pt"
                             color="blue.600"
@@ -433,7 +429,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                     ) : (
                       ""
                     )}
-                  </>
+                  </Flex>
                 )}
               </Flex>
               {user &&
@@ -457,123 +453,114 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                   </Flex>
                 )}
             </Flex>
-            <Flex flexDirection="column">
-              <Flex>
-                <Flex
-                  width="100%"
-                  justifyContent={isEditingSite ? "center" : ""}
-                >
-                  {isEditingSite ? (
-                    <Flex flexDirection="column" width="90%" mt={5}>
-                      <Input
-                        value={editedSite}
-                        onChange={(e) => setEditedSite(e.target.value)}
-                        size="sm"
-                        flexGrow={1}
-                        _focus={{
-                          outline: "none",
-                          bg: "white",
-                          border: "1px solid",
-                          borderColor: "black",
-                        }}
-                      />
-                      {siteError && (
-                        <Text color="red.500" fontSize="10pt" p={1}>
-                          {siteError}
-                        </Text>
-                      )}
-                      <Text fontSize="10pt" color="gray.600" p={2}>
-                        https://www.sample.com
+            <Flex justifyContent="center">
+              <Flex width="90%" justifyContent={isEditingSite ? "center" : ""}>
+                {isEditingSite ? (
+                  <Flex flexDirection="column" width="100%" mt={5}>
+                    <Input
+                      value={editedSite}
+                      onChange={(e) => setEditedSite(e.target.value)}
+                      size="sm"
+                      flexGrow={1}
+                      _focus={{
+                        outline: "none",
+                        bg: "white",
+                        border: "1px solid",
+                        borderColor: "black",
+                      }}
+                    />
+                    {siteError && (
+                      <Text color="red.500" fontSize="10pt" p={1}>
+                        {siteError}
                       </Text>
-                      <Divider />
-                      <Flex
-                        flexDirection="row"
-                        justifyContent="flex-end"
-                        mt={2}
-                      >
-                        <Button
-                          width="30%"
-                          size="sm"
-                          fontSize="12px"
-                          isLoading={loadingSite}
-                          onClick={handleSiteSave}
-                        >
-                          <Text>Save</Text>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          width="30%"
-                          ml={2}
-                          size="sm"
-                          fontSize="12px"
-                          onClick={handleSiteCancel}
-                        >
-                          <Text>Cancel</Text>
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  ) : (
-                    <>
-                      {editedSite ||
-                      user?.uid === communityData.creatorId ||
-                      isUserModerator ? (
-                        <Flex alignItems="flex-start" mt={5}>
-                          <Icon
-                            fontSize={35}
-                            p={2}
-                            as={FaGlobe}
-                            color="gray.500"
-                          />
-                          <Flex flexDirection="column" ml={1}>
-                            <Text
-                              fontSize="10pt"
-                              color="blue.600"
-                              cursor="pointer"
-                              fontWeight={700}
-                              _hover={{ textDecoration: "underline" }}
-                              onClick={handleSiteEditClick}
-                            >
-                              {!editedSite && "ADD WEBSITE"}
-                            </Text>
-                            <Link
-                              isExternal
-                              href={editedSite}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ fontSize: "10pt" }}
-                            >
-                              {editedSite}
-                            </Link>
-                            <Text fontSize="9pt" color="gray.600">
-                              Website
-                            </Text>
-                          </Flex>
-                        </Flex>
-                      ) : null}
-                    </>
-                  )}
-                </Flex>
-                {user &&
-                  !isEditingSite &&
-                  (user.uid === communityData.creatorId || isUserModerator) && (
-                    <Flex mt={5}>
+                    )}
+                    <Text fontSize="10pt" color="gray.600" p={2}>
+                      https://www.sample.com
+                    </Text>
+                    <Divider />
+                    <Flex flexDirection="row" justifyContent="flex-end" mt={2}>
                       <Button
-                        variant="ghost"
-                        position="relative"
-                        color="blue.500"
-                        ml={2}
-                        size="xs"
-                        onClick={handleSiteEditClick}
+                        width="30%"
+                        size="sm"
+                        fontSize="12px"
+                        isLoading={loadingSite}
+                        onClick={handleSiteSave}
                       >
-                        <Icon
-                          position="absolute"
-                          fontSize={editedSite ? "" : "12pt"}
-                          as={editedSite ? FaPen : IoMdAddCircleOutline}
-                        />
+                        <Text>Save</Text>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        width="30%"
+                        ml={2}
+                        size="sm"
+                        fontSize="12px"
+                        onClick={handleSiteCancel}
+                      >
+                        <Text>Cancel</Text>
                       </Button>
                     </Flex>
-                  )}
+                  </Flex>
+                ) : (
+                  <Flex width="80%">
+                    {editedSite ||
+                    user?.uid === communityData.creatorId ||
+                    isUserModerator ? (
+                      <Flex alignItems="flex-start" mt={5} width="100%">
+                        <Icon
+                          fontSize={35}
+                          p={2}
+                          as={FaGlobe}
+                          color="gray.500"
+                        />
+                        <Flex flexDirection="column" ml={1} width="100%">
+                          <Text
+                            fontSize="10pt"
+                            color="blue.600"
+                            cursor="pointer"
+                            fontWeight={700}
+                            _hover={{ textDecoration: "underline" }}
+                            onClick={handleSiteEditClick}
+                          >
+                            {!editedSite && "ADD WEBSITE"}
+                          </Text>
+                          <Link
+                            isExternal
+                            href={editedSite}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontSize: "10pt" }}
+                          >
+                            {editedSite}
+                          </Link>
+                          <Text fontSize="9pt" color="gray.600">
+                            Website
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    ) : null}
+                  </Flex>
+                )}
               </Flex>
+              {user &&
+                !isEditingSite &&
+                (user.uid === communityData.creatorId || isUserModerator) && (
+                  <Flex mt={5}>
+                    <Button
+                      variant="ghost"
+                      position="relative"
+                      color="blue.500"
+                      ml={2}
+                      size="xs"
+                      onClick={handleSiteEditClick}
+                    >
+                      <Icon
+                        position="absolute"
+                        fontSize={editedSite ? "" : "12pt"}
+                        as={editedSite ? FaPen : IoMdAddCircleOutline}
+                      />
+                    </Button>
+                  </Flex>
+                )}
             </Flex>
           </Flex>
           {user &&
@@ -601,7 +588,11 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
         </Flex>
       </Box>
 
-      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        size={md ? "md" : "xm"}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontSize="11pt">Manage Community</ModalHeader>

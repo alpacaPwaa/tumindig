@@ -318,11 +318,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                     fontWeight={600}
                   >
                     <Flex align="center" width="80%">
-                      <Flex
-                        width={md ? "" : "20%"}
-                        align="center"
-                        justifyContent="center"
-                      >
+                      <Flex width="20%" align="center" justifyContent="center">
                         {item.imageURL ? (
                           <Image
                             borderRadius="md"

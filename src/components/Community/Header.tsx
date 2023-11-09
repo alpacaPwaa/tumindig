@@ -182,7 +182,8 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
                       &middot;
                     </Text>
                     <Text color="gray.500" fontSize="10pt" fontWeight={600}>
-                      {communityData.numberOfMembers} members
+                      {communityData.numberOfMembers}{" "}
+                      {md ? "members" : "joined"}
                     </Text>
                   </Flex>
                 </Flex>

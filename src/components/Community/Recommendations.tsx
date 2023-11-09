@@ -154,7 +154,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({ communityData }) => {
                           />
                         )}
                       </Flex>
-                      <Flex width="80%">
+                      <Flex width="75%">
                         <span
                           style={{
                             whiteSpace: "nowrap",

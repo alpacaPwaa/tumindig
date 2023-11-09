@@ -284,7 +284,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   {homePage ? (
                     <Flex alignItems="center">
                       {post.communityImageURL ? (
-                        <Flex width={md ? "" : "20%"}>
+                        <Flex>
                           <Image
                             borderRadius="full"
                             boxSize="35px"
@@ -685,6 +685,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
               </Button>
               <Text
                 fontSize="10pt"
+                fontWeight={700}
                 mr={1}
                 ml={1}
                 color={

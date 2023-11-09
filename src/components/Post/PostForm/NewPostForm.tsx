@@ -322,10 +322,14 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
     <Flex bg="white" flexDirection="column" p={5} borderRadius="md" mt={6}>
       {communityVisibility && (!isUserAdmin || !isUserModerator) && (
         <Flex
-          bg="red.400"
+          border="1px"
+          bg="gray.50"
+          borderColor="gray.100"
+          shadow="sm"
+          fontSize="10pt"
+          borderRadius="md"
           p={2}
           mb={2}
-          borderRadius="md"
           alignItems="center"
           justifyContent="center"
         >

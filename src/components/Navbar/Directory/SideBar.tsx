@@ -97,7 +97,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
         userId={user?.uid!}
       />
       <Box
-        height="600px"
+        height="550px"
         overflowY="auto"
         bg="white"
         css={{
@@ -203,6 +203,37 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
               p={2}
               _hover={{ bg: "gray.100" }}
               backgroundColor={
+                router.pathname === "/communities" ? "gray.100" : ""
+              }
+              onClick={() => {
+                if (!md) {
+                  // Check if it's not a medium or large screen
+                  handleSidebarItemClick();
+                  goToCommunityList();
+                }
+                goToCommunityList();
+              }}
+            >
+              <Flex alignItems="center">
+                <Icon
+                  fontSize={32}
+                  mr={2}
+                  as={AiFillCompass}
+                  bg="gray.200"
+                  p="5px"
+                  borderRadius="full"
+                />
+                Communities
+              </Flex>
+            </Box>
+            <Box
+              as="button"
+              width="100%"
+              fontSize="10pt"
+              fontWeight={600}
+              p={2}
+              _hover={{ bg: "gray.100" }}
+              backgroundColor={
                 router.pathname === "/events" ||
                 router.pathname.includes("joined")
                   ? "gray.100"
@@ -229,38 +260,6 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
                 Events
               </Flex>
             </Box>
-            <Box
-              as="button"
-              width="100%"
-              fontSize="10pt"
-              fontWeight={600}
-              p={2}
-              _hover={{ bg: "gray.100" }}
-              backgroundColor={
-                router.pathname === "/communities" ? "gray.100" : ""
-              }
-              onClick={() => {
-                if (!md) {
-                  // Check if it's not a medium or large screen
-                  handleSidebarItemClick();
-                  goToCommunityList();
-                }
-                goToCommunityList();
-              }}
-            >
-              <Flex alignItems="center">
-                <Icon
-                  fontSize={32}
-                  mr={2}
-                  as={AiFillCompass}
-                  bg="gray.200"
-                  p="5px"
-                  borderRadius="full"
-                />
-                Communities
-              </Flex>
-            </Box>
-
             <Box
               as="button"
               fontSize="10pt"

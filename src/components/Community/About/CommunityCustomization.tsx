@@ -27,6 +27,7 @@ import {
   ModalOverlay,
   ModalFooter,
   Button,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BiCustomize } from "react-icons/bi";
@@ -52,7 +53,7 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
   const [selectedBanner, setSelectedBanner] = useState<string>();
   const selectBannerRef = useRef<HTMLInputElement>(null);
   const [showModal, setShowModal] = useState(false); // State to control the modal visibility
-
+  const [md] = useMediaQuery("(min-width: 768px)");
   const [saveLoading, setSaveLoading] = useState(false);
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,7 +228,11 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
               </Button>
             </Flex>
 
-            <Modal isOpen={showModal} onClose={handleCloseModal}>
+            <Modal
+              isOpen={showModal}
+              onClose={handleCloseModal}
+              size={md ? "md" : "xs"}
+            >
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader fontSize={15}>Community Customization</ModalHeader>
@@ -345,7 +350,7 @@ const CommunityCustomization: React.FC<CommunityCustomizationProps> = ({
                 </ModalBody>
                 <Divider />
                 <ModalFooter width="100%">
-                  <Flex width="40%">
+                  <Flex width={md ? "40%" : "60%"}>
                     <Button
                       size="sm"
                       mr={1}
