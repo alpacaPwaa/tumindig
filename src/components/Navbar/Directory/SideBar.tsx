@@ -111,7 +111,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
         }}
       >
         <Stack spacing={1}>
-          <Stack spacing={2} mb={2} mt={2}>
+          <Stack spacing={2} mb={2}>
             {user && (
               <Flex
                 alignItems="center"

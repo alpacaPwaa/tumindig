@@ -254,7 +254,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
             our community.
           </Text>
           <Flex flexDirection="column" fontWeight={600}>
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="center">
               <Flex justifyContent={isEditingEmail ? "center" : ""} width="90%">
                 {isEditingEmail ? (
                   <Flex flexDirection="column" width="100%" mt={5}>
@@ -591,7 +591,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        size={md ? "md" : "xm"}
+        size={md ? "md" : "xs"}
       >
         <ModalOverlay />
         <ModalContent>
