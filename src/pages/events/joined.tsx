@@ -294,7 +294,7 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
           <Text>Recent Events</Text>
         </Flex>
-        <PostEventNav />
+        {user && <PostEventNav />}
         {loading ? (
           <PostLoader />
         ) : (

@@ -211,9 +211,9 @@ const PostOptions: React.FC<PostOptionsProps> = ({
                 {hidePost ? "Hidden" : "Hide"}
               </Text>
             </MenuItem>
-            <Divider />
             {userIsCreator && (
               <>
+                <Divider />
                 <MenuItem onClick={handleDelete}>
                   <Flex justifyContent="center" justifyItems="center">
                     <Icon as={AiOutlineDelete} fontSize="20px" />
@@ -234,7 +234,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
                 <Divider />
               </>
             )}
-            <Divider />
+            {/* <Divider /> */}
             {/* <MenuItem
               onClick={handleReportPostModal}
               color={reportPost ? "red.500" : ""}

@@ -19,6 +19,7 @@ import usePosts from "../../hooks/usePosts";
 import { FaUsers } from "react-icons/fa";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
+import { AiFillCalendar } from "react-icons/ai";
 
 type EventPostsProps = {
   communityData: Community;
@@ -279,19 +280,16 @@ const EventPosts: React.FC<EventPostsProps> = ({
         >
           <Icon
             color="gray.300"
-            as={FaUsers}
+            as={AiFillCalendar}
             fontSize={200}
-            border="8px solid"
-            borderColor="gray.300"
-            borderRadius="50%"
             mb={3}
             mt={6}
           />
           <Text color="gray.500" fontSize="15pt" fontWeight={800}>
-            No Post Yet
+            No Event Yet
           </Text>
           <Text color="gray.500" fontSize="11pt" fontWeight={500}>
-            Start the conversation with your first post!
+            Event coming soon! Check back for details.
           </Text>
         </Flex>
       ) : null}
