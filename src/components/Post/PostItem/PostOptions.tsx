@@ -231,7 +231,6 @@ const PostOptions: React.FC<PostOptionsProps> = ({
                     </Text>
                   </Flex>
                 </MenuItem>
-                <Divider />
               </>
             )}
             {/* <Divider /> */}
