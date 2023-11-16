@@ -348,7 +348,6 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                     Tags
                   </Text>
                   <Flex mt={1} cursor="pointer">
-                    <Tag size="sm">{communityData.communityCategory}</Tag>
                     {communityData.organizationVolunteerType && (
                       <Tag size="sm" ml={1}>
                         {communityData.organizationVolunteerType}

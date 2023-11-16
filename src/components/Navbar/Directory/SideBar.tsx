@@ -381,11 +381,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
                 }}
               >
                 <Flex width="80%" align="center">
-                  <Flex
-                    align="center"
-                    width="100%"
-                    onClick={() => `/tumindig/${snippet.communityId}`}
-                  >
+                  <Flex align="center" width="100%">
                     {snippet.imageURL ? (
                       <Image
                         borderRadius="md"

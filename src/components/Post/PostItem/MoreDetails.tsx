@@ -212,6 +212,12 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
             mt={2}
             borderRadius="md"
             alignItems="center"
+            onClick={(event) => {
+              if (!md) {
+                event.stopPropagation();
+                setShowDetails(true);
+              }
+            }}
           >
             {post.communityImageURL ? (
               <Flex>
@@ -246,21 +252,24 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                 <Text fontSize="11pt" fontWeight={600}>
                   {post.eventTitle}
                 </Text>
-                <Text fontSize="10pt" fontWeight={600} color="gray.600">
-                  {post.eventVolunteer ? post.eventVolunteer : "0"} {""}
-                  volunteers
-                </Text>
+                <Flex>
+                  <Text fontSize="10pt" fontWeight={600} color="gray.600">
+                    {post.eventVolunteer ? post.eventVolunteer : "0"} {""}
+                    volunteers
+                  </Text>
+                </Flex>
               </Flex>
-
-              <Button
-                variant="ghost"
-                size="md"
-                onClick={(event) => {
-                  event.stopPropagation(), setShowDetails(true);
-                }}
-              >
-                <Text>See Details</Text>
-              </Button>
+              {md && (
+                <Button
+                  variant="ghost"
+                  size="md"
+                  onClick={(event) => {
+                    event.stopPropagation(), setShowDetails(true);
+                  }}
+                >
+                  <Text>See Details</Text>
+                </Button>
+              )}
             </Flex>
           </Flex>
         )}

@@ -72,12 +72,12 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   return (
     <Flex bgColor="white" flexDirection="column">
       <Flex flexDirection="row">
-        <Flex direction="column" width="100%" maxHeight="250px">
+        <Flex direction="column" width="100%" maxHeight="300px">
           {!shouldShowBanner ? (
             <Box height="75px" bg="blue.400" />
           ) : (
             <Box
-              height="250px"
+              height="300px"
               bg={`url(${bannerURL})`}
               bgSize="cover"
               bgPosition="center"
