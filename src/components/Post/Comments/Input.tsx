@@ -118,7 +118,6 @@ const CommentInput: React.FC<CommentInputProps> = ({
       ) : (
         <Flex
           align="center"
-          flexDirection="column"
           justify="space-between"
           borderRadius={2}
           border="1px solid"
