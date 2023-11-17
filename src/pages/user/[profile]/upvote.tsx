@@ -14,7 +14,14 @@ import {
 } from "firebase/firestore";
 import usePosts from "../../../hooks/usePosts";
 import { Community } from "../../../atoms/communitiesAtom";
-import { Flex, Stack, Spinner, Text, Icon } from "@chakra-ui/react";
+import {
+  Flex,
+  Stack,
+  Spinner,
+  Text,
+  Icon,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { Post, PostVote } from "../../../atoms/postsAtom";
 import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
@@ -27,6 +34,7 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
+  const [md] = useMediaQuery("(min-width: 768px)");
   const {
     postStateValue,
     onHidePost,
@@ -187,6 +195,7 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
   return (
     <PageContentLayout>
       <>
+        {!md && <ProfilePage />}
         <ProfileNav />
       </>
       <>

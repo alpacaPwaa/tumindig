@@ -782,7 +782,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           </ModalHeader>
           <Divider />
 
-          <ModalBody>
+          <ModalBody padding={2}>
             <>
               <PostItem
                 post={post}
