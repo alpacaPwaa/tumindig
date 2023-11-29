@@ -94,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           ml={2}
         >
           <Text fontWeight={700} color="deeppink">
-            Volunteerverse
+            Tumndig
           </Text>
         </Flex>
       </Flex>
@@ -129,7 +129,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                 </Flex>
                 <Flex fontWeight={700} color="deeppink" ml={2}>
                   <Text fontSize="13pt" fontWeight={700} color="deeppink">
-                    Volunteerverse
+                    Tumndig
                   </Text>
                 </Flex>
               </Flex>

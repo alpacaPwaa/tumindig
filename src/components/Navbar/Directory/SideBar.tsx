@@ -352,15 +352,17 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
           )}
           <Divider width="95%" m="auto" />
           <Box mt={3} mb={4}>
-            <Text
-              pl={3}
-              mb={1}
-              fontSize="7pt"
-              fontWeight={700}
-              color="gray.500"
-            >
-              YOUR SHORTCUTS
-            </Text>
+            {user && (
+              <Text
+                pl={3}
+                mb={1}
+                fontSize="7pt"
+                fontWeight={700}
+                color="gray.500"
+              >
+                YOUR SHORTCUTS
+              </Text>
+            )}
             {mySnippets.map((snippet, index) => (
               <Flex
                 key={index}
