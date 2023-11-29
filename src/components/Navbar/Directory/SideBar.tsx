@@ -97,7 +97,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
         userId={user?.uid!}
       />
       <Box
-        height={md ? "550px" : "600px"}
+        height="600px"
         overflowY="auto"
         bg="white"
         css={{
