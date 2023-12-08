@@ -11,7 +11,7 @@ export interface Community {
   privacyType: "public" | "restricted" | "private";
   createdAt?: Timestamp;
   imageURL?: string;
-  communityCategory: "Volunteer";
+  communityCategory: "Volunteer" | "Organization";
   description: string;
   bannerURL: string;
   organizationVolunteerType?:

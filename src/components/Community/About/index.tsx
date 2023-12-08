@@ -347,12 +347,25 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                   <Text fontWeight={600} fontSize="11pt">
                     Tags
                   </Text>
-                  <Flex mt={1} cursor="pointer">
-                    {communityData.organizationVolunteerType && (
-                      <Tag size="sm" ml={1}>
-                        {communityData.organizationVolunteerType}
-                      </Tag>
-                    )}
+                  <Flex width="80%">
+                    <Flex mt={1} cursor="pointer">
+                      {communityData.communityCategory == "Volunteer" ? (
+                        <Tag size="sm" ml={1}>
+                          Volunteer
+                        </Tag>
+                      ) : (
+                        <Tag size="sm" ml={1}>
+                          Organization
+                        </Tag>
+                      )}
+                    </Flex>
+                    <Flex mt={1} cursor="pointer" width="100%">
+                      {communityData.organizationVolunteerType && (
+                        <Tag size="sm" ml={1}>
+                          {communityData.organizationVolunteerType}
+                        </Tag>
+                      )}
+                    </Flex>
                   </Flex>
                 </Flex>
               </Flex>

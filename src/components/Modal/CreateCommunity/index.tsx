@@ -30,6 +30,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { User } from "firebase/auth";
 import { FaGlobeAmericas } from "react-icons/fa";
+import { HiUserGroup } from "react-icons/hi2";
 
 type CreateCommunityModalProps = {
   isOpen: boolean;
@@ -48,6 +49,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [charsRemaining, setCharsRemaining] = useState(50);
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
+  const [communityCategory, setCommunityCategory] = useState("volunteer");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [organizationVolunteerType, setOrganizationVolunteerType] =
@@ -89,7 +91,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           createdAt: serverTimestamp(),
           numberOfMembers: 1,
           privacyType: communityType, // set the privacy type based on user selection
-          communityCategory: "Volunteer",
+          communityCategory: communityCategory,
           organizationVolunteerType: organizationVolunteerType,
           description: "",
           bannerURL: "",
@@ -294,7 +296,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               >
                 <Flex alignItems="center">
                   <Icon as={FaGlobeAmericas} mr={2} color="gray.500" />
-                  <Text fontSize="10pt" mr={1}>
+                  <Text fontSize="10pt" fontWeight={600} mr={1}>
                     Public
                   </Text>
                 </Flex>
@@ -315,7 +317,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               >
                 <Flex flexDirection="row" align="center">
                   <Icon as={BsFillEyeFill} color="gray.500" mr={2} />
-                  <Text fontSize="10pt" mr={1}>
+                  <Text fontSize="10pt" fontWeight={600} mr={1}>
                     Restricted
                   </Text>
                 </Flex>
@@ -325,6 +327,33 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               </Text>
             </Flex>
           </Stack>
+        </Box>
+
+        <Box mt={3}>
+          <Text fontWeight={600} fontSize={15} mb={1}>
+            Others
+          </Text>
+          <Flex
+            flexDirection={md ? "row" : "column"}
+            alignItems={md ? "center" : ""}
+          >
+            <Checkbox
+              colorScheme="blue"
+              name="organization"
+              isChecked={communityCategory === "organization"}
+              onChange={() => setCommunityCategory("Organization")}
+            >
+              <Flex flexDirection="row" align="center">
+                <Icon as={HiUserGroup} color="gray.500" mr={2} />
+                <Text fontSize="10pt" fontWeight={600} mr={1}>
+                  Organization
+                </Text>
+              </Flex>
+            </Checkbox>
+            <Text fontSize="8pt" color="gray.500" ml={md ? "" : 5}>
+              Check if your community is an organization.
+            </Text>
+          </Flex>
         </Box>
       </ModalBody>
 

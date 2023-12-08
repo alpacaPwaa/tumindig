@@ -85,6 +85,17 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
     return ""; // Return an empty string if date is undefined
   };
 
+  const convertToStandardTime = (time: string | undefined) => {
+    const standardTime = new Date(`2000-01-01T${time}:00`);
+    const formattedTime = standardTime.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+
+    return formattedTime;
+  };
+
   const onJoinLeaveCommunity = (post: Post, isJoined: boolean) => {
     console.log("ON JOIN LEAVE", post.id);
 
@@ -332,7 +343,8 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                   color="gray.400"
                 />
                 <Text>
-                  {post.timeStart} to {post.timeEnd}
+                  {convertToStandardTime(post.timeStart)} to{" "}
+                  {convertToStandardTime(post.timeEnd)}
                 </Text>
               </Flex>
               <Flex alignItems="center">

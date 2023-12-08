@@ -24,6 +24,8 @@ import {
   MenuOptionGroup,
   Spinner,
   useMediaQuery,
+  MenuItem,
+  Tag,
 } from "@chakra-ui/react";
 import {
   query,
@@ -68,6 +70,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
     selectedOrganizationVolunteerType,
     setSelectedOrganizationVolunteerType,
   ] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const { communityStateValue, loadingCommunityMap, onJoinLeaveCommunity } =
     useCommunityData();
   const [open, setOpen] = useState(false);
@@ -109,7 +112,34 @@ const CommunityList: React.FC<CommunityListProps> = () => {
         limit(10 * currentPage)
       );
 
-      if (selectedOrganizationVolunteerType) {
+      // Apply filters if category is selected
+      if (selectedCategory) {
+        communityQuery = query(
+          collection(firestore, "communities"),
+          where("communityCategory", "==", selectedCategory),
+          orderBy("numberOfMembers", "desc"),
+          limit(10 * currentPage)
+        );
+      }
+
+      if (
+        selectedOrganizationVolunteerType &&
+        selectedCategory === "Organization"
+      ) {
+        // Apply both filters when selectedCategory is "Organization" and selectedOrganizationVolunteerType is specified
+        communityQuery = query(
+          collection(firestore, "communities"),
+          where("communityCategory", "==", "Organization"),
+          where(
+            "organizationVolunteerType",
+            "==",
+            selectedOrganizationVolunteerType
+          ),
+          orderBy("numberOfMembers", "desc"),
+          limit(10 * currentPage)
+        );
+      } else if (selectedOrganizationVolunteerType) {
+        // Apply only organizationVolunteerType filter when selectedOrganizationVolunteerType is specified
         communityQuery = query(
           collection(firestore, "communities"),
           where(
@@ -174,7 +204,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
   useEffect(() => {
     getCommunityRecommendations();
     //eslint-disable-next-line
-  }, [selectedOrganizationVolunteerType, currentPage]);
+  }, [selectedOrganizationVolunteerType, currentPage, selectedCategory]);
 
   const handleOrganizationVolunteerTypeChange = (value: string | string[]) => {
     setLoading(true);
@@ -182,6 +212,15 @@ const CommunityList: React.FC<CommunityListProps> = () => {
       setSelectedOrganizationVolunteerType(value);
     } else if (Array.isArray(value) && value.length > 0) {
       setSelectedOrganizationVolunteerType(value[0]);
+    }
+  };
+
+  const handleCategoryChange = (value: string | string[]) => {
+    setLoading(true);
+    if (typeof value === "string") {
+      setSelectedCategory(value);
+    } else if (Array.isArray(value) && value.length > 0) {
+      setSelectedCategory(value[0]);
     }
   };
 
@@ -233,6 +272,45 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"
               >
+                {selectedCategory || "All Communities"}
+              </MenuButton>
+              <MenuList
+                textAlign="left"
+                color="gray.800"
+                fontSize="14"
+                fontWeight="semibold"
+              >
+                <MenuOptionGroup
+                  defaultValue=""
+                  type="radio"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                >
+                  <MenuItemOption value="">All Communities</MenuItemOption>
+                  <MenuItemOption value="Organization">
+                    Organization
+                  </MenuItemOption>
+                </MenuOptionGroup>
+              </MenuList>
+            </Menu>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                mt={1}
+                width="49%"
+                textAlign="left"
+                borderRadius="md"
+                variant="outline"
+                border="1px solid gray"
+                borderColor="gray.200"
+                backgroundColor="white"
+                color="gray.500"
+                fontWeight="semibold"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
                 {selectedOrganizationVolunteerType || "Filter Communities"}
               </MenuButton>
               <MenuList
@@ -246,7 +324,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                   value={selectedOrganizationVolunteerType}
                   onChange={handleOrganizationVolunteerTypeChange}
                 >
-                  <MenuItemOption value="">All Communities</MenuItemOption>
+                  <MenuItemOption value="">All</MenuItemOption>
                   <MenuItemOption value="Hunger & Homelessness">
                     Hunger & Homelessness
                   </MenuItemOption>
@@ -338,13 +416,20 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                         )}
                       </Flex>
                       <Flex direction="column">
-                        <Text
-                          wordBreak="break-word"
-                          fontWeight={600}
-                          fontSize="12px"
-                        >
-                          {item.id}
-                        </Text>
+                        <Flex direction="row">
+                          <Text
+                            wordBreak="break-word"
+                            fontWeight={600}
+                            fontSize="12px"
+                          >
+                            {item.id}
+                          </Text>
+                          {item.communityCategory == "Organization" && (
+                            <Tag size="sm" ml={1}>
+                              Organization
+                            </Tag>
+                          )}
+                        </Flex>
                         <Text fontSize="11px" fontWeight={600} color="gray.600">
                           {`${item.numberOfMembers}`} Members
                         </Text>
