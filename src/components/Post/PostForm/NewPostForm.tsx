@@ -704,7 +704,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                     Country:
                   </FormLabel>
                   <Flex flexDirection="column" width="100%">
-                    <Menu>
+                    <Menu autoSelect={md ? true : false}>
                       <MenuButton
                         as={Button}
                         rightIcon={<ChevronDownIcon />}

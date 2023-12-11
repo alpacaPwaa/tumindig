@@ -11,6 +11,7 @@ import {
   MenuList,
   MenuOptionGroup,
   MenuItem,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -29,6 +30,8 @@ const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
   const router = useRouter();
   const [user, loadingUser] = useAuthState(auth);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [showList, setShowList] = useState(false);
+  const [md] = useMediaQuery("(min-width: 768px)");
   const countries: Country[] = [
     { value: "", label: "All" },
     { value: "Afghanistan", label: "Afghanistan" },
@@ -272,7 +275,7 @@ const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
         >
           Filter Country
         </Text>
-        <Menu>
+        <Menu autoSelect={md ? true : false}>
           <MenuButton
             as={Button}
             rightIcon={<ChevronDownIcon />}
