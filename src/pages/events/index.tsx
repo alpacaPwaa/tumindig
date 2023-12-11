@@ -41,6 +41,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const router = useRouter();
   const {
     postStateValue,
@@ -56,16 +57,30 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
 
-  const getNoUserHomePosts = async () => {
+  const getEventsPosts = async () => {
     console.log("GETTING NO USER FEED");
 
     try {
-      const postQuery = query(
+      let postQuery = query(
         collection(firestore, "posts"),
         orderBy("voteStatus", "desc"),
         orderBy("createdAt", "desc"),
         limit(8 * currentPage)
       );
+
+      // Apply filters if category is selected
+      if (selectedCountry) {
+        setLoading(true);
+
+        postQuery = query(
+          collection(firestore, "posts"),
+          where("country", "==", selectedCountry),
+          orderBy("voteStatus", "desc"),
+          orderBy("createdAt", "desc"),
+          limit(8 * currentPage)
+        );
+      }
+
       const postDocs = await getDocs(postQuery);
       const posts = postDocs.docs.map((doc) => ({
         id: doc.id,
@@ -95,6 +110,12 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
 
     setLoading(false);
     setFetchPostLoading(false);
+  };
+
+  const handleSelectCountry = (selectedCountry: string) => {
+    setSelectedCountry(selectedCountry);
+    // Call your filtering function or update state here
+    // Example: setFilterCountry(selectedCountry);
   };
 
   useEffect(() => {
@@ -157,18 +178,23 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   useEffect(() => {
     if (!communityStateValue.initSnippetsFetched) return;
     if (user) {
-      getNoUserHomePosts();
+      getEventsPosts();
     }
     //eslint-disable-next-line
-  }, [user, communityStateValue.initSnippetsFetched, currentPage]);
+  }, [
+    user,
+    communityStateValue.initSnippetsFetched,
+    currentPage,
+    selectedCountry,
+  ]);
 
   useEffect(() => {
     setFetchPostLoading(true);
     if (!user && !loadingUser) {
-      getNoUserHomePosts();
+      getEventsPosts();
     }
     //eslint-disable-next-line
-  }, [user, loadingUser, currentPage]);
+  }, [user, loadingUser, currentPage, selectedCountry]);
 
   useEffect(() => {
     if (!user?.uid) return; // If the user is not authenticated, return early
@@ -267,7 +293,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
           <Text>Recent Events</Text>
         </Flex>
-        {user && <PostEventNav />}
+        <PostEventNav onSelectCountry={handleSelectCountry} />
         {loading ? (
           <PostLoader />
         ) : (

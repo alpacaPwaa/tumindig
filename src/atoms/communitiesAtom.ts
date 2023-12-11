@@ -85,7 +85,7 @@ export const defaultCommunity: Community = {
   creatorName: "",
   numberOfMembers: 0,
   privacyType: "public",
-  communityCategory: "Volunteer",
+  communityCategory: "Volunteer" || "Organization",
   organizationVolunteerType: "Others",
   description: "",
   bannerURL: "",

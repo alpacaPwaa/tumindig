@@ -282,136 +282,140 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
               </Flex>
             </Box>
           </Stack>
-          {mySnippets.find((item) => item.isAdmin) && (
+          {user && (
             <>
-              <Divider width="95%" m="auto" />
-              <Box mt={3} mb={1}>
-                <Text
-                  pl={3}
-                  mb={1}
-                  fontSize="7pt"
-                  fontWeight={700}
-                  color="gray.500"
-                >
-                  COMMUNITIES YOU MANAGE
-                </Text>
-                {mySnippets
-                  .filter((item) => item.isAdmin)
-                  .map((snippet, index) => (
-                    <Flex
-                      key={index}
-                      position="relative"
-                      align="center"
-                      fontSize="10pt"
-                      p={2}
-                      fontWeight={600}
-                      cursor="pointer"
-                      _hover={{ bg: "gray.100" }}
-                      onClick={() => {
-                        if (!md) {
-                          // Check if it's not a medium or large screen
-                          handleSidebarItemClick();
-                          router.push(`/tumindig/${snippet.communityId}`);
-                        }
-                        router.push(`/tumindig/${snippet.communityId}`);
-                      }}
+              {mySnippets.find((item) => item.isAdmin) && user && (
+                <>
+                  <Divider width="95%" m="auto" />
+                  <Box mt={3} mb={1}>
+                    <Text
+                      pl={3}
+                      mb={1}
+                      fontSize="7pt"
+                      fontWeight={700}
+                      color="gray.500"
                     >
-                      <Flex width="80%" align="center">
-                        <Flex align="center" width="20%">
-                          {snippet.imageURL ? (
-                            <Image
-                              borderRadius="md"
-                              boxSize="28px"
-                              src={snippet.imageURL}
-                              mr={2}
-                              objectFit="cover"
-                              alt="Image"
-                            />
-                          ) : (
-                            <Icon
-                              as={IoPeopleCircleSharp}
-                              fontSize={30}
-                              color="gray.300"
-                              mr={2}
-                            />
-                          )}
+                      COMMUNITIES YOU MANAGE
+                    </Text>
+                    {mySnippets
+                      .filter((item) => item.isAdmin)
+                      .map((snippet, index) => (
+                        <Flex
+                          key={index}
+                          position="relative"
+                          align="center"
+                          fontSize="10pt"
+                          p={2}
+                          fontWeight={600}
+                          cursor="pointer"
+                          _hover={{ bg: "gray.100" }}
+                          onClick={() => {
+                            if (!md) {
+                              // Check if it's not a medium or large screen
+                              handleSidebarItemClick();
+                              router.push(`/tumindig/${snippet.communityId}`);
+                            }
+                            router.push(`/tumindig/${snippet.communityId}`);
+                          }}
+                        >
+                          <Flex width="80%" align="center">
+                            <Flex align="center" width="20%">
+                              {snippet.imageURL ? (
+                                <Image
+                                  borderRadius="md"
+                                  boxSize="28px"
+                                  src={snippet.imageURL}
+                                  mr={2}
+                                  objectFit="cover"
+                                  alt="Image"
+                                />
+                              ) : (
+                                <Icon
+                                  as={IoPeopleCircleSharp}
+                                  fontSize={30}
+                                  color="gray.300"
+                                  mr={2}
+                                />
+                              )}
+                            </Flex>
+                            <Flex>
+                              <Text
+                                maxWidth="100%" // Adjust the maximum width as needed
+                                wordBreak="break-word"
+                              >
+                                {snippet.communityId}
+                              </Text>
+                            </Flex>
+                          </Flex>
                         </Flex>
-                        <Flex>
-                          <Text
-                            maxWidth="100%" // Adjust the maximum width as needed
-                            wordBreak="break-word"
-                          >
-                            {snippet.communityId}
-                          </Text>
-                        </Flex>
+                      ))}
+                  </Box>
+                </>
+              )}
+              <Divider width="95%" m="auto" />
+              <Box mt={3} mb={4}>
+                {user && (
+                  <Text
+                    pl={3}
+                    mb={1}
+                    fontSize="7pt"
+                    fontWeight={700}
+                    color="gray.500"
+                  >
+                    YOUR SHORTCUTS
+                  </Text>
+                )}
+                {mySnippets.map((snippet, index) => (
+                  <Flex
+                    key={index}
+                    position="relative"
+                    align="center"
+                    fontSize="10pt"
+                    p={2}
+                    fontWeight={600}
+                    cursor="pointer"
+                    _hover={{ bg: "gray.100" }}
+                    onClick={() => {
+                      if (!md) {
+                        // Check if it's not a medium or large screen
+                        handleSidebarItemClick();
+                        router.push(`/tumindig/${snippet.communityId}`);
+                      }
+                      router.push(`/tumindig/${snippet.communityId}`);
+                    }}
+                  >
+                    <Flex width="80%" align="center">
+                      <Flex align="center" width="100%">
+                        {snippet.imageURL ? (
+                          <Image
+                            borderRadius="md"
+                            boxSize="28px"
+                            src={snippet.imageURL}
+                            mr={2}
+                            objectFit="cover"
+                            alt="Image"
+                          />
+                        ) : (
+                          <Icon
+                            as={IoPeopleCircleSharp}
+                            fontSize={30}
+                            color="gray.300"
+                            mr={2}
+                          />
+                        )}
+                        <Text
+                          maxWidth="100%" // Adjust the maximum width as needed
+                          wordBreak="break-word"
+                        >
+                          {snippet.communityId}
+                        </Text>
                       </Flex>
                     </Flex>
-                  ))}
+                  </Flex>
+                ))}
               </Box>
             </>
           )}
-          <Divider width="95%" m="auto" />
-          <Box mt={3} mb={4}>
-            {user && (
-              <Text
-                pl={3}
-                mb={1}
-                fontSize="7pt"
-                fontWeight={700}
-                color="gray.500"
-              >
-                YOUR SHORTCUTS
-              </Text>
-            )}
-            {mySnippets.map((snippet, index) => (
-              <Flex
-                key={index}
-                position="relative"
-                align="center"
-                fontSize="10pt"
-                p={2}
-                fontWeight={600}
-                cursor="pointer"
-                _hover={{ bg: "gray.100" }}
-                onClick={() => {
-                  if (!md) {
-                    // Check if it's not a medium or large screen
-                    handleSidebarItemClick();
-                    router.push(`/tumindig/${snippet.communityId}`);
-                  }
-                  router.push(`/tumindig/${snippet.communityId}`);
-                }}
-              >
-                <Flex width="80%" align="center">
-                  <Flex align="center" width="100%">
-                    {snippet.imageURL ? (
-                      <Image
-                        borderRadius="md"
-                        boxSize="28px"
-                        src={snippet.imageURL}
-                        mr={2}
-                        objectFit="cover"
-                        alt="Image"
-                      />
-                    ) : (
-                      <Icon
-                        as={IoPeopleCircleSharp}
-                        fontSize={30}
-                        color="gray.300"
-                        mr={2}
-                      />
-                    )}
-                    <Text
-                      maxWidth="100%" // Adjust the maximum width as needed
-                      wordBreak="break-word"
-                    >
-                      {snippet.communityId}
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Flex>
-            ))}
-          </Box>
         </Stack>
       </Box>
     </Flex>

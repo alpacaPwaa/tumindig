@@ -31,6 +31,7 @@ export type Post = {
   isEdited?: boolean;
   isPinned: boolean;
   isVolunteer?: boolean;
+  country?: string;
 };
 
 export type PostVote = {

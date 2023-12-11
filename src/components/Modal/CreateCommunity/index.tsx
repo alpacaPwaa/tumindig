@@ -49,7 +49,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [charsRemaining, setCharsRemaining] = useState(50);
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
-  const [communityCategory, setCommunityCategory] = useState("volunteer");
+  const [communityCategory, setCommunityCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [organizationVolunteerType, setOrganizationVolunteerType] =
@@ -339,9 +339,13 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           >
             <Checkbox
               colorScheme="blue"
-              name="organization"
-              isChecked={communityCategory === "organization"}
-              onChange={() => setCommunityCategory("Organization")}
+              name="Organization"
+              isChecked={communityCategory === "Organization"}
+              onChange={() =>
+                setCommunityCategory(
+                  communityCategory === "Organization" ? "" : "Organization"
+                )
+              }
             >
               <Flex flexDirection="row" align="center">
                 <Icon as={HiUserGroup} color="gray.500" mr={2} />

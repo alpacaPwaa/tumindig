@@ -41,6 +41,7 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const {
     postStateValue,
     onHidePost,
@@ -55,12 +56,15 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
 
-  const getUserHomePosts = async () => {
+  const getCommunityEventPosts = async () => {
     console.log("GETTING USER HOME POSTS");
 
     // Check if the user has joined any communities
-
     if (!communityStateValue.initSnippetsFetched) return;
+
+    if (selectedCountry) {
+      setLoading(true);
+    }
 
     try {
       let postQuery: Query<DocumentData>;
@@ -86,9 +90,19 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
             query(
               collection(firestore, "posts"),
               where("communityId", "in", chunk),
-              orderBy("voteStatus", "desc"),
-              orderBy("createdAt", "desc"),
-              limit(8 * currentPage)
+              // Add the following lines for country filtering
+              ...(selectedCountry
+                ? [
+                    where("country", "==", selectedCountry),
+                    orderBy("voteStatus", "desc"),
+                    orderBy("createdAt", "desc"),
+                    limit(8 * currentPage),
+                  ]
+                : [
+                    orderBy("voteStatus", "desc"),
+                    orderBy("createdAt", "desc"),
+                    limit(8 * currentPage),
+                  ])
             )
           )
         );
@@ -188,14 +202,25 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
     }
   };
 
+  const handleSelectCountry = (selectedCountry: string) => {
+    setSelectedCountry(selectedCountry);
+    // Call your filtering function or update state here
+    // Example: setFilterCountry(selectedCountry);
+  };
+
   useEffect(() => {
     if (!communityStateValue.initSnippetsFetched) return;
 
     if (user) {
-      getUserHomePosts();
+      getCommunityEventPosts();
     }
     //eslint-disable-next-line
-  }, [user, communityStateValue.initSnippetsFetched, currentPage]);
+  }, [
+    user,
+    communityStateValue.initSnippetsFetched,
+    currentPage,
+    selectedCountry,
+  ]);
 
   useEffect(() => {
     if (!user?.uid) return; // If the user is not authenticated, return early
@@ -294,7 +319,7 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
           <Text>Recent Events</Text>
         </Flex>
-        {user && <PostEventNav />}
+        {user && <PostEventNav onSelectCountry={handleSelectCountry} />}
         {loading ? (
           <PostLoader />
         ) : (

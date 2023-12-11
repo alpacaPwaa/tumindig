@@ -33,7 +33,8 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RiEditLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { TbMessageReport, TbTrashX } from "react-icons/tb";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { authModalState } from "../../../atoms/authModalAtom";
 import { Community, communityState } from "../../../atoms/communitiesAtom";
 import { Post, postState } from "../../../atoms/postsAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
@@ -77,6 +78,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({
   const [removePostModalOpen, setRemovePostModalOplen] = useState(false);
   const singlePostView = !onSelectPost; // function not passed to [pid]
   const [md] = useMediaQuery("(min-width: 768px)");
+  const setAuthModalState = useSetRecoilState(authModalState);
 
   const handleDelete = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -157,6 +159,20 @@ const PostOptions: React.FC<PostOptionsProps> = ({
     }
   };
 
+  const handleMenuButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    // Stop the propagation to prevent it from reaching the parent elements
+    event.stopPropagation();
+
+    // Check if there is no user
+    if (!user) {
+      // Open the authentication modal
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+  };
+
   const isUserModerator = !!communityStateValue.moderatorSnippets.find(
     (snippet) =>
       snippet.communityId === communityData?.id &&
@@ -168,73 +184,72 @@ const PostOptions: React.FC<PostOptionsProps> = ({
     <>
       <Flex align="center">
         <Menu closeOnSelect={false}>
-          {user && (
-            <MenuButton
-              as={Button}
-              variant="ghost"
-              size="sm"
-              borderRadius="full"
-              position="relative"
-              ml="auto"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <Flex align="center" justify="center">
-                <Icon
-                  as={HiOutlineDotsHorizontal}
-                  fontSize="20px"
-                  position="absolute"
-                  color="gray.500"
-                />
-              </Flex>
-            </MenuButton>
-          )}
-          <MenuList>
-            <MenuItem
-              onClick={handleSavePost}
-              color={savePost ? "blue.500" : ""}
-            >
+          <MenuButton
+            as={Button}
+            variant="ghost"
+            size="sm"
+            borderRadius="full"
+            position="relative"
+            ml="auto"
+            onClick={handleMenuButtonClick}
+          >
+            <Flex align="center" justify="center">
               <Icon
-                as={savePost ? BsBookmarkCheck : BsBookmark}
+                as={HiOutlineDotsHorizontal}
                 fontSize="20px"
+                position="absolute"
+                color="gray.500"
               />
-              <Text fontSize="10pt" pl={1} fontWeight={600}>
-                {savePost ? "Saved" : "Save"}
-              </Text>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-              onClick={handleHidePost}
-              color={hidePost ? "blue.500" : ""}
-            >
-              <Icon as={BiHide} fontSize="20px" />
-              <Text fontSize="10pt" pl={1} fontWeight={600}>
-                {hidePost ? "Hidden" : "Hide"}
-              </Text>
-            </MenuItem>
-            {userIsCreator && (
-              <>
-                <Divider />
-                <MenuItem onClick={handleDelete}>
-                  <Flex justifyContent="center" justifyItems="center">
-                    <Icon as={AiOutlineDelete} fontSize="20px" />
-                    <Text fontSize="10pt" pl={1} fontWeight={600}>
-                      Delete
-                    </Text>
-                  </Flex>
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={editMode} closeOnSelect={true}>
-                  <Flex>
-                    <Icon as={RiEditLine} fontSize="20px" />
-                    <Text fontSize="10pt" pl={1} fontWeight={600}>
-                      Edit
-                    </Text>
-                  </Flex>
-                </MenuItem>
-              </>
-            )}
-            {/* <Divider /> */}
-            {/* <MenuItem
+            </Flex>
+          </MenuButton>
+          {user && (
+            <MenuList>
+              <MenuItem
+                onClick={handleSavePost}
+                color={savePost ? "blue.500" : ""}
+              >
+                <Icon
+                  as={savePost ? BsBookmarkCheck : BsBookmark}
+                  fontSize="20px"
+                />
+                <Text fontSize="10pt" pl={1} fontWeight={600}>
+                  {savePost ? "Saved" : "Save"}
+                </Text>
+              </MenuItem>
+              <Divider />
+              <MenuItem
+                onClick={handleHidePost}
+                color={hidePost ? "blue.500" : ""}
+              >
+                <Icon as={BiHide} fontSize="20px" />
+                <Text fontSize="10pt" pl={1} fontWeight={600}>
+                  {hidePost ? "Hidden" : "Hide"}
+                </Text>
+              </MenuItem>
+              {userIsCreator && (
+                <>
+                  <Divider />
+                  <MenuItem onClick={handleDelete}>
+                    <Flex justifyContent="center" justifyItems="center">
+                      <Icon as={AiOutlineDelete} fontSize="20px" />
+                      <Text fontSize="10pt" pl={1} fontWeight={600}>
+                        Delete
+                      </Text>
+                    </Flex>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={editMode} closeOnSelect={true}>
+                    <Flex>
+                      <Icon as={RiEditLine} fontSize="20px" />
+                      <Text fontSize="10pt" pl={1} fontWeight={600}>
+                        Edit
+                      </Text>
+                    </Flex>
+                  </MenuItem>
+                </>
+              )}
+              {/* <Divider /> */}
+              {/* <MenuItem
               onClick={handleReportPostModal}
               color={reportPost ? "red.500" : ""}
             >
@@ -243,31 +258,32 @@ const PostOptions: React.FC<PostOptionsProps> = ({
                 {reportPost ? "Reported" : "Report"}
               </Text>
             </MenuItem> */}
-            {user &&
-              (user.uid === communityData?.creatorId || isUserModerator) && ( // Compare community creator ID with the user's ID
-                <>
-                  <Divider />
-                  <Text
-                    color="gray.500"
-                    fontSize="10pt"
-                    pl={3}
-                    pt={1}
-                    fontWeight={600}
-                  >
-                    Moderator
-                  </Text>
-                  <MenuItem
-                    onClick={handleRemovePostModal}
-                    color={reportPost ? "blue.500" : ""}
-                  >
-                    <Icon as={TbTrashX} fontSize="21px" />
-                    <Text fontSize="10pt" pl={1} fontWeight={600}>
-                      Remove Post
+              {user &&
+                (user.uid === communityData?.creatorId || isUserModerator) && ( // Compare community creator ID with the user's ID
+                  <>
+                    <Divider />
+                    <Text
+                      color="gray.500"
+                      fontSize="10pt"
+                      pl={3}
+                      pt={1}
+                      fontWeight={600}
+                    >
+                      Moderator
                     </Text>
-                  </MenuItem>
-                </>
-              )}
-          </MenuList>
+                    <MenuItem
+                      onClick={handleRemovePostModal}
+                      color={reportPost ? "blue.500" : ""}
+                    >
+                      <Icon as={TbTrashX} fontSize="21px" />
+                      <Text fontSize="10pt" pl={1} fontWeight={600}>
+                        Remove Post
+                      </Text>
+                    </MenuItem>
+                  </>
+                )}
+            </MenuList>
+          )}
         </Menu>
         {!singlePostView && user && (
           <Button

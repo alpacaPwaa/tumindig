@@ -25,7 +25,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillCalendar, AiFillClockCircle, AiFillPhone } from "react-icons/ai";
 import { FaGlobeAmericas } from "react-icons/fa";
-import { IoPeopleCircleSharp } from "react-icons/io5";
+import { IoLocationSharp, IoPeopleCircleSharp } from "react-icons/io5";
 import { MdEmail, MdEventAvailable } from "react-icons/md";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
@@ -180,17 +180,25 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
 
   const getVolunteers = async () => {
     try {
-      const volunteerDocs = await getDocs(
-        collection(firestore, `users/${user?.uid}/postVolunteer`)
-      );
+      if (post.isVolunteer) {
+        const volunteerDocs = await getDocs(
+          collection(firestore, `users/${user?.uid}/postVolunteer`)
+        );
 
-      const volunteer = volunteerDocs.docs.map((doc) => ({ ...doc.data() }));
-      setPostStateValue((prev) => ({
-        ...prev,
-        postVolunteer: volunteer as PostVolunteer[],
-      }));
+        const volunteer = volunteerDocs.docs.map((doc) => ({ ...doc.data() }));
+        setPostStateValue((prev) => ({
+          ...prev,
+          postVolunteer: volunteer as PostVolunteer[],
+        }));
 
-      console.log("here are the volunteers", volunteer);
+        console.log("Here are the volunteers", volunteer);
+      } else {
+        // If post.isVolunteer is false, clear the volunteers data
+        setPostStateValue((prev) => ({
+          ...prev,
+          postVolunteer: [],
+        }));
+      }
     } catch (error: any) {
       console.log("getMySnippets error", error);
     }
@@ -211,7 +219,8 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
           post.timeEnd ||
           post.timeStart ||
           post.email ||
-          post.eventTitle) && (
+          post.eventTitle ||
+          post.country) && (
           <Flex
             width="95%"
             border="1px"
@@ -324,8 +333,18 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                   fontSize={20}
                   color="gray.400"
                 />
+                <Text>{post.country} </Text>
+              </Flex>
+              <Flex alignItems="center">
+                <Icon
+                  as={IoLocationSharp}
+                  mr={2}
+                  fontSize={20}
+                  color="gray.400"
+                />
                 <Text>{post.location} </Text>
               </Flex>
+
               <Flex alignItems="center">
                 <Icon
                   as={AiFillCalendar}

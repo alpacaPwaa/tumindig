@@ -359,7 +359,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const getCommentReplies = async (comments: Comment[]): Promise<Reply[]> => {
     try {
-      // Fetch replies from Firestore
+      // Check if there are comments
+      if (!comments || comments.length === 0) {
+        console.log("No comments provided.");
+        return [];
+      }
+
+      // Fetch replies from Firestore for all comments
       const commentIds = comments.map((comment) => comment.id);
       const repliesQuery = query(
         collection(firestore, "replies"),
@@ -368,6 +374,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         orderBy("createdAt", "asc"),
         limit(3 * currentPageReply)
       );
+
       const replyDocs = await getDocs(repliesQuery);
       const replies = replyDocs.docs.map((doc) => ({
         id: doc.id,
@@ -383,7 +390,26 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
       setReplyVotes(flattenedReplyVotes);
 
-      return replies; // Return fetched replies here
+      // Process the replies for each comment
+      const processedReplies = comments.flatMap((comment) => {
+        // Find replies corresponding to the current comment
+        const commentReplies = replies.filter(
+          (reply) => reply.commentId === comment.id
+        );
+
+        // Check if there are no replies for the current comment
+        if (commentReplies.length === 0) {
+          console.log(`No replies found for comment ${comment.id}`);
+          return [];
+        }
+
+        // Process the replies for the current comment as needed
+        // ...
+
+        return commentReplies;
+      });
+
+      return processedReplies;
     } catch (error: any) {
       console.log("getCommentReplies error", error.message);
       return []; // Return an empty array
