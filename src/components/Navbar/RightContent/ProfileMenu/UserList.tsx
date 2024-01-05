@@ -21,6 +21,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { VscAccount } from "react-icons/vsc";
 import { RxDotFilled } from "react-icons/rx";
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import { BiDonateHeart } from "react-icons/bi";
 
 type UserListProps = {};
 
@@ -36,6 +37,10 @@ const UserList: React.FC<UserListProps> = () => {
 
   const goToProfile = () => {
     router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
+  };
+
+  const goToSupportPage = () => {
+    router.push(`/support`); // Use router.push to navigate to the profile page
   };
 
   return (
@@ -89,6 +94,18 @@ const UserList: React.FC<UserListProps> = () => {
         <Flex alignItems="center">
           <Icon fontSize={22} mr="8px" ml="7px" as={CgProfile} />
           Profile
+        </Flex>
+      </MenuItem>
+      <MenuDivider />
+      <MenuItem
+        fontSize="10pt"
+        fontWeight={600}
+        _hover={{ bg: "blue.500", color: "white" }}
+        onClick={goToSupportPage}
+      >
+        <Flex alignItems="center">
+          <Icon fontSize={22} mr="8px" ml="7px" as={BiDonateHeart} />
+          Support
         </Flex>
       </MenuItem>
       <MenuDivider />

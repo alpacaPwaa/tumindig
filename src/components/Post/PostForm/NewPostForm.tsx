@@ -90,9 +90,11 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
     timeStart: "",
     timeEnd: "",
     eventTitle: "",
+    postTags: "",
     isVolunteer: false,
   });
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -324,6 +326,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
       timeEnd,
       eventTitle,
       isVolunteer,
+      postTags,
     } = textInputs;
 
     if (email && !emailRegex.test(email)) {
@@ -375,6 +378,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
         eventTitle,
         timeEnd,
         country: selectedCountry,
+        postTags: selectedTag,
         numberOfComments: 0,
         voteStatus: 0,
         createdAt: serverTimestamp(),
@@ -493,6 +497,14 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleTagChange = (value: string | string[]) => {
+    if (typeof value === "string") {
+      setSelectedTag(value);
+    } else if (Array.isArray(value) && value.length > 0) {
+      setSelectedTag(value[0]);
+    }
   };
 
   const handleCoutryChange = (value: string | string[]) => {
@@ -918,6 +930,85 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                     {detailsError}
                   </Text>
                 )}
+              </Stack>
+              <Text fontSize="11pt" fontWeight={600}>
+                Tags
+              </Text>
+              <Stack p={2}>
+                <Flex
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <FormLabel mr={3} fontSize="11pt" width="20%">
+                    Cause:
+                  </FormLabel>
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      mt={1}
+                      width="100%"
+                      textAlign="left"
+                      borderRadius="md"
+                      variant="outline"
+                      border="1px solid gray"
+                      borderColor="gray.200"
+                      backgroundColor="white"
+                      color="gray.500"
+                      fontWeight="semibold"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      {selectedTag || "Add Tag"}
+                    </MenuButton>
+                    <MenuList
+                      textAlign="left"
+                      color="gray.800"
+                      fontSize="14"
+                      fontWeight="semibold"
+                      zIndex="999"
+                    >
+                      <MenuOptionGroup
+                        type="radio"
+                        value={selectedTag}
+                        onChange={handleTagChange}
+                      >
+                        <MenuItemOption value="">All</MenuItemOption>
+                        <MenuItemOption value="Hunger & Homelessness">
+                          Hunger & Homelessness
+                        </MenuItemOption>
+                        <MenuItemOption value="Health & Wellness">
+                          Health & Wellness
+                        </MenuItemOption>
+                        <MenuItemOption value="Faith & Spirituality">
+                          Faith & Spirituality
+                        </MenuItemOption>
+                        <MenuItemOption value="Animal & Wildlife">
+                          Animal & Wildlife
+                        </MenuItemOption>
+                        <MenuItemOption value="Childrean & Youth">
+                          Childrean & Youth
+                        </MenuItemOption>
+                        <MenuItemOption value="Environment & Conservation">
+                          Environment & Conservation
+                        </MenuItemOption>
+                        <MenuItemOption value="Human & Social Services">
+                          Human & Social Services
+                        </MenuItemOption>
+                        <MenuItemOption value="International Development">
+                          International Development
+                        </MenuItemOption>
+                        <MenuItemOption value="Arts & Culture">
+                          Arts & Culture
+                        </MenuItemOption>
+                        <MenuItemOption value="Others">Others</MenuItemOption>
+                        {/* Add more options for organization types if needed */}
+                      </MenuOptionGroup>
+                    </MenuList>
+                  </Menu>
+                </Flex>
               </Stack>
             </Stack>
           )}

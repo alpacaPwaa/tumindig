@@ -137,11 +137,8 @@ const Recommendations: React.FC<RecommendationsProps> = ({ communityData }) => {
                               <Image
                                 src={item.imageURL}
                                 boxSize="100%"
-                                style={{
-                                  borderRadius: "50%",
-                                  mask: "url(#circle-mask)",
-                                }}
                                 alt="Image"
+                                borderRadius="full"
                               />
                             </AspectRatio>
                           </Box>

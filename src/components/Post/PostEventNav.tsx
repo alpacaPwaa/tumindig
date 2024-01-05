@@ -24,13 +24,25 @@ type Country = {
   label: string;
 };
 
-type PostEventNavProps = { onSelectCountry: (selectedCountry: string) => void };
+type Tags = {
+  value: string;
+  label: string;
+};
 
-const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
+type PostEventNavProps = {
+  onSelectCountry: (selectedCountry: string) => void;
+  onSelectTags: (selectedTags: string) => void;
+};
+
+const PostEventNav: React.FC<PostEventNavProps> = ({
+  onSelectCountry,
+  onSelectTags,
+}) => {
   const router = useRouter();
   const [user, loadingUser] = useAuthState(auth);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [showList, setShowList] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string>("");
   const [md] = useMediaQuery("(min-width: 768px)");
   const countries: Country[] = [
     { value: "", label: "All" },
@@ -234,6 +246,21 @@ const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
     { value: "Zimbabwe", label: "Zimbabwe" },
   ];
 
+  const tags: Tags[] = [
+    { value: "", label: "All" },
+    { value: "Hunger & Homelessness", label: "Hunger & Homelessness" },
+    { value: "Health & Wellness", label: "Health & Wellness" },
+    { value: "Faith & Spirituality", label: "Faith & Spirituality" },
+    { value: "Animal & Wildlife", label: "Animal & Wildlife" },
+    {
+      value: "Environment & Conservation",
+      label: "Environment & Conservation",
+    },
+    { value: "Human & Social Services", label: "Human & Social Services" },
+    { value: "International Development", label: "International Development" },
+    { value: "Arts & Culture", label: "Arts & Culture" },
+  ];
+
   const goToEventList = () => {
     router.push(`/events`); // Use router.push to navigate to the events page
   };
@@ -257,6 +284,21 @@ const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
     onSelectCountry(updatedCountry);
   };
 
+  const handleTagsChange = (value: string | string[]) => {
+    let updatedTags: string;
+
+    if (typeof value === "string") {
+      updatedTags = value;
+    } else if (Array.isArray(value) && value.length > 0) {
+      updatedTags = value[0];
+    } else {
+      updatedTags = ""; // Set a default value if needed
+    }
+
+    setSelectedTags(updatedTags);
+    onSelectTags(updatedTags);
+  };
+
   return (
     <Flex
       bg="white"
@@ -273,53 +315,100 @@ const PostEventNav: React.FC<PostEventNavProps> = ({ onSelectCountry }) => {
           fontSize="10pt"
           fontWeight="semibold"
         >
-          Filter Country
+          Filter Events
         </Text>
-        <Menu autoSelect={md ? true : false}>
-          <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            mt={1}
-            width="49%"
-            textAlign="left"
-            borderRadius="md"
-            variant="outline"
-            border="1px solid gray"
-            borderColor="gray.200"
-            backgroundColor="white"
-            color="gray.500"
-            fontWeight="semibold"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-          >
-            {selectedCountry || "Select Country"}
-          </MenuButton>
-          <MenuList
-            textAlign="left"
-            color="gray.800"
-            fontSize="14"
-            fontWeight="semibold"
-          >
-            <FixedSizeList
-              height={350}
-              itemCount={countries.length}
-              itemSize={40} // Set your desired item size
-              width="100%"
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Menu autoSelect={md ? true : false}>
+            <MenuButton
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              mt={1}
+              width="49%"
+              textAlign="left"
+              borderRadius="md"
+              variant="outline"
+              border="1px solid gray"
+              borderColor="gray.200"
+              backgroundColor="white"
+              color="gray.500"
+              fontWeight="semibold"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
             >
-              {({ index, style }) => (
-                <MenuItem
-                  key={countries[index].value}
-                  value={countries[index].value}
-                  onClick={() => handleCountryChange(countries[index].value)}
-                  style={style}
-                >
-                  {countries[index].label}
-                </MenuItem>
-              )}
-            </FixedSizeList>
-          </MenuList>
-        </Menu>
+              {selectedCountry || "Select Country"}
+            </MenuButton>
+            <MenuList
+              textAlign="left"
+              color="gray.800"
+              fontSize="14"
+              fontWeight="semibold"
+            >
+              <FixedSizeList
+                height={350}
+                itemCount={countries.length}
+                itemSize={40} // Set your desired item size
+                width="100%"
+              >
+                {({ index, style }) => (
+                  <MenuItem
+                    key={countries[index].value}
+                    value={countries[index].value}
+                    onClick={() => handleCountryChange(countries[index].value)}
+                    style={style}
+                  >
+                    {countries[index].label}
+                  </MenuItem>
+                )}
+              </FixedSizeList>
+            </MenuList>
+          </Menu>
+          <Menu autoSelect={md ? true : false}>
+            <MenuButton
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              mt={1}
+              width="49%"
+              textAlign="left"
+              borderRadius="md"
+              variant="outline"
+              border="1px solid gray"
+              borderColor="gray.200"
+              backgroundColor="white"
+              color="gray.500"
+              fontWeight="semibold"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {selectedTags || "Select Tags"}
+            </MenuButton>
+            <MenuList
+              textAlign="left"
+              color="gray.800"
+              fontSize="14"
+              fontWeight="semibold"
+            >
+              <FixedSizeList
+                height={350}
+                itemCount={tags.length}
+                itemSize={40} // Set your desired item size
+                width="100%"
+              >
+                {({ index, style }) => (
+                  <MenuItem
+                    key={tags[index].value}
+                    value={tags[index].value}
+                    onClick={() => handleTagsChange(tags[index].value)}
+                    style={style}
+                  >
+                    {tags[index].label}
+                  </MenuItem>
+                )}
+              </FixedSizeList>
+            </MenuList>
+          </Menu>
+        </Flex>
       </Flex>
       <Divider />
       <Flex

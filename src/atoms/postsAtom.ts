@@ -32,6 +32,7 @@ export type Post = {
   isPinned: boolean;
   isVolunteer?: boolean;
   country?: string;
+  postTags?: string;
 };
 
 export type PostVote = {

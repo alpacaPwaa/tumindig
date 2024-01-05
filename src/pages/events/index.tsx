@@ -29,6 +29,7 @@ import PostItem from "../../components/Post/PostItem";
 import usePosts from "../../hooks/usePosts";
 import { useRouter } from "next/router";
 import PostEventNav from "../../components/Post/PostEventNav";
+import { setEngine } from "crypto";
 
 type EventHomeProps = {
   communityData: Community;
@@ -42,6 +43,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string>("");
   const router = useRouter();
   const {
     postStateValue,
@@ -68,13 +70,35 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
         limit(8 * currentPage)
       );
 
-      // Apply filters if category is selected
+      // Apply filters if country is selected
       if (selectedCountry) {
         setLoading(true);
 
         postQuery = query(
           collection(firestore, "posts"),
           where("country", "==", selectedCountry),
+          orderBy("voteStatus", "desc"),
+          orderBy("createdAt", "desc"),
+          limit(8 * currentPage)
+        );
+      }
+
+      // Apply filters if tags are selected
+      if (selectedTags && selectedCountry) {
+        setLoading(true);
+
+        postQuery = query(
+          collection(firestore, "posts"),
+          where("country", "==", selectedCountry),
+          where("postTags", "==", selectedTags),
+          orderBy("voteStatus", "desc"),
+          orderBy("createdAt", "desc"),
+          limit(8 * currentPage)
+        );
+      } else if (selectedTags) {
+        postQuery = query(
+          collection(firestore, "posts"),
+          where("postTags", "==", selectedTags),
           orderBy("voteStatus", "desc"),
           orderBy("createdAt", "desc"),
           limit(8 * currentPage)
@@ -114,6 +138,12 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
 
   const handleSelectCountry = (selectedCountry: string) => {
     setSelectedCountry(selectedCountry);
+    // Call your filtering function or update state here
+    // Example: setFilterCountry(selectedCountry);
+  };
+
+  const handleSelectTags = (selectedTags: string) => {
+    setSelectedTags(selectedTags);
     // Call your filtering function or update state here
     // Example: setFilterCountry(selectedCountry);
   };
@@ -186,6 +216,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
     communityStateValue.initSnippetsFetched,
     currentPage,
     selectedCountry,
+    selectedTags,
   ]);
 
   useEffect(() => {
@@ -194,7 +225,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
       getEventsPosts();
     }
     //eslint-disable-next-line
-  }, [user, loadingUser, currentPage, selectedCountry]);
+  }, [user, loadingUser, currentPage, selectedCountry, selectedTags]);
 
   useEffect(() => {
     if (!user?.uid) return; // If the user is not authenticated, return early
@@ -293,7 +324,10 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
           <Text>Recent Events</Text>
         </Flex>
-        <PostEventNav onSelectCountry={handleSelectCountry} />
+        <PostEventNav
+          onSelectCountry={handleSelectCountry}
+          onSelectTags={handleSelectTags}
+        />
         {loading ? (
           <PostLoader />
         ) : (

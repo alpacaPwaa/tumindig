@@ -32,6 +32,7 @@ import { authModalState } from "../../../atoms/authModalAtom";
 import { Community } from "../../../atoms/communitiesAtom";
 import { Post, postState, PostVolunteer } from "../../../atoms/postsAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
+import { FaTags } from "react-icons/fa";
 
 type MoreDetailsProps = { post: Post; community: Community };
 
@@ -374,6 +375,14 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                 <Icon as={MdEmail} mr={2} fontSize={20} color="gray.400" />
                 <Text> {post.email} </Text>
               </Flex>
+              {post.postTags ? (
+                <Flex alignItems="center">
+                  <Icon as={FaTags} mr={2} fontSize={20} color="gray.400" />
+                  <Text> {post.postTags} </Text>
+                </Flex>
+              ) : (
+                ""
+              )}
             </Stack>
           </ModalBody>
 
