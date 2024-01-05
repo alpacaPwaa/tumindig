@@ -145,7 +145,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   const handleSelectTags = (selectedTags: string) => {
     setSelectedTags(selectedTags);
     // Call your filtering function or update state here
-    // Example: setFilterCountry(selectedCountry);
+    // Example: setFilterEvent(selectedTags);
   };
 
   useEffect(() => {

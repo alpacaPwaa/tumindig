@@ -42,6 +42,7 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string>("");
   const {
     postStateValue,
     onHidePost,
@@ -62,10 +63,6 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
     // Check if the user has joined any communities
     if (!communityStateValue.initSnippetsFetched) return;
 
-    if (selectedCountry) {
-      setLoading(true);
-    }
-
     try {
       let postQuery: Query<DocumentData>;
 
@@ -85,26 +82,28 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
       // Perform separate queries for each chunk and combine the results
       const postPromises: Promise<QuerySnapshot<DocumentData>>[] = [];
       for (const chunk of communityIdChunks) {
+        const queryConditions = [
+          where("communityId", "in", chunk),
+          orderBy("voteStatus", "desc"),
+          orderBy("createdAt", "desc"),
+          limit(8 * currentPage),
+        ];
+
+        if (selectedCountry) {
+          queryConditions.push(where("country", "==", selectedCountry));
+        }
+
+        if (selectedCountry && selectedTags) {
+          queryConditions.push(
+            where("country", "==", selectedCountry),
+            where("postTags", "==", selectedTags)
+          );
+        } else if (selectedTags) {
+          queryConditions.push(where("postTags", "==", selectedTags));
+        }
+
         postPromises.push(
-          getDocs(
-            query(
-              collection(firestore, "posts"),
-              where("communityId", "in", chunk),
-              // Add the following lines for country filtering
-              ...(selectedCountry
-                ? [
-                    where("country", "==", selectedCountry),
-                    orderBy("voteStatus", "desc"),
-                    orderBy("createdAt", "desc"),
-                    limit(8 * currentPage),
-                  ]
-                : [
-                    orderBy("voteStatus", "desc"),
-                    orderBy("createdAt", "desc"),
-                    limit(8 * currentPage),
-                  ])
-            )
-          )
+          getDocs(query(collection(firestore, "posts"), ...queryConditions))
         );
       }
 
@@ -144,7 +143,6 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
     setLoading(false);
     setFetchPostLoading(false);
   };
-
   useEffect(() => {
     const handleScroll = () => {
       if (!hasMore || loading) return;
@@ -208,6 +206,12 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
     // Example: setFilterCountry(selectedCountry);
   };
 
+  const handleSelectTags = (selectedTags: string) => {
+    setSelectedTags(selectedTags);
+    // Call your filtering function or update state here
+    // Example: setFilterEvent(selectedTags);
+  };
+
   useEffect(() => {
     if (!communityStateValue.initSnippetsFetched) return;
 
@@ -220,6 +224,7 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
     communityStateValue.initSnippetsFetched,
     currentPage,
     selectedCountry,
+    selectedTags,
   ]);
 
   useEffect(() => {
@@ -319,7 +324,12 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
         <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
           <Text>Recent Events</Text>
         </Flex>
-        {user && <PostEventNav onSelectCountry={handleSelectCountry} />}
+        {user && (
+          <PostEventNav
+            onSelectCountry={handleSelectCountry}
+            onSelectTags={handleSelectTags}
+          />
+        )}
         {loading ? (
           <PostLoader />
         ) : (
