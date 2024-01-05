@@ -141,13 +141,13 @@ const Support: React.FC<SupportProps> = () => {
           right? Especially when that passion involves creating the awesome
           website you&apos;re browsing right now. The thing is, server bills
           aren&apos;t exactly ramen-friendly. So, if you enjoy this website
-          without getting bombarded with pop-up ads (you're welcome!), then
+          without getting bombarded with pop-up ads (you&apos;re welcome!), then
           maybe consider tossing a few bucks my way. Think of it as an
           investment in good vibes, community spirit, and endless
           procrastination material (wink wink). Your support helps keep this
           virtual haven afloat and fuels my caffeine-powered coding sprees. So,
           if you&apos;re feeling generous (or just guilty about all the hours
-          you've spent here), hit that donate button and join the crew of
+          you&apos;ve spent here), hit that donate button and join the crew of
           Tumndig superheroes!
         </Text>
       </VStack>
