@@ -21,6 +21,7 @@ import { MdNewReleases } from "react-icons/md";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
 import { auth } from "../../firebase/clientApp";
+import dynamic from "next/dynamic";
 
 type CreatePostProps = {};
 
@@ -45,10 +46,12 @@ const CreatePostLink: React.FC<CreatePostProps> = () => {
 
   const goToCommunity = () => {
     router.push(`/tumindig/${router.query.community}`); // Use router.push to navigate to the profile page
+    return;
   };
 
   const goToTopPage = () => {
     router.push(`/tumindig/${router.query.community}/top`); // Use router.push to navigate to the profile page
+    return;
   };
 
   return (
