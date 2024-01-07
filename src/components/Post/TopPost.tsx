@@ -7,6 +7,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { Community, communityState } from "../../atoms/communitiesAtom";
@@ -19,15 +20,14 @@ import usePosts from "../../hooks/usePosts";
 import { FaUsers } from "react-icons/fa";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
-import { AiFillCalendar } from "react-icons/ai";
 
-type EventPostsProps = {
+type TopPostsProps = {
   communityData: Community;
   userId?: string;
   loadingUser: boolean;
 };
 
-const EventPosts: React.FC<EventPostsProps> = ({
+const TopPosts: React.FC<TopPostsProps> = ({
   communityData,
   userId,
   loadingUser,
@@ -79,13 +79,17 @@ const EventPosts: React.FC<EventPostsProps> = ({
   const getPosts = async () => {
     console.log("WE ARE GETTING POSTS!!!");
 
+    const oneWeekAgoTimestamp = Timestamp.fromMillis(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    );
+
     try {
       const postsQuery = query(
         collection(firestore, "posts"),
         where("communityId", "==", communityData?.id!),
-        orderBy("isPinned", "desc"),
-        orderBy("createdAt", "desc"),
-        orderBy("voteStatus", "desc"),
+        where("createdAt", ">=", oneWeekAgoTimestamp),
+        orderBy("createdAt", "desc"), // Order by createdAt in descending order first
+        orderBy("voteStatus", "desc"), // Then, order by voteStatus in descending order
         limit(10 * currentPage)
       );
       const postDocs = await getDocs(postsQuery);
@@ -94,19 +98,22 @@ const EventPosts: React.FC<EventPostsProps> = ({
         ...doc.data(),
       })) as Post[];
 
-      // Filter the posts to get only the ones where isVolunteer is true
-      const volunteerPosts = posts.filter((post) => post.isVolunteer === true);
+      posts.sort(
+        (a: Post, b: Post) =>
+          b.voteStatus - a.voteStatus ||
+          b.createdAt.toMillis() - a.createdAt.toMillis()
+      );
 
       setPostStateValue((prev) => ({
         ...prev,
-        posts: volunteerPosts, // Only volunteer posts
+        posts: posts as Post[],
         postsCache: {
           ...prev.postsCache,
-          [communityData?.id!]: posts as Post[], // Cache all posts
+          [communityData?.id!]: posts as Post[],
         },
         postUpdateRequired: false,
       }));
-      setPosts(volunteerPosts);
+      setPosts(posts as Post[]);
 
       // Check if there are more posts to load
       const fetchedPostsLength = posts.length;
@@ -280,20 +287,23 @@ const EventPosts: React.FC<EventPostsProps> = ({
         >
           <Icon
             color="gray.300"
-            as={AiFillCalendar}
+            as={FaUsers}
             fontSize={200}
+            border="8px solid"
+            borderColor="gray.300"
+            borderRadius="50%"
             mb={3}
             mt={6}
           />
           <Text color="gray.500" fontSize="15pt" fontWeight={800}>
-            No Event Yet
+            No Post Yet
           </Text>
           <Text color="gray.500" fontSize="11pt" fontWeight={500}>
-            Event coming soon! Check back for details.
+            Start the conversation with your first post!
           </Text>
         </Flex>
       ) : null}
     </>
   );
 };
-export default EventPosts;
+export default TopPosts;

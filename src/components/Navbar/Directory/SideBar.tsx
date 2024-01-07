@@ -173,7 +173,11 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
               fontWeight={600}
               p={2}
               _hover={{ bg: "gray.100" }}
-              backgroundColor={router.pathname === "/" ? "gray.100" : ""}
+              backgroundColor={
+                router.pathname === "/" || router.pathname === "/top"
+                  ? "gray.100"
+                  : ""
+              }
               onClick={() => {
                 if (!md) {
                   // Check if it's not a medium or large screen

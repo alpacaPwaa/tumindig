@@ -83,12 +83,16 @@ const Posts: React.FC<PostsProps> = ({
         collection(firestore, "posts"),
         where("communityId", "==", communityData?.id!),
         orderBy("isPinned", "desc"),
-        orderBy("voteStatus", "desc"),
         orderBy("createdAt", "desc"),
+        orderBy("voteStatus", "desc"),
         limit(10 * currentPage)
       );
       const postDocs = await getDocs(postsQuery);
-      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const posts = postDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Post[];
+
       setPostStateValue((prev) => ({
         ...prev,
         posts: posts as Post[],

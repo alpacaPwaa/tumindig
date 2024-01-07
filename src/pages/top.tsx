@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Flex, Stack, Text, Spinner, Button, HStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Stack,
+  Text,
+  Spinner,
+  Button,
+  HStack,
+  Icon,
+} from "@chakra-ui/react";
 import {
   collection,
   DocumentData,
@@ -9,42 +17,41 @@ import {
   Query,
   query,
   QuerySnapshot,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import type { NextPage } from "next";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
-import { auth, firestore } from "../../firebase/clientApp";
 import {
   Community,
   CommunitySnippet,
   communityState,
-} from "../../atoms/communitiesAtom";
-import { Post, PostVote, PostOptions } from "../../atoms/postsAtom";
-import PersonalHome from "../../components/Community/PersonalHome";
-import Recommendations from "../../components/Community/Recommendations";
-import PageContentLayout from "../../components/Layout/PageContent";
-import PostLoader from "../../components/Post/Loader";
-import PostItem from "../../components/Post/PostItem";
-import usePosts from "../../hooks/usePosts";
-import { useRouter } from "next/router";
-import PostEventNav from "../../components/Post/PostEventNav";
-import { setEngine } from "crypto";
+} from "../atoms/communitiesAtom";
+import { Post, PostOptions, PostVote } from "../atoms/postsAtom";
+import Recommendations from "../components/Community/Recommendations";
+import PageContentLayout from "../components/Layout/PageContent";
+import PostLoader from "../components/Post/Loader";
+import PostItem from "../components/Post/PostItem";
+import { auth, firestore } from "../firebase/clientApp";
+import usePosts from "../hooks/usePosts";
+import PersonalHome from "../components/Community/PersonalHome";
+import { MdNewReleases } from "react-icons/md";
+import { ImArrowUp } from "react-icons/im";
+import router from "next/router";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
-type EventHomeProps = {
+type TopProps = {
   communityData: Community;
   snippets: CommunitySnippet[];
 };
 
-const Events: NextPage<EventHomeProps> = ({ communityData }) => {
+const Top: NextPage<TopProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [selectedTags, setSelectedTags] = useState<string>("");
-  const router = useRouter();
   const {
     postStateValue,
     onHidePost,
@@ -59,70 +66,170 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
 
-  const getEventsPosts = async () => {
+  const goToNewPost = () => {
+    router.push(`/`); // Use router.push to navigate to the events page
+  };
+
+  const goToTopPost = () => {
+    router.push(`/top`); // Use router.push to navigate to the events page
+  };
+
+  const getUserHomePosts = async () => {
     console.log("GETTING NO USER FEED");
 
+    const oneWeekAgoTimestamp = Timestamp.fromMillis(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    );
+
     try {
-      let postQuery = query(
+      let postQuery: Query<DocumentData>;
+
+      // Check if the user has joined any communities
+      if (communityStateValue.mySnippets.length) {
+        console.log("GETTING POSTS IN USER COMMUNITIES");
+
+        const myCommunityIds = communityStateValue.mySnippets.map(
+          (snippet) => snippet.communityId
+        );
+
+        // Divide the myCommunityIds array into chunks of 10 or fewer elements
+        const chunkSize = 8;
+        const communityIdChunks: string[][] = [];
+        for (let i = 0; i < myCommunityIds.length; i += chunkSize) {
+          communityIdChunks.push(myCommunityIds.slice(i, i + chunkSize));
+        }
+
+        // Perform separate queries for each chunk and combine the results
+        const postPromises: Promise<QuerySnapshot<DocumentData>>[] = [];
+        for (const chunk of communityIdChunks) {
+          const createdAtQuery = query(
+            collection(firestore, "posts"),
+            where("communityId", "in", chunk),
+            where("createdAt", ">=", oneWeekAgoTimestamp),
+            orderBy("createdAt", "desc"), // Order by createdAt in descending order first
+            orderBy("voteStatus", "desc"), // Then, order by voteStatus in descending order
+            limit(8 * currentPage)
+          );
+
+          postPromises.push(getDocs(createdAtQuery));
+        }
+
+        // Merge results from different queries
+        const postDocs = await Promise.all(postPromises);
+        const posts: Post[] = [];
+        for (const querySnapshot of postDocs) {
+          const queryPosts = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Post[];
+          posts.push(...queryPosts);
+        }
+
+        console.log("NO USER FEED", posts);
+
+        // Sort the merged array by 'voteStatus' and then by 'createdAt'
+        posts.sort(
+          (a: Post, b: Post) =>
+            b.voteStatus - a.voteStatus ||
+            b.createdAt.toMillis() - a.createdAt.toMillis()
+        );
+
+        setPostStateValue((prev) => ({
+          ...prev,
+          posts,
+        }));
+
+        // Check if there are more posts to load
+        const fetchedPostsLength = posts.length;
+        const pageSize = 8;
+        const morePostsAvailable = fetchedPostsLength === pageSize;
+
+        // Update the 'hasMore' state based on whether there are more posts available to load
+        setHasMore(morePostsAvailable);
+      } else {
+        console.log("USER HAS NO COMMUNITIES - GETTING GENERAL POSTS");
+
+        // If the user has not joined any communities, fetch general posts
+        postQuery = query(
+          collection(firestore, "posts"),
+          where("createdAt", ">=", oneWeekAgoTimestamp),
+          orderBy("createdAt", "desc"), // Order by createdAt in descending order first
+          orderBy("voteStatus", "desc"), // Then, order by voteStatus in descending order
+          limit(8 * currentPage)
+        );
+
+        const postDocs = await getDocs(postQuery);
+        const posts = postDocs.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[];
+
+        console.log("NO USER FEED", posts);
+
+        // Sort the merged array by 'voteStatus' and then by 'createdAt'
+        posts.sort(
+          (a: Post, b: Post) =>
+            b.voteStatus - a.voteStatus ||
+            b.createdAt.toMillis() - a.createdAt.toMillis()
+        );
+
+        setPostStateValue((prev) => ({
+          ...prev,
+          posts,
+        }));
+
+        // Check if there are more posts to load
+        const fetchedPostsLength = posts.length;
+        const pageSize = 8;
+        const morePostsAvailable = fetchedPostsLength === pageSize;
+
+        // Update the 'hasMore' state based on whether there are more posts available to load
+        setHasMore(morePostsAvailable);
+      }
+    } catch (error: any) {
+      console.log("getUserHomePosts error", error.message);
+    }
+
+    setLoading(false);
+    setFetchPostLoading(false);
+  };
+
+  const getNoUserHomePosts = async () => {
+    console.log("GETTING NO USER FEED");
+
+    const oneWeekAgoTimestamp = Timestamp.fromMillis(
+      Date.now() - 7 * 24 * 60 * 60 * 1000
+    );
+
+    try {
+      const postQuery = query(
         collection(firestore, "posts"),
-        orderBy("voteStatus", "desc"),
-        orderBy("createdAt", "desc"),
+        where("createdAt", ">=", oneWeekAgoTimestamp),
+        orderBy("createdAt", "desc"), // Order by createdAt in descending order first
+        orderBy("voteStatus", "desc"), // Then, order by voteStatus in descending order
         limit(8 * currentPage)
       );
-
-      // Apply filters if country is selected
-      if (selectedCountry) {
-        setLoading(true);
-
-        postQuery = query(
-          collection(firestore, "posts"),
-          where("country", "==", selectedCountry),
-          orderBy("createdAt", "desc"),
-          orderBy("voteStatus", "desc"),
-          limit(8 * currentPage)
-        );
-      }
-
-      // Apply filters if tags are selected
-      if (selectedTags && selectedCountry) {
-        setLoading(true);
-
-        postQuery = query(
-          collection(firestore, "posts"),
-          where("country", "==", selectedCountry),
-          where("postTags", "==", selectedTags),
-          orderBy("voteStatus", "desc"),
-          orderBy("createdAt", "desc"),
-          limit(8 * currentPage)
-        );
-      } else if (selectedTags) {
-        postQuery = query(
-          collection(firestore, "posts"),
-          where("postTags", "==", selectedTags),
-          orderBy("voteStatus", "desc"),
-          orderBy("createdAt", "desc"),
-          limit(8 * currentPage)
-        );
-      }
-
       const postDocs = await getDocs(postQuery);
       const posts = postDocs.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Post[];
+      console.log("NO USER FEED", posts);
 
-      // Filter posts to include only those where isVolunteer is true
-      const volunteerPosts = posts.filter((post) => post.isVolunteer === true);
-
-      console.log("NO USER FEED", volunteerPosts);
+      // Sort the merged array by 'voteStatus' and then by 'createdAt'
+      posts.sort(
+        (a: Post, b: Post) =>
+          b.voteStatus - a.voteStatus ||
+          b.createdAt.toMillis() - a.createdAt.toMillis()
+      );
 
       setPostStateValue((prev) => ({
         ...prev,
-        posts: volunteerPosts, // Only volunteer posts
+        posts: posts as Post[],
       }));
 
       // Check if there are more posts to load
-      const fetchedPostsLength = volunteerPosts.length;
+      const fetchedPostsLength = posts.length;
       const pageSize = 8;
       const morePostsAvailable = fetchedPostsLength === pageSize;
 
@@ -131,21 +238,8 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
     } catch (error: any) {
       console.log("getNoUserHomePosts error", error.message);
     }
-
     setLoading(false);
     setFetchPostLoading(false);
-  };
-
-  const handleSelectCountry = (selectedCountry: string) => {
-    setSelectedCountry(selectedCountry);
-    // Call your filtering function or update state here
-    // Example: setFilterCountry(selectedCountry);
-  };
-
-  const handleSelectTags = (selectedTags: string) => {
-    setSelectedTags(selectedTags);
-    // Call your filtering function or update state here
-    // Example: setFilterEvent(selectedTags);
   };
 
   useEffect(() => {
@@ -207,25 +301,20 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
 
   useEffect(() => {
     if (!communityStateValue.initSnippetsFetched) return;
+
     if (user) {
-      getEventsPosts();
+      getUserHomePosts();
     }
     //eslint-disable-next-line
-  }, [
-    user,
-    communityStateValue.initSnippetsFetched,
-    currentPage,
-    selectedCountry,
-    selectedTags,
-  ]);
+  }, [user, communityStateValue.initSnippetsFetched, currentPage]);
 
   useEffect(() => {
     setFetchPostLoading(true);
     if (!user && !loadingUser) {
-      getEventsPosts();
+      getNoUserHomePosts();
     }
     //eslint-disable-next-line
-  }, [user, loadingUser, currentPage, selectedCountry, selectedTags]);
+  }, [user, loadingUser, currentPage]);
 
   useEffect(() => {
     if (!user?.uid) return; // If the user is not authenticated, return early
@@ -320,14 +409,67 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   return (
     <PageContentLayout>
       <></>
-      <Stack spacing={4}>
-        <Flex fontSize="11pt" color="gray.500" fontWeight={600}>
-          <Text>Recent Events</Text>
+      <>
+        <Flex
+          flexDirection="column"
+          fontSize="11pt"
+          color="gray.500"
+          fontWeight={700}
+          mb={2}
+        >
+          <Text>Top Activity</Text>
+          <HStack bg="white" p="15px 10px 15px 10px" mt={2} borderRadius="sm">
+            <Button
+              size="sm"
+              variant="ghost"
+              fontWeight={700}
+              fontSize="14px"
+              onClick={goToNewPost}
+            >
+              <Icon
+                alignItems="center"
+                justifyContent="center"
+                fontSize={20}
+                mr={1}
+                as={MdNewReleases}
+              />
+              Newest
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              fontWeight={700}
+              fontSize="14px"
+              onClick={goToTopPost}
+              color={router.pathname === "/top" ? "blue.500" : "gray.500"}
+            >
+              <Icon
+                alignItems="center"
+                justifyContent="center"
+                fontSize={18}
+                mr={1}
+                as={ImArrowUp}
+              />
+              Top
+            </Button>
+          </HStack>
         </Flex>
-        <PostEventNav
-          onSelectCountry={handleSelectCountry}
-          onSelectTags={handleSelectTags}
-        />
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="row"
+          bg="white"
+          borderRadius="sm"
+          fontWeight={600}
+          color="gray.500"
+          mb={3}
+          p={2}
+        >
+          <Icon size={20} mr={1} as={IoAlertCircleOutline} />
+          <Text fontSize="13px">
+            Trending now: Explore the hottest topics from the past 7 days.
+          </Text>
+        </Flex>
         {loading ? (
           <PostLoader />
         ) : (
@@ -386,7 +528,7 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
             ) : null}
           </Flex>
         )}
-      </Stack>
+      </>
       <Stack spacing={5}>
         <Recommendations communityData={communityData} />
         <PersonalHome />
@@ -395,4 +537,4 @@ const Events: NextPage<EventHomeProps> = ({ communityData }) => {
   );
 };
 
-export default Events;
+export default Top;

@@ -84,8 +84,8 @@ const Joined: NextPage<JoinedCommunitiesHomeProps> = ({ communityData }) => {
       for (const chunk of communityIdChunks) {
         const queryConditions = [
           where("communityId", "in", chunk),
-          orderBy("voteStatus", "desc"),
           orderBy("createdAt", "desc"),
+          orderBy("voteStatus", "desc"),
           limit(8 * currentPage),
         ];
 

@@ -55,7 +55,6 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
     try {
       const postQuery = query(
         collection(firestore, "posts"),
-        orderBy("voteStatus", "desc"),
         orderBy("createdAt", "desc"),
         limit(8 * currentPage)
       );
