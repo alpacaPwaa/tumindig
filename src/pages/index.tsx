@@ -38,6 +38,7 @@ import PersonalHome from "../components/Community/PersonalHome";
 import { MdNewReleases } from "react-icons/md";
 import { ImArrowUp } from "react-icons/im";
 import router from "next/router";
+import FilterPostNav from "../components/Post/FilterPostNav";
 
 type HomeProps = {
   communityData: Community;
@@ -63,14 +64,6 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
-
-  const goToNewPost = () => {
-    router.push(`/`); // Use router.push to navigate to the events page
-  };
-
-  const goToTopPost = () => {
-    router.push(`/top`); // Use router.push to navigate to the events page
-  };
 
   const getUserHomePosts = async () => {
     console.log("GETTING NO USER FEED");
@@ -386,42 +379,8 @@ const Home: NextPage<HomeProps> = ({ communityData }) => {
           mb={2}
         >
           <Text>Recent Activity</Text>
-          <HStack bg="white" p="15px 10px 15px 10px" mt={2} borderRadius="sm">
-            <Button
-              size="sm"
-              variant="ghost"
-              fontWeight={700}
-              fontSize="14px"
-              onClick={goToNewPost}
-              color={router.pathname === "/" ? "blue.500" : "gray.500"}
-            >
-              <Icon
-                alignItems="center"
-                justifyContent="center"
-                fontSize={20}
-                mr={1}
-                as={MdNewReleases}
-              />
-              Newest
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              fontWeight={700}
-              fontSize="14px"
-              onClick={goToTopPost}
-            >
-              <Icon
-                alignItems="center"
-                justifyContent="center"
-                fontSize={18}
-                mr={1}
-                as={ImArrowUp}
-              />
-              Top
-            </Button>
-          </HStack>
         </Flex>
+        <FilterPostNav />
         {loading ? (
           <PostLoader />
         ) : (
