@@ -38,8 +38,8 @@ import usePosts from "../hooks/usePosts";
 import PersonalHome from "../components/Community/PersonalHome";
 import { MdNewReleases } from "react-icons/md";
 import { ImArrowUp } from "react-icons/im";
-import router from "next/router";
 import { IoAlertCircleOutline } from "react-icons/io5";
+import { useRouter } from "next/router";
 
 type TopProps = {
   communityData: Community;
@@ -65,6 +65,7 @@ const Top: NextPage<TopProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const communityStateValue = useRecoilValue(communityState);
+  const router = useRouter();
 
   const goToNewPost = () => {
     router.push(`/`); // Use router.push to navigate to the events page
