@@ -27,6 +27,7 @@ import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
 import ProfileNav from "../../../components/Profile/ProfileNav";
 import { AiOutlineFolderOpen } from "react-icons/ai";
+import { useRouter } from "next/router";
 
 type DownvotedPostProps = { profile: string; communityData: Community };
 
@@ -48,6 +49,9 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const [user] = useAuthState(auth);
+
+  const router = useRouter();
+  const userProfile = router.query.profile;
 
   const getUserPosts = async () => {
     console.log("GETTING NO USER FEED");
@@ -194,7 +198,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
   return (
     <PageContentLayout>
       <>
-        {!md && <ProfilePage />}
+        {!md && <ProfilePage userProfile={userProfile as string} />}
         <ProfileNav />
       </>
       <>
@@ -279,7 +283,7 @@ const DownvotedPost: NextPage<DownvotedPostProps> = ({ communityData }) => {
         </>
       </>
       <>
-        <ProfilePage />
+        <ProfilePage userProfile={userProfile as string} />
       </>
     </PageContentLayout>
   );

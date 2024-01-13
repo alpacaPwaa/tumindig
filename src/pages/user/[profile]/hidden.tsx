@@ -27,6 +27,7 @@ import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
 import ProfileNav from "../../../components/Profile/ProfileNav";
 import { AiOutlineFolderOpen } from "react-icons/ai";
+import { useRouter } from "next/router";
 
 type HiddenPostProps = { profile: string; communityData: Community };
 
@@ -48,6 +49,9 @@ const HiddenPost: NextPage<HiddenPostProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const [user] = useAuthState(auth);
+
+  const router = useRouter();
+  const userProfile = router.query.profile;
 
   const getUserPosts = async () => {
     console.log("GETTING NO USER FEED");
@@ -323,7 +327,7 @@ const HiddenPost: NextPage<HiddenPostProps> = ({ communityData }) => {
         </>
       </>
       <>
-        <ProfilePage />
+        <ProfilePage userProfile={userProfile as string} />
       </>
     </PageContentLayout>
   );

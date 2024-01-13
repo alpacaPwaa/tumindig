@@ -84,7 +84,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
       // Update the 'hasMore' state based on whether there are more posts available to load
       setHasMore(morePostsAvailable);
     } catch (error: any) {
-      console.log("getNoUserHomePosts error", error.message);
+      console.log("getuserProfilePosts error", error.message);
     }
     setLoading(false);
     setFetchPostLoading(false);
@@ -192,10 +192,8 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
   return (
     <PageContentLayout>
       <>
-        {!md && <ProfilePage userId={userProfile as string} />}
-        {userProfile == user?.uid && (
-          <ProfileNav userId={userProfile as string} />
-        )}
+        {!md && <ProfilePage userProfile={userProfile as string} />}
+        {userProfile == user?.uid && <ProfileNav />}
       </>
       <>
         {loading ? (
@@ -230,7 +228,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
                       (item) => item.postId === post.id
                     )?.isReported
                   }
-                  userIsCreator={userProfile === post.creatorId}
+                  userIsCreator={user?.uid === post.creatorId}
                   onSelectPost={onSelectPost}
                   homePage
                   mediaURLs={[]}
@@ -279,7 +277,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
         )}
       </>
       <>
-        <ProfilePage userId={userProfile as string} />
+        <ProfilePage userProfile={userProfile as string} />
       </>
     </PageContentLayout>
   );

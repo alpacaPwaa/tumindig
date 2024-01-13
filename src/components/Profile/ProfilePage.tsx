@@ -36,10 +36,10 @@ import { updateProfile } from "firebase/auth";
 import { AiOutlineSetting } from "react-icons/ai";
 
 type ProfilePageProps = {
-  userId?: string;
+  userProfile?: string;
 };
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile }) => {
   const [user] = useAuthState(auth);
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string>();
@@ -55,23 +55,42 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
   const [displayNameLoading, setDisplayNameLoading] = useState(false);
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [inputFocused, setInputFocused] = useState(false);
-  // const [md] = useMediaQuery("(min-width: 768px)");
-  const md = false;
+  const [md] = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userDocRef = doc(collection(firestore, "users"), userId);
+        // Check if userProfile is defined and not null
+        if (!userProfile) {
+          console.error("User profile is undefined or null");
+          return;
+        }
+
+        // Log the userProfile and its type for debugging
+        console.log("User profile:", userProfile);
+        console.log("User profile type:", typeof userProfile);
+
+        const userDocRef = doc(collection(firestore, "users"), userProfile);
         const userDocSnapshot = await getDoc(userDocRef);
+
         if (userDocSnapshot.exists()) {
           const userData = userDocSnapshot.data();
 
+          // Log the retrieved userData for debugging
           console.log("Userdata");
           console.log(userData);
+
+          // Log the user's email
+          console.log("User email:", user?.email);
 
           setUpdatedDisplayName(userData.displayName);
           setUpdatedPhotoURL(userData.photoURL);
           setCreatedAt(userData.createdAt);
+        } else {
+          console.error(
+            "User document does not exist for profile:",
+            userProfile
+          );
         }
       } catch (error) {
         console.log("Error fetching user data:", error);
@@ -79,7 +98,49 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [userProfile]);
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       // Check if user is defined and not null
+  //       if (!userProfile) {
+  //         console.error("User is undefined or null");
+  //         return;
+  //       }
+
+  //       // Log the user and its type for debugging
+  //       console.log("User:", userProfile);
+  //       console.log("User type:", typeof userProfile);
+
+  //       // Log the user's email
+  //       console.log("User email:", user?.email);
+
+  //       // Fetch user data using email instead of uid
+  //       const userDocRef = collection(firestore, "users");
+  //       const userQuery = query(userDocRef, where("email", "==", userProfile));
+  //       const userDocSnapshot = await getDocs(userQuery);
+
+  //       if (!userDocSnapshot.empty) {
+  //         const userData = userDocSnapshot.docs[0].data();
+
+  //         // Log the retrieved userData for debugging
+  //         console.log("Userdata");
+  //         console.log(userData);
+
+  //         setUpdatedDisplayName(userData.displayName);
+  //         setUpdatedPhotoURL(userData.photoURL);
+  //         setCreatedAt(userData.createdAt);
+  //       } else {
+  //         console.error("User document does not exist for email:", userProfile);
+  //       }
+  //     } catch (error) {
+  //       console.log("Error fetching user data:", error);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, [userProfile]);
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -229,7 +290,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
   return (
     <Flex
       direction="column"
-      width={md ? 350 : "350px"}
+      width={md ? 350 : "100%"}
       borderRadius={4}
       cursor="pointer"
       bg="white"
@@ -245,30 +306,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
         alignItems="flex-end"
       >
         <Flex mt={2} pl="105px" pb="5px">
-          <Text
-            fontSize="11pt"
-            color="white"
-            fontWeight={700}
-            maxWidth="100%"
-            wordBreak="break-word"
-          >
-            {updatedDisplayName}
-          </Text>
-          {/* {updatedDisplayName ? (
-                        <Text
-                            fontSize="11pt"
-                            color="white"
-                            fontWeight={700}
-                            maxWidth="100%"
-                            wordBreak="break-word"
-                        >
-                            {updatedDisplayName}
-                        </Text>
-                    ) : (
-                        <Text fontSize="11pt" color="white" fontWeight={700}>
-                            {user?.email?.split("@")[0]}
-                        </Text>
-                    )} */}
+          {updatedDisplayName ? (
+            <Text
+              fontSize="11pt"
+              color="white"
+              fontWeight={700}
+              maxWidth="100%"
+              wordBreak="break-word"
+            >
+              {updatedDisplayName}
+            </Text>
+          ) : (
+            <Text fontSize="11pt" color="white" fontWeight={700}>
+              {user?.email?.split("@")[0]}
+            </Text>
+          )}
         </Flex>
       </Flex>
       <Flex
@@ -299,7 +351,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
           />
         )}
 
-        {userId === user?.uid && (
+        {userProfile === user?.email && (
           <Button
             alignItems="center"
             variant="ghost"

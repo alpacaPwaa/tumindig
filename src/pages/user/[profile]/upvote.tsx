@@ -27,6 +27,7 @@ import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
 import ProfileNav from "../../../components/Profile/ProfileNav";
 import { AiOutlineFolderOpen } from "react-icons/ai";
+import { useRouter } from "next/router";
 
 type UpvotedPostProps = { profile: string; communityData: Community };
 
@@ -48,6 +49,9 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
     setLoading,
   } = usePosts();
   const [user] = useAuthState(auth);
+
+  const router = useRouter();
+  const userProfile = router.query.profile;
 
   const getUserPosts = async () => {
     console.log("GETTING NO USER FEED");
@@ -279,7 +283,7 @@ const UpvotedPost: NextPage<UpvotedPostProps> = ({ communityData }) => {
         </>
       </>
       <>
-        <ProfilePage />
+        <ProfilePage userProfile={userProfile as string} />
       </>
     </PageContentLayout>
   );

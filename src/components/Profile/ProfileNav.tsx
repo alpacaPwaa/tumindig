@@ -4,11 +4,9 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 
-type ProfileNavProps = {
-  userId?: string;
-};
+type ProfileNavProps = {};
 
-const ProfileNav: React.FC<ProfileNavProps> = ({ userId }) => {
+const ProfileNav: React.FC<ProfileNavProps> = () => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const [md] = useMediaQuery("(min-width: 768px)");

@@ -6,6 +6,7 @@ export type Post = {
   id: string;
   communityId: string;
   communityImageURL?: string;
+  creatorEmail: string;
   creatorDisplayText: string;
   creatorId: string;
   title: string;
