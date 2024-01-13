@@ -36,7 +36,7 @@ const UserList: React.FC<UserListProps> = () => {
   };
 
   const goToProfile = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}`); // Use router.push to navigate to the profile page
   };
 
   const goToSupportPage = () => {

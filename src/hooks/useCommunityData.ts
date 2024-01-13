@@ -88,33 +88,33 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     //eslint-disable-next-line
   }, [user]);
 
+  // Inside getModeratorSnippets
   const getAllModeratorSnippets = async () => {
     const snippetsCollection = collectionGroup(firestore, "moderatorSnippets");
-    const snippetsDocs = await getDocs(snippetsCollection);
+    const snippetsDocs = await getDocs(
+      query(snippetsCollection, where("isModerator", "==", true))
+    );
     const snippets: ModeratorSnippet[] = [];
 
     snippetsDocs.forEach((doc) => {
       const snippet = doc.data() as ModeratorSnippet;
-
-      if (snippet.isModerator === true) {
-        snippets.push({ ...snippet });
-      }
+      snippets.push({ ...snippet });
     });
 
     return snippets;
   };
 
+  // Inside getBannedSnippets
   const getAllBanSnippets = async () => {
     const snippetsCollection = collectionGroup(firestore, "banSnippets");
-    const snippetsDocs = await getDocs(snippetsCollection);
+    const snippetsDocs = await getDocs(
+      query(snippetsCollection, where("isBanned", "==", true))
+    );
     const snippets: BanSnippet[] = [];
 
     snippetsDocs.forEach((doc) => {
       const snippet = doc.data() as BanSnippet;
-
-      if (snippet.isBanned === true) {
-        snippets.push({ ...snippet });
-      }
+      snippets.push({ ...snippet });
     });
 
     return snippets;
@@ -131,7 +131,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
       }));
       setLoading(false);
     } catch (error: any) {
-      console.log("Error getting snippets", error);
+      console.log("Error getting moderator snippets", error);
       setError(error.message);
       setLoading(false);
     }
@@ -148,7 +148,7 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
       }));
       setLoading(false);
     } catch (error: any) {
-      console.log("Error getting snippets", error);
+      console.log("Error getting banned snippets", error);
       setError(error.message);
       setLoading(false);
     }

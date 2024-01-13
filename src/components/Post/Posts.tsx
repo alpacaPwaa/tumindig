@@ -59,22 +59,6 @@ const Posts: React.FC<PostsProps> = ({
     router.push(`/tumindig/${communityData?.id!}/comments/${post.id}`);
   };
 
-  useEffect(() => {
-    if (
-      postStateValue.postsCache[communityData?.id!] &&
-      !postStateValue.postUpdateRequired
-    ) {
-      setPostStateValue((prev) => ({
-        ...prev,
-        posts: postStateValue.postsCache[communityData?.id!],
-      }));
-      return;
-    }
-
-    getPosts();
-    //eslint-disable-next-line
-  }, [communityData, postStateValue.postUpdateRequired]);
-
   const getPosts = async () => {
     console.log("WE ARE GETTING POSTS!!!");
 
@@ -119,6 +103,24 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
+    console.log("Effect A is running");
+    if (
+      postStateValue.postsCache[communityData?.id!] &&
+      !postStateValue.postUpdateRequired
+    ) {
+      setPostStateValue((prev) => ({
+        ...prev,
+        posts: postStateValue.postsCache[communityData?.id!],
+      }));
+      return;
+    }
+
+    getPosts();
+    //eslint-disable-next-line
+  }, [communityData, postStateValue.postUpdateRequired]);
+
+  useEffect(() => {
+    console.log("Effect B is running");
     if (!hasMore || loading) return;
 
     const handleScroll = () => {
@@ -171,6 +173,8 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
+    console.log("Effect C is running");
+
     if (!user?.uid) return; // If the user is not authenticated, return early
 
     // Function to fetch votes for a specific post by postId
@@ -206,17 +210,19 @@ const Posts: React.FC<PostsProps> = ({
   }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
 
   useEffect(() => {
+    console.log("Effect D is running");
+
     setFetchPostLoading(true);
     getPosts();
     //eslint-disable-next-line
   }, [currentPage]);
 
   useEffect(() => {
+    console.log("Effect E is running");
+
     setLoading(true);
     //eslint-disable-next-line
   }, []);
-
-  console.log("HERE IS POST STATE", postStateValue);
 
   return (
     <>

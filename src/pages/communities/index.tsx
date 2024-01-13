@@ -395,7 +395,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                     cursor="pointer"
                     fontWeight={600}
                   >
-                    <Flex align="center" width="80%">
+                    <Flex width="80%">
                       <Flex width="20%" align="center" justifyContent="center">
                         {item.imageURL ? (
                           <Image
@@ -415,7 +415,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                           />
                         )}
                       </Flex>
-                      <Flex direction="column">
+                      <Flex direction="column" width="80%">
                         <Flex direction="row">
                           <Text
                             wordBreak="break-word"

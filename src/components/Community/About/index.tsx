@@ -213,7 +213,7 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
             ) : (
               <Flex flexDirection="column">
                 {!showFullDescription && description?.length > 100 ? (
-                  <Text fontSize="11pt">
+                  <Text fontSize="11pt" whiteSpace="pre-line">
                     {description.slice(0, 100)}
                     <Button
                       variant="link"
@@ -225,7 +225,7 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                     </Button>
                   </Text>
                 ) : (
-                  <Text fontSize="11pt">
+                  <Text fontSize="11pt" whiteSpace="pre-line">
                     {description}
                     {description?.length > 100 && (
                       <Button
@@ -347,19 +347,15 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
                   <Text fontWeight={600} fontSize="11pt">
                     Tags
                   </Text>
-                  <Flex width="80%">
+                  <Flex>
                     <Flex mt={1} cursor="pointer">
-                      {communityData.communityCategory == "Volunteer" ? (
-                        <Tag size="sm" ml={1}>
-                          Volunteer
-                        </Tag>
-                      ) : (
+                      {communityData.communityCategory == "Organization" && (
                         <Tag size="sm" ml={1}>
                           Organization
                         </Tag>
                       )}
                     </Flex>
-                    <Flex mt={1} cursor="pointer" width="100%">
+                    <Flex mt={1} cursor="pointer">
                       {communityData.organizationVolunteerType && (
                         <Tag size="sm" ml={1}>
                           {communityData.organizationVolunteerType}

@@ -64,7 +64,7 @@ const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
   };
 
   const goToProfile = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}`); // Use router.push to navigate to the profile page
   };
 
   const handleOpenModal = () => {

@@ -260,7 +260,7 @@ const Rules: React.FC<RulesProps> = ({ communityData }) => {
                   </Flex>
                 </Flex>
                 {ruleDisplays[index] && (
-                  <Text fontSize="11pt" pl={2}>
+                  <Text fontSize="11pt" pl={2} whiteSpace="pre-line">
                     {rule.body}
                   </Text>
                 )}

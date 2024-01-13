@@ -505,7 +505,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   </Flex>
                 </>
               ) : !showFullPost && editedPostBody?.length > 350 ? (
-                <Text fontSize="11pt">
+                <Text fontSize="11pt" whiteSpace="pre-line">
                   {editedPostBody.slice(0, 350)}
                   <Button
                     variant="link"
@@ -520,7 +520,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
                   </Button>
                 </Text>
               ) : (
-                <Text fontSize="11pt">
+                <Text fontSize="11pt" whiteSpace="pre-line">
                   {editedPostBody}
                   {editedPostBody?.length > 350 && (
                     <Button

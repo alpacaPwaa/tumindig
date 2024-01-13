@@ -29,6 +29,7 @@ import PostLoader from "../../../components/Post/Loader";
 import PostItem from "../../../components/Post/PostItem";
 import ProfileNav from "../../../components/Profile/ProfileNav";
 import { AiOutlineFolderOpen } from "react-icons/ai";
+import { useRouter } from "next/router";
 
 type ProfileProps = { profile: string; communityData: Community };
 
@@ -37,6 +38,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [fetchPostLoading, setFetchPostLoading] = useState(false);
+  const [user] = useAuthState(auth);
   const {
     postStateValue,
     onHidePost,
@@ -47,8 +49,10 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     onSelectPost,
     onDeletePost,
   } = usePosts();
-  const [user] = useAuthState(auth);
   const [md] = useMediaQuery("(min-width: 768px)");
+
+  const router = useRouter();
+  const userProfile = router.query.profile;
 
   const getUserPosts = async (): Promise<Post[]> => {
     console.log("GETTING NO USER FEED");
@@ -56,7 +60,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     try {
       const postQuery = query(
         collection(firestore, "posts"),
-        where("creatorId", "==", user?.uid),
+        where("creatorId", "==", userProfile),
         orderBy("createdAt", "desc"),
         limit(8 * currentPage)
       );
@@ -150,7 +154,7 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
       }
     });
     //eslint-disable-next-line
-  }, [postStateValue.posts, postStateValue.selectedPost, user?.uid]);
+  }, [postStateValue.posts, postStateValue.selectedPost, user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -178,104 +182,104 @@ const Profile: NextPage<ProfileProps> = ({ communityData }) => {
     getUserPosts();
     setFetchPostLoading(true);
     //eslint-disable-next-line
-  }, [user, currentPage]);
+  }, [userProfile, currentPage]);
 
   useEffect(() => {
     setLoading(true);
     //eslint-disable-next-line
-  }, [user]);
+  }, [userProfile]);
 
   return (
     <PageContentLayout>
       <>
-        {!md && <ProfilePage />}
-        <ProfileNav />
+        {!md && <ProfilePage userId={userProfile as string} />}
+        {userProfile == user?.uid && (
+          <ProfileNav userId={userProfile as string} />
+        )}
       </>
       <>
-        <>
-          {loading ? (
-            <PostLoader />
-          ) : (
-            <Flex flexDirection="column">
-              <Stack>
-                {postStateValue.posts.map((post: Post, index) => (
-                  <PostItem
-                    key={post.id}
-                    post={post}
-                    postIdx={index}
-                    onVote={onVote}
-                    onDeletePost={onDeletePost}
-                    userVoteValue={
-                      postStateValue.postVotes.find(
-                        (item) => item.postId === post.id
-                      )?.voteValue
-                    }
-                    hidePost={
-                      postStateValue.postOptions.find(
-                        (item) => item.postId === post.id
-                      )?.isHidden
-                    }
-                    savePost={
-                      postStateValue.postOptions.find(
-                        (item) => item.postId === post.id
-                      )?.isSaved
-                    }
-                    reportPost={
-                      postStateValue.postOptions.find(
-                        (item) => item.postId === post.id
-                      )?.isReported
-                    }
-                    userIsCreator={user?.uid === post.creatorId}
-                    onSelectPost={onSelectPost}
-                    homePage
-                    mediaURLs={[]}
-                    onHidePost={onHidePost}
-                    onSavePost={onSavePost}
-                    onReportPost={onReportPost}
-                    communityData={communityData}
-                  />
-                ))}
-              </Stack>
-              {fetchPostLoading && (
-                <Flex
-                  p={2}
-                  justifyContent="center"
-                  fontSize="10pt"
-                  fontWeight={800}
-                >
-                  <Spinner size="sm" mr={2} />
-                  <Text>Loading</Text>
-                </Flex>
-              )}
+        {loading ? (
+          <PostLoader />
+        ) : (
+          <Flex flexDirection="column">
+            <Stack>
+              {postStateValue.posts.map((post: Post, index) => (
+                <PostItem
+                  key={post.id}
+                  post={post}
+                  postIdx={index}
+                  onVote={onVote}
+                  onDeletePost={onDeletePost}
+                  userVoteValue={
+                    postStateValue.postVotes.find(
+                      (item) => item.postId === post.id
+                    )?.voteValue
+                  }
+                  hidePost={
+                    postStateValue.postOptions.find(
+                      (item) => item.postId === post.id
+                    )?.isHidden
+                  }
+                  savePost={
+                    postStateValue.postOptions.find(
+                      (item) => item.postId === post.id
+                    )?.isSaved
+                  }
+                  reportPost={
+                    postStateValue.postOptions.find(
+                      (item) => item.postId === post.id
+                    )?.isReported
+                  }
+                  userIsCreator={userProfile === post.creatorId}
+                  onSelectPost={onSelectPost}
+                  homePage
+                  mediaURLs={[]}
+                  onHidePost={onHidePost}
+                  onSavePost={onSavePost}
+                  onReportPost={onReportPost}
+                  communityData={communityData}
+                />
+              ))}
+            </Stack>
+            {fetchPostLoading && (
+              <Flex
+                p={2}
+                justifyContent="center"
+                fontSize="10pt"
+                fontWeight={800}
+              >
+                <Spinner size="sm" mr={2} />
+                <Text>Loading</Text>
+              </Flex>
+            )}
 
-              {postStateValue.posts.filter(
-                (post) => user?.uid === post.creatorId
-              ).length === 0 && (
-                <Flex
-                  justifyContent="center"
-                  alignItems="center"
-                  flexDirection="column"
-                >
-                  <Icon
-                    color="gray.300"
-                    as={AiOutlineFolderOpen}
-                    fontSize={200}
-                    mt={6}
-                  />
-                  <Text color="gray.500" fontSize="15pt" fontWeight={800}>
-                    No Post Yet
-                  </Text>
-                  <Text color="gray.500" fontSize="11pt" fontWeight={500}>
-                    All your posts will appear here.
-                  </Text>
-                </Flex>
-              )}
-            </Flex>
-          )}
-        </>
+            {postStateValue.posts.filter(
+              (post) => userProfile === post.creatorId
+            ).length === 0 && (
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                flexDirection="column"
+              >
+                <Icon
+                  color="gray.300"
+                  as={AiOutlineFolderOpen}
+                  fontSize={200}
+                  mt={6}
+                />
+                <Text color="gray.500" fontSize="15pt" fontWeight={800}>
+                  No Post Yet
+                </Text>
+                <Text color="gray.500" fontSize="11pt" fontWeight={500}>
+                  All your posts will appear here.
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        )}
       </>
       <>
-        <ProfilePage />
+        <ProfilePage userId={userProfile as string} />
       </>
     </PageContentLayout>
   );

@@ -582,7 +582,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             }}
           />
         ) : !showFullComment && comment.text?.length > 350 ? (
-          <Text fontSize="11pt">
+          <Text fontSize="11pt" whiteSpace="pre-line">
             {comment.text.slice(0, 350)}
             <Button
               variant="link"
@@ -594,7 +594,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             </Button>
           </Text>
         ) : (
-          <Text fontSize="11pt">
+          <Text fontSize="11pt" whiteSpace="pre-line">
             {comment.text}
             {comment.text?.length > 350 && (
               <Button

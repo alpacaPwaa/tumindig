@@ -170,7 +170,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
             }}
           />
         ) : !showFullReply && reply.text?.length > 350 ? (
-          <Text fontSize="11pt">
+          <Text fontSize="11pt" whiteSpace="pre-line">
             {reply.text.slice(0, 350)}
             <Button
               variant="link"
@@ -182,7 +182,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
             </Button>
           </Text>
         ) : (
-          <Text fontSize="11pt">
+          <Text fontSize="11pt" whiteSpace="pre-line">
             {reply.text}
             {reply.text?.length > 350 && (
               <Button

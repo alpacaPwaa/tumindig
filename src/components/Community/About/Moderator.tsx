@@ -719,10 +719,7 @@ const Moderator: React.FC<ModeratorProps> = ({ communityData }) => {
                                         alt="User Photo"
                                         objectFit="cover"
                                         boxSize="100%"
-                                        style={{
-                                          borderRadius: "50%",
-                                          mask: "url(#circle-mask)",
-                                        }}
+                                        borderRadius="full"
                                       />
                                     </AspectRatio>
                                   </Box>

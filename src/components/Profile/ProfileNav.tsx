@@ -4,31 +4,33 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 
-type ProfileNavProps = {};
+type ProfileNavProps = {
+  userId?: string;
+};
 
-const ProfileNav: React.FC<ProfileNavProps> = () => {
+const ProfileNav: React.FC<ProfileNavProps> = ({ userId }) => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const [md] = useMediaQuery("(min-width: 768px)");
 
   const goToProfile = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}`); // Use router.push to navigate to the profile page
   };
 
   const goToSavePost = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}/save`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}/save`); // Use router.push to navigate to the profile page
   };
 
   const goToHiddenPost = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}/hidden`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}/hidden`); // Use router.push to navigate to the profile page
   };
 
   const goToUpvotedPost = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}/upvote`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}/upvote`); // Use router.push to navigate to the profile page
   };
 
   const goToDownvotedPost = () => {
-    router.push(`/user/${user?.email?.split("@")[0]}/downvote`); // Use router.push to navigate to the profile page
+    router.push(`/user/${user?.uid}/downvote`); // Use router.push to navigate to the profile page
   };
 
   return (
@@ -50,63 +52,69 @@ const ProfileNav: React.FC<ProfileNavProps> = () => {
         position="absolute"
         bottom="0"
       >
-        <Text
-          _hover={{
-            cursor: "pointer",
-            color: "blue.500",
-          }}
-          color={
-            router.pathname === "/user/[profile]" ? "blue.500" : "gray.500"
-          }
-          borderBottom={router.pathname === "/user/[profile]" ? "2px" : "none"}
-          onClick={goToProfile}
-        >
-          OVERVIEW
-        </Text>
-        <Text
-          _hover={{
-            cursor: "pointer",
-            color: "blue.500",
-          }}
-          color={router.pathname.includes("save") ? "blue.500" : "gray.500"}
-          borderBottom={router.pathname.includes("save") ? "2px" : "none"}
-          onClick={goToSavePost}
-        >
-          SAVED
-        </Text>
-        <Text
-          _hover={{
-            cursor: "pointer",
-            color: "blue.500",
-          }}
-          color={router.pathname.includes("hidden") ? "blue.500" : "gray.500"}
-          borderBottom={router.pathname.includes("hidden") ? "2px" : "none"}
-          onClick={goToHiddenPost}
-        >
-          HIDDEN
-        </Text>
-        <Text
-          _hover={{
-            cursor: "pointer",
-            color: "blue.500",
-          }}
-          color={router.pathname.includes("upvote") ? "blue.500" : "gray.500"}
-          borderBottom={router.pathname.includes("upvote") ? "2px" : "none"}
-          onClick={goToUpvotedPost}
-        >
-          UPVOTED
-        </Text>
-        <Text
-          _hover={{
-            cursor: "pointer",
-            color: "blue.500",
-          }}
-          color={router.pathname.includes("downvote") ? "blue.500" : "gray.500"}
-          borderBottom={router.pathname.includes("downvote") ? "2px" : "none"}
-          onClick={goToDownvotedPost}
-        >
-          DOWNVOTED
-        </Text>
+        <>
+          <Text
+            _hover={{
+              cursor: "pointer",
+              color: "blue.500",
+            }}
+            color={
+              router.pathname === "/user/[profile]" ? "blue.500" : "gray.500"
+            }
+            borderBottom={
+              router.pathname === "/user/[profile]" ? "2px" : "none"
+            }
+            onClick={goToProfile}
+          >
+            OVERVIEW
+          </Text>
+          <Text
+            _hover={{
+              cursor: "pointer",
+              color: "blue.500",
+            }}
+            color={router.pathname.includes("save") ? "blue.500" : "gray.500"}
+            borderBottom={router.pathname.includes("save") ? "2px" : "none"}
+            onClick={goToSavePost}
+          >
+            SAVED
+          </Text>
+          <Text
+            _hover={{
+              cursor: "pointer",
+              color: "blue.500",
+            }}
+            color={router.pathname.includes("hidden") ? "blue.500" : "gray.500"}
+            borderBottom={router.pathname.includes("hidden") ? "2px" : "none"}
+            onClick={goToHiddenPost}
+          >
+            HIDDEN
+          </Text>
+          <Text
+            _hover={{
+              cursor: "pointer",
+              color: "blue.500",
+            }}
+            color={router.pathname.includes("upvote") ? "blue.500" : "gray.500"}
+            borderBottom={router.pathname.includes("upvote") ? "2px" : "none"}
+            onClick={goToUpvotedPost}
+          >
+            UPVOTED
+          </Text>
+          <Text
+            _hover={{
+              cursor: "pointer",
+              color: "blue.500",
+            }}
+            color={
+              router.pathname.includes("downvote") ? "blue.500" : "gray.500"
+            }
+            borderBottom={router.pathname.includes("downvote") ? "2px" : "none"}
+            onClick={goToDownvotedPost}
+          >
+            DOWNVOTED
+          </Text>
+        </>
       </Flex>
     </Flex>
   );

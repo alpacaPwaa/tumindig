@@ -35,44 +35,51 @@ import { RiCakeFill } from "react-icons/ri";
 import { updateProfile } from "firebase/auth";
 import { AiOutlineSetting } from "react-icons/ai";
 
-type ProfilePageProps = {};
+type ProfilePageProps = {
+  userId?: string;
+};
 
-const ProfilePage: React.FC<ProfilePageProps> = () => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
   const [user] = useAuthState(auth);
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string>();
   const [imageLoading, setImageLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [updatedPhotoURL, setUpdatedPhotoURL] = useState<string | undefined>(
-    user?.photoURL || undefined
+    ""
   );
   const [updatedDisplayName, setUpdatedDisplayName] = useState<
     string | undefined
-  >(user?.displayName || undefined);
+  >("");
   const [createdAt, setCreatedAt] = useState<number | undefined>();
   const [displayNameLoading, setDisplayNameLoading] = useState(false);
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [inputFocused, setInputFocused] = useState(false);
-  const [md] = useMediaQuery("(min-width: 768px)");
+  // const [md] = useMediaQuery("(min-width: 768px)");
+  const md = false;
 
   useEffect(() => {
-    if (user) {
-      const fetchUserData = async () => {
-        try {
-          const userDocRef = doc(collection(firestore, "users"), user.uid);
-          const userDocSnapshot = await getDoc(userDocRef);
-          if (userDocSnapshot.exists()) {
-            const userData = userDocSnapshot.data();
-            setCreatedAt(userData.createdAt);
-          }
-        } catch (error) {
-          console.log("Error fetching user data:", error);
-        }
-      };
+    const fetchUserData = async () => {
+      try {
+        const userDocRef = doc(collection(firestore, "users"), userId);
+        const userDocSnapshot = await getDoc(userDocRef);
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
 
-      fetchUserData();
-    }
-  }, [user]);
+          console.log("Userdata");
+          console.log(userData);
+
+          setUpdatedDisplayName(userData.displayName);
+          setUpdatedPhotoURL(userData.photoURL);
+          setCreatedAt(userData.createdAt);
+        }
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -222,7 +229,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
   return (
     <Flex
       direction="column"
-      width={md ? 300 : "100%"}
+      width={md ? 350 : "350px"}
       borderRadius={4}
       cursor="pointer"
       bg="white"
@@ -231,28 +238,37 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
       position="sticky"
     >
       <Flex
-        width="100%"
+        width="full"
         height="60px"
         bg="blue.500"
         borderRadius="4px 4px 0px 0px"
         alignItems="flex-end"
       >
         <Flex mt={2} pl="105px" pb="5px">
-          {user?.displayName ? (
-            <Text
-              fontSize="11pt"
-              color="white"
-              fontWeight={700}
-              maxWidth="100%" // Adjust the maximum width as needed
-              wordBreak="break-word"
-            >
-              {user.displayName}
-            </Text>
-          ) : (
-            <Text fontSize="11pt" color="white" fontWeight={700}>
-              {user?.email?.split("@")[0]}
-            </Text>
-          )}
+          <Text
+            fontSize="11pt"
+            color="white"
+            fontWeight={700}
+            maxWidth="100%"
+            wordBreak="break-word"
+          >
+            {updatedDisplayName}
+          </Text>
+          {/* {updatedDisplayName ? (
+                        <Text
+                            fontSize="11pt"
+                            color="white"
+                            fontWeight={700}
+                            maxWidth="100%"
+                            wordBreak="break-word"
+                        >
+                            {updatedDisplayName}
+                        </Text>
+                    ) : (
+                        <Text fontSize="11pt" color="white" fontWeight={700}>
+                            {user?.email?.split("@")[0]}
+                        </Text>
+                    )} */}
         </Flex>
       </Flex>
       <Flex
@@ -261,7 +277,7 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
         flexDirection="column"
         alignItems="center"
       >
-        {user?.photoURL ? (
+        {updatedPhotoURL ? (
           <Image
             borderRadius="md"
             boxSize="80px"
@@ -283,25 +299,27 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
           />
         )}
 
-        <Button
-          alignItems="center"
-          variant="ghost"
-          position="absolute"
-          right="15%"
-          bottom="15%"
-          border="1px"
-          borderColor="blue.500"
-          bg="white"
-          size="sm"
-          onClick={openModal}
-        >
-          <Icon
-            as={AiOutlineSetting}
-            fontSize="14pt"
-            color="blue.500"
+        {userId === user?.uid && (
+          <Button
+            alignItems="center"
+            variant="ghost"
             position="absolute"
-          />
-        </Button>
+            right="15%"
+            bottom="15%"
+            border="1px"
+            borderColor="blue.500"
+            bg="white"
+            size="sm"
+            onClick={openModal}
+          >
+            <Icon
+              as={AiOutlineSetting}
+              fontSize="14pt"
+              color="blue.500"
+              position="absolute"
+            />
+          </Button>
+        )}
 
         <input
           id="file-upload-modal"
@@ -412,11 +430,11 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
                       color="blue.500"
                       objectFit="cover"
                     />
-                  ) : user?.photoURL ? (
+                  ) : updatedPhotoURL ? (
                     <Image
                       borderRadius="full"
                       boxSize="160px"
-                      src={user.photoURL}
+                      src={updatedPhotoURL}
                       alt="Dan Abramov"
                       position="relative"
                       color="blue.500"
