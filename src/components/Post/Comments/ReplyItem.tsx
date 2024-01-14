@@ -24,6 +24,7 @@ import { FaUserCircle } from "react-icons/fa";
 import moment from "moment";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import ResizeTextarea from "react-textarea-autosize";
+import Link from "next/link";
 
 export type Reply = {
   reply: Reply;
@@ -132,12 +133,14 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
       </Box>
       <Stack spacing={1} width="100%">
         <Stack direction="row" align="center" spacing={2} fontSize="8pt">
-          <Text
-            fontWeight={700}
-            _hover={{ textDecoration: "underline", cursor: "pointer" }}
-          >
-            {reply.creatorDisplayText}
-          </Text>
+          <Link href={`/user/${reply.creatorId}`}>
+            <Text
+              fontWeight={700}
+              _hover={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              {reply.creatorDisplayText}
+            </Text>
+          </Link>
           {reply.createdAt?.seconds && (
             <Text color="gray.600">
               {moment(new Date(reply.createdAt?.seconds * 1000)).fromNow()}

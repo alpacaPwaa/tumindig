@@ -54,16 +54,9 @@ const CommentInput: React.FC<CommentInputProps> = ({
                     alt="User Photo"
                     objectFit="cover"
                     boxSize="100%"
-                    style={{ borderRadius: "50%", mask: "url(#circle-mask)" }}
+                    borderRadius="full"
                   />
                 </AspectRatio>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0">
-                  <defs>
-                    <mask id="circle-mask" maskContentUnits="objectBoundingBox">
-                      <circle cx="0.5" cy="0.5" r="0.5" fill="white" />
-                    </mask>
-                  </defs>
-                </svg>
               </Box>
             ) : (
               <Icon as={FaUserCircle} fontSize={36} color="gray.300" mr={3} />

@@ -50,6 +50,7 @@ import ResizeTextarea from "react-textarea-autosize";
 import { User } from "firebase/auth";
 import { UserNotification } from "../../../atoms/notificationAtom";
 import { BsArrowReturnRight } from "react-icons/bs";
+import Link from "next/link";
 
 export type Comment = {
   id: string;
@@ -541,12 +542,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
       </Box>
       <Stack spacing={1} width="100%">
         <Stack direction="row" align="center" spacing={2} fontSize="8pt">
-          <Text
-            fontWeight={700}
-            _hover={{ textDecoration: "underline", cursor: "pointer" }}
-          >
-            {comment.creatorDisplayText}
-          </Text>
+          <Link href={`/user/${comment.creatorId}`}>
+            <Text
+              fontWeight={700}
+              _hover={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              {comment.creatorDisplayText}
+            </Text>
+          </Link>
           <Text color="gray.500" mx={1}>
             &middot;
           </Text>

@@ -275,7 +275,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile }) => {
   };
 
   const openModal = () => {
-    setIsModalOpen(true);
+    if (user && userProfile && userProfile === user.uid) {
+      setIsModalOpen(true);
+    }
   };
 
   const closeModal = () => {
@@ -351,7 +353,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile }) => {
           />
         )}
 
-        {userProfile === user?.email && (
+        {userProfile === user?.uid && (
           <Button
             alignItems="center"
             variant="ghost"

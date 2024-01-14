@@ -125,7 +125,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
   const [pinPost, setPinPost] = useState(post.isPinned);
   const [pinLoading, setPinLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const link = `https://www.tumindig.com/tumindig/${post.communityId}/comments/${post.id}`;
+  const link = `https://www.tumndig.com/tumindig/${post.communityId}/comments/${post.id}`;
   const { mediaTypes } = post;
   const [communityStateValue] = useRecoilState(communityState);
   const [md] = useMediaQuery("(min-width: 768px)");
@@ -317,32 +317,48 @@ const PostItem: React.FC<PostItemContentProps> = ({
                           >{`${post.communityId}`}</Text>
                         </Link>
                         <HStack color="gray.500" alignItems="flex-start">
-                          <Text
-                            maxWidth={md || !user ? "100%" : "90%"} // Adjust the maximum width as needed
-                            wordBreak="break-word"
+                          <Link
+                            href={`user/${post.creatorId}`}
+                            onClick={(event) => {
+                              event.stopPropagation(); // Stop event propagation
+                            }}
                           >
-                            {md && "Posted by"} {post.creatorDisplayText}{" "}
-                            &middot;{" "}
-                            {moment(
-                              new Date(post.createdAt.seconds * 1000)
-                            ).fromNow(true)}{" "}
-                            {post.isEdited && "Edited"}
-                          </Text>
+                            <Text
+                              maxWidth={md || !user ? "100%" : "90%"} // Adjust the maximum width as needed
+                              wordBreak="break-word"
+                              _hover={{ textDecoration: "underline" }}
+                            >
+                              {md && "Posted by"} {post.creatorDisplayText}{" "}
+                              &middot;{" "}
+                              {moment(
+                                new Date(post.createdAt.seconds * 1000)
+                              ).fromNow(true)}{" "}
+                              {post.isEdited && "Edited"}
+                            </Text>
+                          </Link>
                         </HStack>
                       </Flex>
                     </Flex>
                   ) : (
                     <HStack color="gray.500" alignItems="flex-start">
-                      <Text
-                        maxWidth={md || !user ? "100%" : "80%"} // Adjust the maximum width as needed
-                        wordBreak="break-word"
+                      <Link
+                        href={`/user/${post.creatorId}`}
+                        onClick={(event) => {
+                          event.stopPropagation(); // Stop event propagation
+                        }}
                       >
-                        Posted by {post.creatorDisplayText} &middot;{" "}
-                        {moment(
-                          new Date(post.createdAt.seconds * 1000)
-                        ).fromNow(true)}{" "}
-                        {post.isEdited && "Edited"}
-                      </Text>
+                        <Text
+                          maxWidth={md || !user ? "100%" : "90%"} // Adjust the maximum width as needed
+                          wordBreak="break-word"
+                          _hover={{ textDecoration: "underline" }}
+                        >
+                          {md && "Posted by"} {post.creatorDisplayText} &middot;{" "}
+                          {moment(
+                            new Date(post.createdAt.seconds * 1000)
+                          ).fromNow(true)}{" "}
+                          {post.isEdited && "Edited"}
+                        </Text>
+                      </Link>
                     </HStack>
                   )}
                 </Flex>
