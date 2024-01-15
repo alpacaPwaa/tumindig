@@ -21,7 +21,6 @@ import { MdNewReleases } from "react-icons/md";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
 import { auth } from "../../firebase/clientApp";
-import dynamic from "next/dynamic";
 
 type CreatePostProps = {};
 
