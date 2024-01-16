@@ -942,7 +942,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
                   justifyContent="center"
                 >
                   <FormLabel mr={3} fontSize="11pt" width="20%">
-                    Cause:
+                    Advocacy:
                   </FormLabel>
                   <Menu>
                     <MenuButton

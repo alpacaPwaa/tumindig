@@ -39,6 +39,7 @@ import { RiUserUnfollowFill } from "react-icons/ri";
 import useDirectory from "../../../hooks/useDirectory";
 import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
 import TopPosts from "../../../components/Post/TopPost";
+import NewTopPostLink from "../../../components/Community/NewTopPostLink";
 
 interface CommunityTopPageProps {
   post: Post;
@@ -109,6 +110,7 @@ const CommunityTopPage: NextPage<CommunityTopPageProps> = ({
         {/* Left Content */}
         <>
           <CreatePostLink />
+          <NewTopPostLink />
           {/* {communityData.communityCategory != "Sponsor" && (
             <CommunitySponsor communityData={communityData} />
           )} */}

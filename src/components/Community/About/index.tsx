@@ -116,7 +116,7 @@ const About: React.FC<AboutProps> = ({ post, communityData, pt, loading }) => {
           alignItems="center"
         >
           <Text fontSize="11pt" fontWeight={600}>
-            About Community
+            Community Advocacy
           </Text>
         </Flex>
         <Divider mb={2} />

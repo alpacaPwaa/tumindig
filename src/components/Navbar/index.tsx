@@ -58,21 +58,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         alignItems="center"
       >
         <Flex justifyContent="center" alignItems="center">
-          <Icon
-            display={{ base: "none", md: "unset" }}
-            fontSize="30px"
-            color="deeppink"
-            as={BsFillHouseFill}
-            position="relative"
-          />
-          <Icon
-            display={{ base: "none", md: "unset" }}
-            fontSize="14px"
-            bottom="15px"
-            color="white"
-            as={AiFillHeart}
-            position="absolute"
-          />
+          <Image src="/images/tumndig.png" boxSize="16pt" />
         </Flex>
 
         <Flex display={{ base: "unset", md: "none" }}>
@@ -90,10 +76,10 @@ const Navbar: React.FC<NavbarProps> = () => {
         <Flex
           display={{ base: "none", md: "unset" }}
           fontWeight={700}
-          color="deeppink"
+          color="black"
           ml={2}
         >
-          <Text fontWeight={700} color="deeppink">
+          <Text fontWeight={700} color="black">
             Tumndig
           </Text>
         </Flex>

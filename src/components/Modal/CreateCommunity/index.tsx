@@ -178,7 +178,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         <Box mt={2}>
           <Menu autoSelect={false} matchWidth>
             <Text fontWeight={600} fontSize={15}>
-              Choose Volunteer Tag
+              Community Advocacy
             </Text>
             <MenuButton
               mt={"1"}

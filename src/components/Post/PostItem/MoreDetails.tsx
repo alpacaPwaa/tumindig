@@ -276,7 +276,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
                 <Flex>
                   <Text fontSize="10pt" fontWeight={600} color="gray.600">
                     {post.eventVolunteer ? post.eventVolunteer : "0"} {""}
-                    volunteers
+                    Interested
                   </Text>
                 </Flex>
               </Flex>
@@ -320,9 +320,9 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
               mb={2}
             >
               <Text>
-                Before clicking &apos;Volunteer,&apos; know that you&apos;re
-                reserving a spot for this volunteer opportunity. We&apos;re
-                eager to see you soon!
+                Before clicking &apos;Join,&apos; know that you&apos;re
+                reserving a spot for this event. We&apos;re eager to see you
+                soon!
               </Text>
             </Flex>
             <Stack fontSize="14px" p={2}>
@@ -398,7 +398,7 @@ const MoreDetails: React.FC<MoreDetailsProps> = ({ post, community }) => {
               isLoading={loading}
               onClick={() => onJoinLeaveCommunity(post, isJoined)}
             >
-              {isJoined ? "Leave" : "Volunteer"}
+              {isJoined ? "Leave" : "Join"}
             </Button>
           </ModalFooter>
         </ModalContent>

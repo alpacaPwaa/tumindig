@@ -38,6 +38,7 @@ import { FaUserAltSlash } from "react-icons/fa";
 import { RiUserUnfollowFill } from "react-icons/ri";
 import useDirectory from "../../../hooks/useDirectory";
 import { defaultMenuItem } from "../../../atoms/directoryMenuAtom";
+import NewTopPostLink from "../../../components/Community/NewTopPostLink";
 
 interface CommunityPageProps {
   post: Post;
@@ -108,6 +109,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({
         {/* Left Content */}
         <>
           <CreatePostLink />
+          <NewTopPostLink />
           {/* {communityData.communityCategory != "Sponsor" && (
             <CommunitySponsor communityData={communityData} />
           )} */}
