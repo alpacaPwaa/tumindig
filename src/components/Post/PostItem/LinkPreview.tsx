@@ -108,7 +108,6 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
     <Flex
       border="1px solid"
       borderColor="gray.300"
-      justifyContent="space-around"
       width="100%"
       ml={4}
       mr={4}
@@ -123,7 +122,7 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Flex flexDirection="column" justifyContent="space-around" width="100%">
+        <Flex flexDirection="column">
           <Flex flexDirection="row">
             <Flex flexDirection="column">
               <Text fontWeight={700} fontSize="11pt">
