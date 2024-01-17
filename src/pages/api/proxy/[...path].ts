@@ -6,7 +6,6 @@ import Cors from "cors";
 // Initializing the cors middleware
 const cors = Cors({
   methods: ["GET", "HEAD"],
-  origin: "https://www.tumindig.com", // Add your frontend domain
 });
 
 // Helper method to handle CORS
@@ -47,10 +46,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Send the fetched data back to the client
     const data = await response.text();
-
-    // Set CORS headers on the response
-    res.setHeader("Access-Control-Allow-Origin", "https://www.tumndig.com");
-    res.setHeader("Access-Control-Allow-Methods", "GET, HEAD");
     res.status(200).json({ data });
   } catch (error) {
     console.error("Error in proxy route:", error);
