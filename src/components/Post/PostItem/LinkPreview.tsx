@@ -123,14 +123,14 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
         rel="noopener noreferrer"
       >
         <Flex flexDirection="column" width="100%">
-          <Flex flexDirection="row">
-            <Flex flexDirection="column">
+          <Flex flexDirection="row" width="100%">
+            <Flex flexDirection="column" width="70%">
               <Text fontWeight={700} fontSize="11pt">
                 {previewData.title}
               </Text>
               <Text fontSize="11pt">{truncatedDescription}</Text>
             </Flex>
-            <Flex alignItems="center" justifyContent="center">
+            <Flex width="30%" alignItems="center" justifyContent="center">
               {previewData.image && (
                 <Image
                   boxSize="55pt"
