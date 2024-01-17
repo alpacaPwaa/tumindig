@@ -130,15 +130,6 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
               </Text>
               <Text fontSize="11pt">{truncatedDescription}</Text>
             </Flex>
-            <Flex width="30%" alignItems="center" justifyContent="center">
-              {previewData.image && (
-                <Image
-                  boxSize="55pt"
-                  borderRadius={2}
-                  src={previewData.image}
-                />
-              )}
-            </Flex>
           </Flex>
         </Flex>
       </a>
