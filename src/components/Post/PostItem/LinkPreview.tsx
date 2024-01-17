@@ -33,12 +33,15 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
 
         const encodedURL = encodeURIComponent(url);
 
-        const response = await fetch(`/api/proxy/${encodedURL}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `https://www.tumindig.com/api/proxy/${encodedURL}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data, "text/html");
@@ -122,16 +125,21 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
         rel="noopener noreferrer"
       >
         <Flex flexDirection="column">
-          <Flex flexDirection="row" width="100%">
+          <Flex flexDirection="row">
             <Flex flexDirection="column">
               <Text fontWeight={700} fontSize="11pt">
                 {previewData.title}
               </Text>
               <Text fontSize="11pt">{truncatedDescription}</Text>
             </Flex>
-            <Flex width="50%" justifyContent="center" alignItems="center">
+            <Flex
+              width="50%"
+              justifyContent="center"
+              alignItems="center"
+              boxSize="50pt"
+            >
               {previewData.image && (
-                <Image width="45%" borderRadius={2} src={previewData.image} />
+                <Image borderRadius={2} src={previewData.image} />
               )}
             </Flex>
           </Flex>

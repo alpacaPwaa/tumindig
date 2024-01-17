@@ -6,6 +6,7 @@ import Cors from "cors";
 // Initializing the cors middleware
 const cors = Cors({
   methods: ["GET", "HEAD"],
+  origin: "https://www.tumindig.com", // Add your frontend domain
 });
 
 // Helper method to handle CORS
