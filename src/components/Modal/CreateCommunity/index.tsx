@@ -196,7 +196,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
             >
               {organizationVolunteerType
                 ? organizationVolunteerType
-                : "Select Tags"}
+                : "Advocacy"}
             </MenuButton>
 
             <MenuList

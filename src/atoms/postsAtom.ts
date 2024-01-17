@@ -34,6 +34,7 @@ export type Post = {
   isVolunteer?: boolean;
   country?: string;
   postTags?: string;
+  postLink?: string;
 };
 
 export type PostVote = {

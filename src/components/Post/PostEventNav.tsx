@@ -381,7 +381,7 @@ const PostEventNav: React.FC<PostEventNavProps> = ({
               textOverflow="ellipsis"
               whiteSpace="nowrap"
             >
-              {selectedTags || "Select Tags"}
+              {selectedTags || "Advocacy"}
             </MenuButton>
             <MenuList
               textAlign="left"

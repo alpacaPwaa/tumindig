@@ -311,7 +311,7 @@ const CommunityList: React.FC<CommunityListProps> = () => {
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"
               >
-                {selectedOrganizationVolunteerType || "Filter Communities"}
+                {selectedOrganizationVolunteerType || "Advocacy"}
               </MenuButton>
               <MenuList
                 textAlign="left"

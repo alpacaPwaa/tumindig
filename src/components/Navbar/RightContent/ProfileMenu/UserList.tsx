@@ -22,6 +22,7 @@ import { VscAccount } from "react-icons/vsc";
 import { RxDotFilled } from "react-icons/rx";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { BiDonateHeart } from "react-icons/bi";
+import { RiQuestionLine } from "react-icons/ri";
 
 type UserListProps = {};
 
@@ -41,6 +42,10 @@ const UserList: React.FC<UserListProps> = () => {
 
   const goToSupportPage = () => {
     router.push(`/support`); // Use router.push to navigate to the profile page
+  };
+
+  const goToAboutPage = () => {
+    router.push(`/about`); // Use router.push to navigate to the profile page
   };
 
   return (
@@ -106,6 +111,18 @@ const UserList: React.FC<UserListProps> = () => {
         <Flex alignItems="center">
           <Icon fontSize={22} mr="8px" ml="7px" as={BiDonateHeart} />
           Support
+        </Flex>
+      </MenuItem>
+      <MenuDivider />
+      <MenuItem
+        fontSize="10pt"
+        fontWeight={600}
+        _hover={{ bg: "blue.500", color: "white" }}
+        onClick={goToAboutPage}
+      >
+        <Flex alignItems="center">
+          <Icon fontSize={22} mr="8px" ml="7px" as={RiQuestionLine} />
+          About Us
         </Flex>
       </MenuItem>
       <MenuDivider />

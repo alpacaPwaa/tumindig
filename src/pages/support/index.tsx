@@ -103,7 +103,6 @@ const Support: React.FC<SupportProps> = () => {
     >
       <VStack
         fontSize="11pt"
-        backgroundColor="white"
         borderRadius="md"
         p={md ? "20px 60px 20px 60px" : 3}
         spacing={4}

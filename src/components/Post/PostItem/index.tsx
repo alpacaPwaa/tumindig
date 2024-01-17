@@ -8,10 +8,6 @@ import {
   Icon,
   Image,
   Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -67,6 +63,7 @@ import TumblrIcon from "react-share/lib/TumblrIcon";
 import PostOptions from "./PostOptions";
 import Comments from "../Comments";
 import MoreDetails from "./MoreDetails";
+import LinkPreview from "./LinkPreview";
 
 export type PostItemContentProps = {
   isDisableVote?: boolean;
@@ -671,7 +668,14 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 )}
               </Flex>
             )}
+            {post.postLink && (
+              <Flex p="8px 10px 8px 10px">
+                {/* Use the LinkPreview component with the post link */}
+                <LinkPreview url={post.postLink} />
+              </Flex>
+            )}
           </Flex>
+
           <MoreDetails post={post} community={communityData} />
           <Flex
             color="gray.500"
