@@ -7,9 +7,9 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-type aboutProps = {};
+type AboutProps = {};
 
-const about: React.FC<aboutProps> = () => {
+const About: React.FC<AboutProps> = () => {
   const [md] = useMediaQuery("(min-width: 768px)");
 
   return (
@@ -107,4 +107,4 @@ const about: React.FC<aboutProps> = () => {
     </VStack>
   );
 };
-export default about;
+export default About;
