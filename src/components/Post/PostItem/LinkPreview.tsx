@@ -124,7 +124,7 @@ const LinkPreview: React.FC<{ url: string }> = ({ url }) => {
       >
         <Flex flexDirection="column" width="100%">
           <Flex flexDirection="row" width="100%">
-            <Flex flexDirection="column" width="70%">
+            <Flex flexDirection="column" flexGrow={1}>
               <Text fontWeight={700} fontSize="11pt">
                 {previewData.title}
               </Text>
